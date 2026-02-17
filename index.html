@@ -3,32 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>املاک من | نسخه تست نهایی</title>
+    <title>مدیریت هوشمند املاک</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #f8fafc; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .active-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+        .active-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+        .nav-active { color: #2563eb !important; }
     </style>
 </head>
-<body class="pb-32">
+<body class="pb-36">
 
     <header class="sticky top-0 z-50 flex justify-between items-center p-5 bg-white/80 backdrop-blur-md border-b border-slate-100">
         <div class="flex items-center gap-2">
-            <div class="w-9 h-9 bg-black rounded-xl flex items-center justify-center shadow-lg shadow-black/20">
+            <div class="w-9 h-9 bg-black rounded-xl flex items-center justify-center shadow-lg">
                 <div class="w-4 h-4 border-2 border-white rotate-45"></div>
             </div>
-            <span class="text-xl font-bold tracking-tight text-slate-900 leading-none">املاک من</span>
+            <span class="text-xl font-black text-slate-900">املاک من</span>
         </div>
-        <div class="flex gap-3 text-left">
+        <div class="flex gap-3">
             <div class="flex flex-col items-end">
                 <span class="text-[10px] font-bold text-slate-900">مرتضی نوح‌پیشه</span>
-                <span class="text-[8px] text-slate-400 italic">مدیر پروژه</span>
+                <span class="text-[8px] text-slate-400 font-medium">مدیر پروژه</span>
             </div>
-            <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden">
+            <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-white overflow-hidden shadow-sm">
                 <img src="https://i.pravatar.cc/100?u=morteza" alt="profile">
             </div>
         </div>
@@ -36,240 +37,159 @@
 
     <main id="home" class="tab-content active">
         <div class="p-5">
-            <div class="relative">
-                <input type="text" placeholder="جستجوی کد فایل یا منطقه..." 
-                       class="w-full p-4 pr-12 rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-black outline-none bg-white transition-all">
-                <svg class="w-6 h-6 absolute right-4 top-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" placeholder="جستجوی سریع..." class="w-full p-4 rounded-2xl shadow-sm bg-white outline-none text-sm font-bold">
+        </div>
+        <div class="px-5 space-y-6" id="propertyContainer"></div>
+    </main>
+
+    <main id="dashboard" class="tab-content p-6">
+        <h2 class="text-2xl font-black mb-6">آمار عملکرد</h2>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-50">
+                <span class="text-[10px] font-bold text-slate-400 block mb-1">بازدیدها</span>
+                <span id="dashTotalVisits" class="text-3xl font-black text-black">0</span>
+            </div>
+            <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-50">
+                <span class="text-[10px] font-bold text-slate-400 block mb-1">فایل‌ها</span>
+                <span id="dashTotalFiles" class="text-3xl font-black text-black">0</span>
             </div>
         </div>
+        <div class="bg-slate-900 p-6 rounded-[2.5rem] text-white">
+            <h4 class="text-xs font-bold opacity-50 mb-4 italic">گزارش وضعیت کلیدها</h4>
+            <div id="statBars" class="space-y-4">
+                </div>
+        </div>
+    </main>
 
-        <div class="px-5 space-y-8" id="propertyList">
-            <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100">
-                <div class="relative h-64 bg-slate-200">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_6M28zGj4S_6r6Z_f-r7Y_zP3T6W_j-8_Yg&s" class="w-full h-full object-cover">
-                    <div class="absolute bottom-4 right-4 flex gap-2">
-                        <span class="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold">کد: ۲۴۰</span>
-                        <span class="bg-white/90 text-black px-3 py-1 rounded-full text-[10px] font-bold">VIP</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div><h3 class="font-bold text-lg text-slate-900">آپارتمان مدرن فرمانیه</h3><p class="text-slate-400 text-[10px]">۲۸۰ متر | ۴ خواب | استخر</p></div>
-                        <span class="text-xl font-black text-blue-600">۴۵ م</span>
-                    </div>
-                    <button onclick="handleSecurityAction('۲۴۰', this)" class="w-full bg-black text-white py-4 rounded-2xl text-xs font-bold active:scale-95 transition">ثبت بازدید / امنیت</button>
-                </div>
+    <main id="visits" class="tab-content p-6">
+        <h2 class="text-2xl font-black mb-6">امنیت و مانیتورینگ</h2>
+        <div id="securityLog" class="space-y-4"></div>
+    </main>
+
+    <main id="contacts" class="tab-content p-6">
+        <h2 class="text-2xl font-black mb-6">دفترچه مخاطبین</h2>
+        <div class="space-y-3">
+            <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
+                <div><p class="font-bold text-sm">مرتضی نوح‌پیشه</p><p class="text-[10px] text-slate-400">مدیر پروژه</p></div>
+                <button class="bg-green-100 p-2 rounded-full text-green-600"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg></button>
             </div>
-
-            <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100">
-                <div class="relative h-64 bg-slate-200">
-                    <img src="https://assets.architecturaldigest.in/photos/624c28f69ea64944882190c1/16:9/w_1280,c_limit/Gauri%20Khan.jpg" class="w-full h-full object-cover">
-                    <div class="absolute bottom-4 right-4 flex gap-2">
-                        <span class="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold">کد: ۳۱۲</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div><h3 class="font-bold text-lg text-slate-900">پنت‌هاوس زعفرانیه</h3><p class="text-slate-400 text-[10px]">۳۵۰ متر | ویو ابدی</p></div>
-                        <span class="text-xl font-black text-blue-600">۸۲ م</span>
-                    </div>
-                    <button onclick="handleSecurityAction('۳۱۲', this)" class="w-full bg-black text-white py-4 rounded-2xl text-xs font-bold active:scale-95 transition">ثبت بازدید / امنیت</button>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100">
-                <div class="relative h-64 bg-slate-200">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7A1kXbY5e5A8qV5y6-5B9uW5r7H8A9B0C1D2E&s" class="w-full h-full object-cover">
-                    <div class="absolute bottom-4 right-4 flex gap-2">
-                        <span class="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold">کد: ۱۱۲</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div><h3 class="font-bold text-lg text-slate-900">ویلا مدرن کردان</h3><p class="text-slate-400 text-[10px]">۵۰۰ متر زمین | استخر آبگرم</p></div>
-                        <span class="text-xl font-black text-blue-600">۲۵ م</span>
-                    </div>
-                    <button onclick="handleSecurityAction('۱۱۲', this)" class="w-full bg-black text-white py-4 rounded-2xl text-xs font-bold active:scale-95 transition">ثبت بازدید / امنیت</button>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100">
-                <div class="relative h-64 bg-slate-200">
-                    <img src="https://images.adsttc.com/media/images/5e1d/02c3/3312/fd58/9c00/06e9/large_jpg/002.jpg?1578959519" class="w-full h-full object-cover">
-                    <div class="absolute bottom-4 right-4 flex gap-2">
-                        <span class="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold">کد: ۴۰۵</span>
-                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-bold">فوری</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div><h3 class="font-bold text-lg text-slate-900">واحد اداری شهرک غرب</h3><p class="text-slate-400 text-[10px]">۱۴۰ متر | موقعیت عالی</p></div>
-                        <span class="text-xl font-black text-blue-600">۱۸ م</span>
-                    </div>
-                    <button onclick="handleSecurityAction('۴۰۵', this)" class="w-full bg-black text-white py-4 rounded-2xl text-xs font-bold active:scale-95 transition">ثبت بازدید / امنیت</button>
-                </div>
+            <div class="bg-white p-4 rounded-2xl flex justify-between items-center shadow-sm">
+                <div><p class="font-bold text-sm">اسماعیل جعفرپور</p><p class="text-[10px] text-slate-400">مشاور ارشد</p></div>
+                <button class="bg-green-100 p-2 rounded-full text-green-600"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg></button>
             </div>
         </div>
     </main>
 
-    <div id="visitModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-sm rounded-[3rem] p-8 shadow-2xl scale-95 transition-all">
-            <h3 id="modalUnitTitle" class="text-xl font-bold text-slate-900 mb-6 text-center">ثبت بازدید</h3>
-            <div class="space-y-5">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 mr-2 mb-1 block uppercase">مشاور اعزامی</label>
-                    <select id="consultantSelect" class="w-full bg-slate-50 p-4 rounded-2xl outline-none border-2 border-transparent focus:border-black transition-all text-sm font-bold appearance-none">
-                        <option value="مرتضی نوح‌پیشه">مرتضی نوح‌پیشه</option>
-                        <option value="اسماعیل جعفرپور">اسماعیل جعفرپور</option>
-                        <option value="علی علوی">علی علوی</option>
-                        <option value="رضا حسینی">رضا حسینی</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 mr-2 mb-1 block uppercase">نام مشتری</label>
-                    <input type="text" id="clientNameInput" placeholder="نام مشتری..." class="w-full bg-slate-50 p-4 rounded-2xl outline-none border-2 border-transparent focus:border-black transition-all text-sm font-bold">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 mr-2 mb-2 block text-center italic">-- وضعیت کلید --</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="setKeyStatus('office', this)" class="key-status-btn bg-black text-white p-3 rounded-2xl text-[10px] font-bold transition-all">🔑 دفتر</button>
-                        <button onclick="setKeyStatus('owner', this)" class="key-status-btn bg-slate-100 text-slate-500 p-3 rounded-2xl text-[10px] font-bold transition-all">🏠 مالک</button>
-                        <button onclick="setKeyStatus('tenant', this)" class="key-status-btn bg-slate-100 text-slate-500 p-3 rounded-2xl text-[10px] font-bold transition-all">👥 مستاجر</button>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-3 mt-10">
-                <button onclick="closeVisitModal()" class="flex-1 py-4 text-slate-400 font-bold text-xs uppercase">انصراف</button>
-                <button onclick="confirmSecurityRecord()" class="flex-[2] bg-black text-white py-4 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition">ثبت نهایی</button>
+    <div id="addPropertyModal" class="fixed inset-0 z-[110] hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl">
+            <h3 class="text-xl font-black mb-6">ثبت فایل جدید</h3>
+            <input type="text" id="newCode" placeholder="کد ملک" class="w-full bg-slate-50 p-4 rounded-2xl mb-3 outline-none font-bold">
+            <input type="text" id="newTitle" placeholder="عنوان فایل" class="w-full bg-slate-50 p-4 rounded-2xl mb-3 outline-none font-bold">
+            <input type="text" id="newPrice" placeholder="قیمت" class="w-full bg-slate-50 p-4 rounded-2xl mb-6 outline-none font-bold">
+            <div class="flex gap-3">
+                <button onclick="closeAddModal()" class="flex-1 font-bold text-slate-400">لغو</button>
+                <button onclick="addNewProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-bold">ذخیره فایل</button>
             </div>
         </div>
     </div>
 
-    <main id="visits" class="tab-content p-6">
-        <h2 class="text-2xl font-bold mb-6 text-slate-900 font-black">مانیتورینگ امنیت</h2>
-        <div id="securityLog" class="space-y-4">
-            <div class="bg-white p-10 rounded-3xl border-2 border-dashed border-slate-100 text-center">
-                <p class="text-slate-400 text-xs italic">در حال حاضر هیچ واحدی در وضعیت بازدید نیست.</p>
-            </div>
-        </div>
-    </main>
-
-    <main id="dashboard" class="tab-content p-6">
-        <h2 class="text-2xl font-bold mb-6 text-slate-900 font-black">آمار امروز</h2>
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                <span class="text-[10px] font-bold text-slate-400 block mb-1">بازدیدها</span>
-                <span id="dashVisits" class="text-3xl font-black text-black">۰</span>
-            </div>
-            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                <span class="text-[10px] font-bold text-slate-400 block mb-1">فایل فعال</span>
-                <span class="text-3xl font-black text-black">۱۱۲</span>
-            </div>
-        </div>
-    </main>
-
-    <nav class="fixed bottom-6 left-6 right-6 bg-white/90 backdrop-blur-2xl border border-slate-100 px-6 py-4 rounded-[2.5rem] flex justify-between items-center shadow-2xl z-50">
-        <button onclick="showTab('home')" class="nav-item flex flex-col items-center gap-1 text-black transition-all">
+    <nav class="fixed bottom-8 left-6 right-6 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50">
+        <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
-            <span class="text-[9px] font-black uppercase">ویترین</span>
+            <span class="text-[8px] font-bold mt-1">ویترین</span>
         </button>
-        <button onclick="showTab('dashboard')" class="nav-item flex flex-col items-center gap-1 text-slate-400 transition-all">
+        <button onclick="showTab('dashboard', this)" class="nav-item text-slate-300 flex flex-col items-center">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-            <span class="text-[9px] font-black uppercase">آمار</span>
+            <span class="text-[8px] font-bold mt-1">آمار</span>
         </button>
-        <button onclick="showTab('visits')" class="nav-item flex flex-col items-center gap-1 text-slate-400 transition-all">
+        
+        <button onclick="openAddModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-blue-200 -mt-12 border-4 border-white active:scale-90 transition-all">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+        </button>
+
+        <button onclick="showTab('visits', this)" class="nav-item text-slate-300 flex flex-col items-center">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
-            <span class="text-[9px] font-black uppercase">امنیت</span>
+            <span class="text-[8px] font-bold mt-1">امنیت</span>
         </button>
-        <button class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg active:scale-90 transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+        <button onclick="showTab('contacts', this)" class="nav-item text-slate-300 flex flex-col items-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"></path></svg>
+            <span class="text-[8px] font-bold mt-1">مخاطبین</span>
         </button>
     </nav>
 
     <script>
-        let selectedKeyStatus = 'office';
-        let currentActiveUnit = null;
-        let currentBtn = null;
-        let propertyStates = {};
-        let totalVisits = 0;
+        let properties = [
+            { code: '۲۴۰', title: 'آپارتمان فرمانیه', price: '۴۵ م', details: '۲۸۰ متر', img: 'https://picsum.photos/seed/p1/400/300' },
+            { code: '۳۱۲', title: 'پنت‌هاوس زعفرانیه', price: '۸۲ م', details: '۳۵۰ متر', img: 'https://picsum.photos/seed/p2/400/300' }
+        ];
+        let visitStates = {};
+        let totalVisitsCount = 0;
 
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.replace('text-black', 'text-slate-400'));
-            if(event) event.currentTarget.classList.replace('text-slate-400', 'text-black');
-            window.scrollTo(0, 0);
-        }
-
-        function handleSecurityAction(unit, btn) {
-            currentActiveUnit = unit;
-            currentBtn = btn;
-            if (!propertyStates[unit] || !propertyStates[unit].isOut) {
-                document.getElementById('visitModal').classList.remove('hidden');
-            } else {
-                if(confirm(`آیا بازدید واحد ${unit} به پایان رسید؟`)) {
-                    propertyStates[unit].isOut = false;
-                    btn.innerText = "ثبت بازدید / امنیت";
-                    btn.className = "w-full bg-black text-white py-4 rounded-2xl text-xs font-bold transition-all";
-                    updateSecurityLog();
-                }
-            }
-        }
-
-        function setKeyStatus(status, btn) {
-            selectedKeyStatus = status;
-            document.querySelectorAll('.key-status-btn').forEach(b => {
-                b.classList.replace('bg-black', 'bg-slate-100');
-                b.classList.replace('text-white', 'text-slate-500');
-            });
-            btn.classList.replace('bg-slate-100', 'bg-black');
-            btn.classList.replace('text-slate-500', 'text-white');
-        }
-
-        function confirmSecurityRecord() {
-            const client = document.getElementById('clientNameInput').value;
-            const consultant = document.getElementById('consultantSelect').value;
-            if (!client) return alert("نام مشتری الزامی است");
-
-            const time = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-            let color = selectedKeyStatus === 'office' ? "bg-red-600" : (selectedKeyStatus === 'owner' ? "bg-orange-500" : "bg-purple-600");
-            let icon = selectedKeyStatus === 'office' ? "🔑" : (selectedKeyStatus === 'owner' ? "🏠" : "👥");
-
-            propertyStates[currentActiveUnit] = { isOut: true, client, consultant, time, color, icon };
-            
-            currentBtn.innerHTML = `<span class='text-[10px]'>${icon} ${consultant} (${time})</span>`;
-            currentBtn.className = `w-full ${color} text-white py-4 rounded-2xl font-bold active-pulse`;
-
-            totalVisits++;
-            document.getElementById('dashVisits').innerText = totalVisits;
-            updateSecurityLog();
-            closeVisitModal();
-        }
-
-        function updateSecurityLog() {
-            const logContainer = document.getElementById('securityLog');
-            const activeUnits = Object.keys(propertyStates).filter(k => propertyStates[k].isOut);
-            
-            if(activeUnits.length === 0) {
-                logContainer.innerHTML = `<div class="bg-white p-10 rounded-3xl border-2 border-dashed border-slate-100 text-center"><p class="text-slate-400 text-xs italic">در حال حاضر هیچ واحدی در وضعیت بازدید نیست.</p></div>`;
-                return;
-            }
-
-            logContainer.innerHTML = activeUnits.map(unit => `
-                <div class="bg-white p-5 rounded-3xl border-r-4 border-black shadow-sm flex justify-between items-center">
-                    <div>
-                        <p class="text-xs font-black">واحد ${unit} - ${propertyStates[unit].consultant}</p>
-                        <p class="text-[10px] text-slate-400">مشتری: ${propertyStates[unit].client} | زمان: ${propertyStates[unit].time}</p>
+        function renderProperties() {
+            const container = document.getElementById('propertyContainer');
+            container.innerHTML = properties.map(p => {
+                const state = visitStates[p.code];
+                return `
+                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-50">
+                    <img src="${p.img}" class="w-full h-44 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-900">${p.title}</h3>
+                            <span class="text-blue-600 font-black">${p.price}</span>
+                        </div>
+                        <button onclick="handleVisit('${p.code}')" class="w-full ${state?.isOut ? state.color + ' active-pulse' : 'bg-black'} text-white py-4 rounded-2xl text-[10px] font-black transition-all">
+                            ${state?.isOut ? `${state.icon} ${state.consultant} در بازدید` : 'ثبت بازدید / امنیت کلید'}
+                        </button>
                     </div>
-                    <div class="w-3 h-3 rounded-full ${propertyStates[unit].color} animate-ping"></div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
+            document.getElementById('dashTotalFiles').innerText = properties.length;
         }
 
-        function closeVisitModal() {
-            document.getElementById('visitModal').classList.add('hidden');
-            document.getElementById('clientNameInput').value = "";
+        function handleVisit(code) {
+            if(visitStates[code]?.isOut) {
+                if(confirm("پایان بازدید؟")) { delete visitStates[code]; renderProperties(); updateAll(); }
+            } else {
+                const client = prompt("نام مشتری؟");
+                if(!client) return;
+                visitStates[code] = { isOut: true, client, consultant: 'مرتضی نوح‌پیشه', time: '۱۲:۳۰', icon: '🔑', color: 'bg-red-600', type: 'office' };
+                totalVisitsCount++;
+                renderProperties(); updateAll();
+            }
         }
+
+        function updateAll() {
+            const log = document.getElementById('securityLog');
+            const active = Object.keys(visitStates);
+            document.getElementById('dashTotalVisits').innerText = totalVisitsCount;
+
+            log.innerHTML = active.map(k => `
+                <div class="bg-white p-5 rounded-3xl border-r-8 border-black shadow-sm mb-3">
+                    <p class="text-xs font-black">${visitStates[k].icon} واحد ${k} - ${visitStates[k].consultant}</p>
+                    <p class="text-[10px] text-slate-400 mt-1 font-bold">👤 مشتری: ${visitStates[k].client}</p>
+                </div>
+            `).join('') || '<p class="text-center text-slate-400 text-xs italic">گزارشی نیست</p>';
+        }
+
+        function showTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('nav-active'));
+            btn.classList.add('nav-active');
+        }
+
+        function openAddModal() { document.getElementById('addPropertyModal').classList.remove('hidden'); }
+        function closeAddModal() { document.getElementById('addPropertyModal').classList.add('hidden'); }
+        function addNewProperty() {
+            const code = document.getElementById('newCode').value;
+            const title = document.getElementById('newTitle').value;
+            const price = document.getElementById('newPrice').value;
+            if(!code || !title) return alert("ناقص!");
+            properties.unshift({ code, title, price, details: '۱۰۰ متر', img: `https://picsum.photos/seed/${code}/400/300` });
+            renderProperties(); closeAddModal();
+        }
+
+        renderProperties();
     </script>
 </body>
 </html>
