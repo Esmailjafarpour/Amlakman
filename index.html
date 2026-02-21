@@ -363,62 +363,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل املاک نادر - نسخه نهایی و هوشمند</title>
+    <title>پنل مدیریت املاک نادر</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700;900&display=swap" rel="stylesheet">
     <script>tailwind.config = { darkMode: 'class' }</script>
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; transition: all 0.3s; scroll-behavior: smooth; }
+        body { font-family: 'Vazirmatn', sans-serif; transition: 0.3s; scroll-behavior: smooth; }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .nav-active { color: #2563eb !important; transform: scale(1.1); }
-        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; }
+        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
         .swiper-container::-webkit-scrollbar { display: none; }
-        .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; height: 260px; }
-        .dot { transition: all 0.3s; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); }
+        .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; height: 280px; }
+        .dot { transition: 0.3s; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); }
         .dot.active { background: white !important; width: 18px; border-radius: 10px; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .dark .glass { background: rgba(15, 23, 42, 0.8); }
-        
-        /* استایل لرزش خطا برای تمام اینپوت‌ها */
-        .error-shake { animation: shake 0.5s; border: 2px solid #ef4444 !important; background-color: #fef2f2 !important; }
+        .error-shake { animation: shake 0.5s; border-color: #ef4444 !important; background-color: #fef2f2 !important; }
         .dark .error-shake { background-color: #450a0a !important; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
     </style>
 </head>
 <body class="pb-36 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-right">
 
-    <div id="authPage" class="fixed inset-0 z-[500] bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 overflow-y-auto">
+    <div id="authPage" class="fixed inset-0 z-[600] bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 overflow-y-auto">
         <div class="w-full max-w-sm text-center">
-            <h1 class="text-4xl font-black text-blue-600 mb-2 italic tracking-tighter">NADER ESTATE</h1>
-            <p class="text-slate-400 text-[10px] mb-10 font-bold uppercase tracking-[0.2em]">Security & Management</p>
+            <h1 class="text-5xl font-black text-blue-600 mb-2 italic tracking-tighter">NADER ESTATE</h1>
+            <p class="text-slate-400 text-[10px] mb-12 font-bold uppercase tracking-[0.3em]">Management Panel v2.0</p>
             
-            <div class="space-y-5">
+            <div class="space-y-6">
                 <div class="text-right">
-                    <input type="tel" id="authPhone" placeholder="شماره موبایل (۰۹...)" maxlength="11" class="w-full bg-slate-100 dark:bg-slate-900 border-2 border-transparent py-5 px-6 rounded-2xl outline-none focus:ring-2 ring-blue-600 transition-all text-left text-lg font-bold tracking-widest">
-                    <p id="phoneError" class="text-red-500 text-[10px] font-bold mt-1 mr-2 hidden">شماره همراه ۱۱ رقمی وارد کنید</p>
+                    <label class="text-[10px] font-bold text-slate-500 mr-2">شماره همراه</label>
+                    <input type="tel" id="authPhone" placeholder="09123456789" maxlength="11" class="w-full bg-slate-100 dark:bg-slate-900 border-2 border-transparent py-5 px-6 rounded-3xl outline-none focus:ring-2 ring-blue-600 transition-all text-left text-xl font-bold tracking-widest">
+                    <p id="authPhoneErr" class="text-red-500 text-[10px] font-bold mt-2 mr-2 hidden">⚠️ شماره همراه ۱۱ رقمی معتبر وارد کنید</p>
                 </div>
                 
-                <div id="signupFormSection" class="hidden space-y-5 pt-5 border-t dark:border-slate-800 animate-fadeIn text-right">
-                    <input type="text" id="signupName" placeholder="نام و نام خانوادگی مشاور" class="w-full bg-slate-100 dark:bg-slate-900 py-4 px-6 rounded-2xl outline-none font-bold text-sm border-2 border-transparent">
+                <div id="signupFormSection" class="hidden space-y-6 pt-6 border-t dark:border-slate-800 animate-fadeIn text-right">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 mr-2">نام و نام خانوادگی مشاور</label>
+                        <input type="text" id="signupName" placeholder="مثلاً: مهران رضایی" class="w-full bg-slate-100 dark:bg-slate-900 py-4 px-6 rounded-2xl outline-none font-bold text-sm border-2 border-transparent">
+                        <p id="signupNameErr" class="text-red-500 text-[10px] font-bold mt-2 mr-2 hidden">⚠️ نام و نام خانوادگی مشاور الزامی است</p>
+                    </div>
                     
                     <div class="flex flex-col items-center gap-3">
-                        <label id="avatarLabel" class="w-24 h-24 rounded-full bg-slate-200 dark:bg-slate-800 border-4 border-white dark:border-slate-700 flex flex-col items-center justify-center cursor-pointer overflow-hidden relative shadow-xl transition-all">
+                        <label id="avatarLabel" class="w-28 h-28 rounded-full bg-slate-200 dark:bg-slate-800 border-4 border-white dark:border-slate-700 flex flex-col items-center justify-center cursor-pointer overflow-hidden relative shadow-2xl transition-all">
                             <img id="tempAvatarPreview" class="hidden w-full h-full object-cover">
-                            <span id="camIcon" class="text-2xl">📸</span>
+                            <span id="camIcon" class="text-3xl">📸</span>
                             <input type="file" id="signupAvatarInput" accept="image/*" class="hidden" onchange="previewAvatar(this)">
                         </label>
-                        <p id="avatarError" class="text-red-500 text-[10px] font-black hidden">عکس پروفایل الزامی است</p>
+                        <p id="avatarErr" class="text-red-500 text-[10px] font-black hidden">⚠️ انتخاب تصویر پروفایل الزامی است</p>
                     </div>
                 </div>
-                <button id="authBtn" onclick="processAuth()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-xl active:scale-95 transition-all">ورود به سیستم</button>
+                <button id="authBtn" onclick="processAuth()" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black shadow-xl shadow-blue-600/30 active:scale-95 transition-all text-lg">تایید و ورود</button>
             </div>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-       <header class="p-5 glass sticky top-0 z-50 border-b dark:border-slate-800 flex justify-between items-center">
+        <header class="p-5 glass sticky top-0 z-50 border-b dark:border-slate-800 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover shadow-lg">
                 <div class="text-right leading-tight space-y-2">
@@ -435,50 +438,64 @@
             </div>
         </header>
 
-        <main id="home" class="tab-content active px-5 py-6"><div id="propertyContainer" class="space-y-8"></div></main>
+        <main id="home" class="tab-content active px-5 py-8"><div id="propertyContainer" class="space-y-10"></div></main>
         
-        <main id="dashboard" class="tab-content p-6 text-center">
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] shadow-sm border dark:border-slate-800 text-center">
-                    <p class="text-[10px] text-slate-400 font-black mb-1">فایل‌ها</p>
+        <main id="dashboard" class="tab-content p-6">
+            <div class="grid grid-cols-2 gap-4 mb-8 text-center">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border dark:border-slate-800 shadow-sm">
+                    <p class="text-[10px] text-slate-400 font-black mb-1">تعداد فایل‌ها</p>
                     <span id="statFiles" class="text-3xl font-black text-blue-600">0</span>
                 </div>
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] shadow-sm border dark:border-slate-800 text-center">
-                    <p class="text-[10px] text-slate-400 font-black mb-1">بازدیدها</p>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border dark:border-slate-800 shadow-sm">
+                    <p class="text-[10px] text-slate-400 font-black mb-1">بازدیدهای امروز</p>
                     <span id="statVisits" class="text-3xl font-black text-blue-600">0</span>
                 </div>
             </div>
-            <div class="bg-slate-900 text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden text-right">
-                <h3 class="font-black text-sm mb-6 flex items-center gap-2">💰 ماشین حساب <span class="text-[9px] bg-blue-600 px-2 py-1 rounded-lg">0.25%</span></h3>
-                <input type="number" id="dealPrice" placeholder="مبلغ معامله..." class="w-full bg-white/10 border-none p-5 rounded-2xl outline-none mb-4 font-black text-center text-lg">
-                <button onclick="calculateCommission()" class="w-full bg-blue-600 py-4 rounded-2xl font-black">محاسبه سهم دفتر</button>
+            <div class="bg-slate-900 text-white p-8 rounded-[3rem] shadow-2xl text-right relative overflow-hidden">
+                <h3 class="font-black text-sm mb-6">💰 محاسبه کمیسیون دفتر</h3>
+                <input type="number" id="dealPrice" placeholder="مبلغ کل معامله (تومان)..." class="w-full bg-white/10 p-5 rounded-2xl outline-none mb-4 font-black text-center text-lg">
+                <button onclick="calculateCommission()" class="w-full bg-blue-600 py-4 rounded-2xl font-black">محاسبه (۰.۲۵٪)</button>
                 <div id="commResult" class="hidden mt-6 space-y-4 border-t border-white/10 pt-6 animate-fadeIn">
-                    <div class="flex justify-between items-center text-sm"><span class="opacity-60">هر طرف:</span><span id="eachSide" class="font-black">0</span></div>
-                    <div class="flex justify-between items-center text-blue-400"><span class="font-bold">جمع با مالیات:</span><span id="totalComm" class="text-lg font-black">0</span></div>
+                    <div class="flex justify-between items-center text-sm"><span class="opacity-60">کمیسیون هر طرف:</span><span id="eachSide" class="font-black">0</span></div>
+                    <div class="flex justify-between items-center text-blue-400"><span class="font-bold">مجموع + مالیات (۹٪):</span><span id="totalComm" class="text-xl font-black">0</span></div>
                 </div>
             </div>
         </main>
 
-        <main id="visits" class="tab-content p-6"><h2 class="font-black text-lg mb-6">🔑 مانیتورینگ کلیدها</h2><div id="securityLog" class="space-y-4"></div></main>
-        <main id="contacts" class="tab-content p-6 text-center text-slate-400 text-xs italic py-20">بخش تقویم و رویدادها</main>
+        <main id="visits" class="tab-content p-6 text-right">
+            <h2 class="font-black text-lg mb-6 flex items-center gap-2">🛡️ مانیتورینگ خروج کلید</h2>
+            <div id="securityLog" class="space-y-4"></div>
+        </main>
 
-        <div id="propModal" class="fixed inset-0 z-[200] hidden glass flex items-center justify-center p-6 overflow-y-auto">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 shadow-2xl border dark:border-slate-800 text-right">
-                <h3 class="text-2xl font-black mb-6 text-blue-600 text-center">ثبت فایل جدید</h3>
-                <div class="space-y-4">
-                    <label id="pImgLabel" class="w-full h-24 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] flex flex-col items-center justify-center cursor-pointer text-slate-400 transition-all">
-                        <span class="text-2xl">📸</span><span class="text-[10px] font-black mt-1">تصاویر ملک</span>
+        <main id="contacts" class="tab-content p-6 text-center py-20 opacity-30 italic">بخش تقویم و جلسات نادر</main>
+
+        <div id="propModal" class="fixed inset-0 z-[500] hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-6 overflow-y-auto">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3.5rem] p-8 shadow-2xl text-right">
+                <h3 class="text-2xl font-black mb-8 text-blue-600 text-center italic">New Property</h3>
+                <div class="space-y-4 text-right">
+                    <label id="pImgLabel" class="w-full h-28 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-[2.5rem] flex flex-col items-center justify-center cursor-pointer text-slate-400 transition-all">
+                        <span class="text-2xl">🖼️</span><span class="text-[10px] font-black mt-1 uppercase">Add Images</span>
                         <input type="file" id="pImages" multiple class="hidden" onchange="addImagesToList(this)">
                     </label>
+                    <p id="pImgErr" class="text-red-500 text-[10px] font-bold hidden mr-2">⚠️ انتخاب حداقل یک تصویر الزامی است</p>
                     <div id="previewGallery" class="flex gap-2 overflow-x-auto pb-2"></div>
                     
-                    <input type="text" id="pCode" placeholder="کد ملک (الزامی)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent transition-all">
-                    <input type="text" id="pTitle" placeholder="عنوان فایل (الزامی)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent transition-all">
-                    <input type="text" id="pPrice" placeholder="قیمت (الزامی)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent transition-all">
+                    <div>
+                        <input type="text" id="pCode" placeholder="کد فایل (مثلاً ۱۰۱)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent transition-all">
+                        <p id="pCodeErr" class="text-red-500 text-[10px] font-bold hidden mr-2 mt-1">⚠️ کد ملک را وارد کنید</p>
+                    </div>
+                    <div>
+                        <input type="text" id="pTitle" placeholder="عنوان ملک" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent transition-all">
+                        <p id="pTitleErr" class="text-red-500 text-[10px] font-bold hidden mr-2 mt-1">⚠️ عنوان ملک الزامی است</p>
+                    </div>
+                    <div>
+                        <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent transition-all text-left">
+                        <p id="pPriceErr" class="text-red-500 text-[10px] font-bold hidden mr-2 mt-1">⚠️ قیمت ملک الزامی است</p>
+                    </div>
                 </div>
                 <div class="flex gap-3 mt-8">
-                    <button onclick="closeModal('propModal')" class="flex-1 text-slate-400 font-black text-xs">لغو</button>
-                    <button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black">ذخیره فایل</button>
+                    <button onclick="closeModal('propModal')" class="flex-1 font-black text-xs text-slate-400">انصراف</button>
+                    <button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-3xl font-black shadow-lg">ثبت نهایی</button>
                 </div>
             </div>
         </div>
@@ -486,108 +503,62 @@
         <nav class="fixed bottom-8 left-6 right-6 glass h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50 border shadow-2xl dark:border-slate-800">
             <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center gap-1"><span class="text-xl">🏠</span><span class="text-[8px] font-black">ویترین</span></button>
             <button onclick="showTab('dashboard', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1"><span class="text-xl">📊</span><span class="text-[8px] font-black">آمار</span></button>
-            <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-14 border-4 border-white dark:border-slate-950 text-2xl font-bold transition-all active:scale-90">+</button>
+            <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl shadow-blue-600/40 -mt-14 border-4 border-white dark:border-slate-950 text-2xl font-bold transition-all active:scale-90">+</button>
             <button onclick="showTab('visits', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1"><span class="text-xl">🔑</span><span class="text-[8px] font-black">امنیت</span></button>
             <button onclick="showTab('contacts', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1"><span class="text-xl">📅</span><span class="text-[8px] font-black">تقویم</span></button>
         </nav>
     </div>
 
     <script>
-        let properties = []; let visits = {}; let history = []; let currentImgList = [];
+        let properties = []; let visits = {}; let historyCount = 0; let currentImgList = [];
         let isSignupMode = false; let currentUser = null;
 
-        // --- ولدیشن احراز هویت ---
+        // --- سیستم احراز هویت و ولیدیشن ---
         function processAuth() {
             const phoneInp = document.getElementById('authPhone');
+            const phoneErr = document.getElementById('authPhoneErr');
             const phone = phoneInp.value.trim();
             
             if (!/^09\d{9}$/.test(phone)) {
-                phoneInp.classList.add('error-shake');
-                document.getElementById('phoneError').classList.remove('hidden');
-                setTimeout(() => phoneInp.classList.remove('error-shake'), 500);
-                return;
-            }
-            document.getElementById('phoneError').classList.add('hidden');
+                phoneInp.classList.add('error-shake'); phoneErr.classList.remove('hidden');
+                setTimeout(() => phoneInp.classList.remove('error-shake'), 500); return;
+            } else { phoneInp.classList.remove('error-shake'); phoneErr.classList.add('hidden'); }
 
             if (phone === "09337301641") {
-                currentUser = { phone: "09337301641", name: "نادر (مدیریت)", avatar: "https://www.w3schools.com/howto/img_avatar.png" };
+                currentUser = { phone, name: "نادر (مدیریت)", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" };
                 launchApp(); return;
             }
 
-            const savedUser = localStorage.getItem('nader_v8_user_' + phone);
-            if (savedUser && !isSignupMode) { currentUser = JSON.parse(savedUser); launchApp(); return; }
+            const saved = localStorage.getItem('nader_final_user_' + phone);
+            if (saved && !isSignupMode) { currentUser = JSON.parse(saved); launchApp(); return; }
 
             if (!isSignupMode) {
                 isSignupMode = true;
                 document.getElementById('signupFormSection').classList.remove('hidden');
-                document.getElementById('authBtn').innerText = "تکمیل و ورود";
-                return;
+                document.getElementById('authBtn').innerText = "تکمیل ثبت‌نام"; return;
             }
 
-            // ولدیشن ثبت‌نام
             const nameInp = document.getElementById('signupName');
+            const nameErr = document.getElementById('signupNameErr');
             const avatarLabel = document.getElementById('avatarLabel');
+            const avatarErr = document.getElementById('avatarErr');
             const avatarPre = document.getElementById('tempAvatarPreview');
-            let hasError = false;
+            let hasErr = false;
 
-            if (nameInp.value.trim().length < 3) { nameInp.classList.add('error-shake'); hasError = true; } 
-            else { nameInp.classList.remove('error-shake'); }
+            if (nameInp.value.trim().length < 3) { nameInp.classList.add('error-shake'); nameErr.classList.remove('hidden'); hasErr = true; }
+            else { nameInp.classList.remove('error-shake'); nameErr.classList.add('hidden'); }
 
-            if (!avatarPre.src || avatarPre.classList.contains('hidden')) {
-                avatarLabel.classList.add('error-shake');
-                document.getElementById('avatarError').classList.remove('hidden');
-                hasError = true;
-            } else {
-                avatarLabel.classList.remove('error-shake');
-                document.getElementById('avatarError').classList.add('hidden');
-            }
+            if (!avatarPre.src || avatarPre.classList.contains('hidden')) { avatarLabel.classList.add('error-shake'); avatarErr.classList.remove('hidden'); hasErr = true; }
+            else { avatarLabel.classList.remove('error-shake'); avatarErr.classList.add('hidden'); }
 
-            if (hasError) { setTimeout(() => { nameInp.classList.remove('error-shake'); avatarLabel.classList.remove('error-shake'); }, 500); return; }
+            if (hasErr) { setTimeout(() => { nameInp.classList.remove('error-shake'); avatarLabel.classList.remove('error-shake'); }, 500); return; }
 
             currentUser = { phone, name: nameInp.value.trim(), avatar: avatarPre.src };
-            localStorage.setItem('nader_v8_user_' + phone, JSON.stringify(currentUser));
+            localStorage.setItem('nader_final_user_' + phone, JSON.stringify(currentUser));
             launchApp();
         }
 
-        // --- ولدیشن ثبت ملک ---
-        function saveProperty() {
-            const codeInp = document.getElementById('pCode');
-            const titleInp = document.getElementById('pTitle');
-            const priceInp = document.getElementById('pPrice');
-            const imgLabel = document.getElementById('pImgLabel');
-            let hasError = false;
-
-            if (!codeInp.value.trim()) { codeInp.classList.add('error-shake'); hasError = true; }
-            else { codeInp.classList.remove('error-shake'); }
-
-            if (!titleInp.value.trim()) { titleInp.classList.add('error-shake'); hasError = true; }
-            else { titleInp.classList.remove('error-shake'); }
-
-            if (!priceInp.value.trim()) { priceInp.classList.add('error-shake'); hasError = true; }
-            else { priceInp.classList.remove('error-shake'); }
-
-            if (currentImgList.length === 0) { imgLabel.classList.add('error-shake'); hasError = true; }
-            else { imgLabel.classList.remove('error-shake'); }
-
-            if (hasError) {
-                setTimeout(() => {
-                    codeInp.classList.remove('error-shake');
-                    titleInp.classList.remove('error-shake');
-                    priceInp.classList.remove('error-shake');
-                    imgLabel.classList.remove('error-shake');
-                }, 500);
-                return;
-            }
-
-            properties.unshift({ 
-                code: codeInp.value, title: titleInp.value, price: priceInp.value, imgs: [...currentImgList] 
-            });
-            
-            updateUI(); 
-            codeInp.value = ""; titleInp.value = ""; priceInp.value = ""; currentImgList = [];
-            closeModal('propModal');
-        }
-
+        // --- اجرای اپلیکیشن ---
         function launchApp() {
             document.getElementById('authPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
@@ -598,29 +569,85 @@
             updateUI();
         }
 
+        // --- ثبت ملک با ولیدیشن متنی اختصاصی ---
+        function saveProperty() {
+            const cInp = document.getElementById('pCode'); const cErr = document.getElementById('pCodeErr');
+            const tInp = document.getElementById('pTitle'); const tErr = document.getElementById('pTitleErr');
+            const pInp = document.getElementById('pPrice'); const pErr = document.getElementById('pPriceErr');
+            const iLab = document.getElementById('pImgLabel'); const iErr = document.getElementById('pImgErr');
+            let hasErr = false;
+
+            if(!cInp.value.trim()){ cInp.classList.add('error-shake'); cErr.classList.remove('hidden'); hasErr=true; }
+            else { cInp.classList.remove('error-shake'); cErr.classList.add('hidden'); }
+
+            if(!tInp.value.trim()){ tInp.classList.add('error-shake'); tErr.classList.remove('hidden'); hasErr=true; }
+            else { tInp.classList.remove('error-shake'); tErr.classList.add('hidden'); }
+
+            if(!pInp.value.trim()){ pInp.classList.add('error-shake'); pErr.classList.remove('hidden'); hasErr=true; }
+            else { pInp.classList.remove('error-shake'); pErr.classList.add('hidden'); }
+
+            if(currentImgList.length === 0){ iLab.classList.add('error-shake'); iErr.classList.remove('hidden'); hasErr=true; }
+            else { iLab.classList.remove('error-shake'); iErr.classList.add('hidden'); }
+
+            if(hasErr) { setTimeout(()=> { [cInp,tInp,pInp,iLab].forEach(el=>el.classList.remove('error-shake')) }, 500); return; }
+
+            properties.unshift({ code: cInp.value, title: tInp.value, price: pInp.value, imgs: [...currentImgList] });
+            updateUI(); closeModal('propModal');
+            // پاکسازی
+            cInp.value = ""; tInp.value = ""; pInp.value = ""; currentImgList = []; document.getElementById('previewGallery').innerHTML = "";
+        }
+
+        // --- مدیریت خروج کلید (Action) ---
+        function handleKeyAction(code) {
+            if (visits[code]) {
+                if(confirm(`آیا کلید واحد ${code} بازگردانده شد؟`)) {
+                    historyCount++; delete visits[code]; updateUI();
+                }
+            } else {
+                visits[code] = { name: currentUser.name, time: new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}) };
+                updateUI();
+            }
+        }
+
         function updateUI() {
-            document.getElementById('propertyContainer').innerHTML = properties.map((p, idx) => `
+            const container = document.getElementById('propertyContainer');
+            container.innerHTML = properties.map((p, idx) => `
                 <div class="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-xl border dark:border-slate-800">
                     <div class="relative">
-                        <div class="swiper-container" onscroll="updateDots(this, ${idx})">${p.imgs.map(img => `<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}</div>
+                        <div class="swiper-container" onscroll="updateDots(this, ${idx})">
+                            ${p.imgs.map(img => `<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
+                        </div>
                         <div class="dots-${idx} absolute bottom-6 left-0 right-0 flex justify-center gap-1.5 px-10">
                             ${p.imgs.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('')}
                         </div>
+                        <div class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-[10px] px-3 py-1 rounded-full font-black">کد: ${p.code}</div>
                     </div>
                     <div class="p-8">
-                        <div class="flex justify-between items-start mb-6 text-right">
+                        <div class="flex justify-between items-start mb-6">
                             <h3 class="font-black text-lg">${p.title}</h3>
-                            <span class="text-blue-600 font-black text-sm">${p.price}</span>
+                            <div class="text-left text-blue-600 font-black text-sm">${p.price}</div>
                         </div>
-                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500' : 'bg-slate-900 dark:bg-blue-600'} text-white py-5 rounded-[1.5rem] font-black text-[10px] tracking-widest uppercase">
-                            ${visits[p.code] ? 'در حال بازدید: ' + visits[code].consultant : 'خروج کلید (' + p.code + ')'}
+                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500 animate-pulse' : 'bg-slate-900 dark:bg-blue-600'} text-white py-5 rounded-[1.8rem] font-black text-[10px] tracking-widest uppercase shadow-lg">
+                            ${visits[p.code] ? '⚠️ در حال بازدید (' + visits[p.code].name + ')' : '🔓 خروج کلید واحد ' + p.code}
                         </button>
                     </div>
                 </div>`).join('');
+
             document.getElementById('statFiles').innerText = properties.length;
-            document.getElementById('statVisits').innerText = history.length + Object.keys(visits).length;
+            document.getElementById('statVisits').innerText = Object.keys(visits).length + historyCount;
+
+            document.getElementById('securityLog').innerHTML = Object.keys(visits).map(code => `
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border-r-8 border-blue-600 flex justify-between items-center shadow-sm">
+                    <div class="text-right font-black"><p class="text-[10px] text-slate-400">واحد ${code}</p><p class="text-xs text-blue-600">${visits[code].name}</p></div>
+                    <p class="text-[10px] font-bold opacity-40">${visits[code].time}</p>
+                </div>`).join('') || '<p class="text-center py-10 text-slate-300 text-[10px] italic">تمام کلیدها در دفتر موجود است</p>';
         }
 
+        // --- ابزارهای کمکی ---
+        function updateDots(el, idx) {
+            const activeIdx = Math.round(el.scrollLeft / el.offsetWidth);
+            document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
+        }
         function previewAvatar(input) {
             if (input.files && input.files[0]) {
                 const r = new FileReader();
@@ -638,21 +665,11 @@
                 r.onload = (e) => {
                     currentImgList.push(e.target.result);
                     let img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = "w-14 h-14 object-cover rounded-xl shrink-0 border-2 border-blue-100";
+                    img.src = e.target.result; img.className = "w-14 h-14 object-cover rounded-xl shrink-0 border-2 border-blue-50";
                     document.getElementById('previewGallery').appendChild(img);
                 };
                 r.readAsDataURL(f);
             });
-        }
-        function updateDots(el, idx) {
-            const activeIdx = Math.round(el.scrollLeft / el.offsetWidth);
-            document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
-        }
-        function openPropModal() {
-            if (currentUser.phone !== "09337301641") { document.getElementById('adminErrorModal')?.classList.remove('hidden'); return; }
-            currentImgList = []; document.getElementById('previewGallery').innerHTML = "";
-            document.getElementById('propModal').classList.remove('hidden');
         }
         function calculateCommission() {
             let price = document.getElementById('dealPrice').value; if(!price) return;
@@ -661,9 +678,13 @@
             document.getElementById('eachSide').innerText = Math.round(comm).toLocaleString() + " تومان";
             document.getElementById('totalComm').innerText = Math.round(total).toLocaleString() + " تومان";
         }
-        function handleLogout() { location.reload(); }
+        function openPropModal() {
+            if (currentUser.phone !== "09337301641") { alert("دسترسی فقط برای نادر مجاز است"); return; }
+            document.getElementById('propModal').classList.remove('hidden');
+        }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+        function handleLogout() { if(confirm("خارج می‌شوید؟")) location.reload(); }
         function showTab(id, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
