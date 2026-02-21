@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل املاک مرتضی | نسخه نهایی و کامل</title>
+    <title>پنل اختصاصی نادر | نسخه نهایی</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap" rel="stylesheet">
     <script>tailwind.config = { darkMode: 'class' }</script>
@@ -12,10 +12,16 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .nav-active { color: #2563eb !important; }
-        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+        /* استایل اسلایدر و ورق زدن */
+        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
         .swiper-container::-webkit-scrollbar { display: none; }
         .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; }
-        .camera-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        /* نقطه‌های سفید */
+        .dot { transition: all 0.3s; opacity: 0.4; }
+        .dot.active { opacity: 1; transform: scale(1.3); background-color: white !important; }
+        /* ولیدیشن */
+        .error-border { border: 2px solid #ef4444 !important; }
+        .error-text { color: #ef4444; font-size: 10px; font-weight: bold; margin-top: 4px; display: none; }
     </style>
 </head>
 <body class="pb-36 text-right bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
@@ -23,12 +29,12 @@
     <header class="sticky top-0 z-50 flex justify-between items-center p-5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800">
         <div class="flex items-center gap-2">
             <div class="w-9 h-9 bg-black dark:bg-blue-600 rounded-xl flex items-center justify-center shadow-lg"><div class="w-4 h-4 border-2 border-white rotate-45"></div></div>
-            <span class="text-xl font-black italic">املاک من</span>
+            <span class="text-xl font-black italic">املاک نادر</span>
         </div>
         <div class="flex gap-3 items-center">
-            <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800"><span id="themeIcon">🌙</span></button>
-            <div class="flex flex-col items-end"><span class="text-[10px] font-bold">مرتضی نوح‌پیشه</span><span class="text-[8px] text-slate-400">Project Manager</span></div>
-            <img src="https://i.pravatar.cc/100?u=morteza" class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-700">
+            <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800">🌙</button>
+            <div class="flex flex-col items-end"><span class="text-[10px] font-bold">نادر</span><span class="text-[8px] text-slate-400">مدیریت پنل</span></div>
+            <img src="https://i.pravatar.cc/100?u=nader" class="w-10 h-10 rounded-full border-2 border-white">
         </div>
     </header>
 
@@ -38,169 +44,153 @@
 
     <main id="dashboard" class="tab-content p-6">
         <div class="grid grid-cols-2 gap-4 mb-6 text-center font-black">
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-50 dark:border-slate-800">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border dark:border-slate-800 shadow-sm">
                 <p class="text-[10px] text-slate-400">کل فایل‌ها</p><span id="statFiles">0</span>
             </div>
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-50 dark:border-slate-800">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border dark:border-slate-800 shadow-sm">
                 <p class="text-[10px] text-slate-400">کل بازدیدها</p><span id="statVisits">0</span>
             </div>
         </div>
-        <h3 class="text-sm font-black mb-4">سوابق اخیر</h3>
         <div id="visitHistory" class="space-y-3"></div>
     </main>
 
     <main id="visits" class="tab-content p-6">
-        <h2 class="text-2xl font-black mb-6 text-red-600 italic">کنترل زنده کلیدها</h2>
-        <div id="securityLog" class="space-y-4 text-center text-slate-400 py-10 italic">همه موارد در وضعیت عادی است</div>
+        <h2 class="text-2xl font-black mb-6 text-red-600 italic">کنترل کلیدها</h2>
+        <div id="securityLog" class="space-y-4 text-center py-10 italic text-slate-400">وضعیت سفید</div>
     </main>
 
     <main id="contacts" class="tab-content p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-black">تیم ما</h2>
-            <button onclick="openMemberModal()" class="bg-blue-600 text-white text-[10px] px-4 py-2 rounded-xl font-bold">+ عضو جدید</button>
-        </div>
+        <h2 class="text-2xl font-black mb-6">تیم نادر</h2>
         <div id="teamContainer" class="space-y-3"></div>
     </main>
 
     <div id="propModal" class="fixed inset-0 z-[120] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
         <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
-            <h3 id="propModalTitle" class="text-xl font-black mb-6 text-center">جزئیات ملک</h3>
+            <h3 class="text-xl font-black mb-6 text-center">جزئیات فایل</h3>
             <div class="space-y-4">
-                <div class="flex flex-col items-center">
+                <div>
                     <label class="w-full h-20 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex items-center justify-center cursor-pointer">
-                        <span class="text-[10px] font-bold text-slate-400">📸 افزودن عکس جدید</span>
-                        <input type="file" id="pImages" accept="image/*" multiple class="hidden" onchange="addImagesToList(this)">
+                        <span class="text-[10px] font-bold text-slate-400">📸 افزودن عکس</span>
+                        <input type="file" id="pImages" multiple accept="image/*" class="hidden" onchange="addImagesToList(this)">
                     </label>
-                    <div id="previewGallery" class="flex gap-2 mt-4 overflow-x-auto w-full p-2 border-b dark:border-slate-800"></div>
+                    <div id="previewGallery" class="flex gap-2 mt-2 overflow-x-auto"></div>
                 </div>
-                <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
-                <input type="text" id="pTitle" placeholder="عنوان فایل" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
-                <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                <div>
+                    <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <span id="pCodeError" class="error-text">این فیلد الزامی است</span>
+                </div>
+                <div>
+                    <input type="text" id="pTitle" placeholder="عنوان فایل" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <span id="pTitleError" class="error-text">این فیلد الزامی است</span>
+                </div>
+                <div>
+                    <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <span id="pPriceError" class="error-text">این فیلد الزامی است</span>
+                </div>
             </div>
             <div class="flex gap-2 mt-8">
-                <button onclick="closePropModal()" class="flex-1 font-bold text-slate-400">لغو</button>
+                <button onclick="closePropModal()" class="flex-1 font-bold text-slate-400 text-sm">لغو</button>
                 <button onclick="saveProperty()" class="flex-[2] bg-black dark:bg-blue-600 text-white py-4 rounded-2xl font-bold">ذخیره</button>
             </div>
         </div>
     </div>
 
     <nav class="fixed bottom-8 left-6 right-6 bg-white dark:bg-slate-900 shadow-2xl h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50 border border-slate-100 dark:border-slate-800">
-        <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>ویترین</button>
-        <button onclick="showTab('dashboard', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>آمار</button>
-        <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-12 border-4 border-white dark:border-slate-950"><svg class="w-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg></button>
-        <button onclick="showTab('visits', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>امنیت</button>
-        <button onclick="showTab('contacts', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>تیم</button>
+        <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center text-[10px] font-bold">ویترین</button>
+        <button onclick="showTab('dashboard', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold">آمار</button>
+        <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-12">+</button>
+        <button onclick="showTab('visits', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold">امنیت</button>
+        <button onclick="showTab('contacts', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold">تیم</button>
     </nav>
 
     <script>
-        let properties = []; 
-        let team = [{id:1, name:'مرتضی نوح‌پیشه', role:'مدیر پروژه', score:5}];
-        let visits = {}; let history = []; 
-        let currentImgList = []; // لیست موقت عکس‌ها برای هر ملک
+        let properties = []; let team = [{id:1, name:'نادر', role:'مدیر کل', score:5}];
+        let visits = {}; let history = []; let currentImgList = [];
 
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            document.getElementById('themeIcon').innerText = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
-        }
+        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
 
-        // --- اصلاح بخش عکس: حالا عکس‌ها به لیست اضافه می‌شوند (جایگزین نمی‌شوند) ---
         function addImagesToList(input) {
             const files = Array.from(input.files);
-            const gallery = document.getElementById('previewGallery');
-
             files.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    currentImgList.push(e.target.result); // اضافه کردن به لیست فعلی
-                    const imgThumb = document.createElement('img');
-                    imgThumb.src = e.target.result;
-                    imgThumb.className = "w-12 h-12 object-cover rounded-lg border-2 border-blue-500 shrink-0";
-                    gallery.appendChild(imgThumb);
+                    currentImgList.push(e.target.result);
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = "w-12 h-12 object-cover rounded-lg shrink-0 border border-blue-500";
+                    document.getElementById('previewGallery').appendChild(img);
                 };
                 reader.readAsDataURL(file);
             });
         }
 
+        function updateDots(el, idx) {
+            const activeIdx = Math.round(el.scrollLeft / el.offsetWidth);
+            const dots = document.querySelectorAll(`.dots-${idx} .dot`);
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === Math.abs(activeIdx)));
+        }
+
         function saveProperty() {
-            const code = document.getElementById('pCode').value;
-            const title = document.getElementById('pTitle').value;
-            const price = document.getElementById('pPrice').value;
-            if(!code || !title) return;
-            
-            const imgs = currentImgList.length > 0 ? [...currentImgList] : [`https://picsum.photos/seed/${code}/400/300`];
-            properties.unshift({code, title, price, imgs});
-            
+            let isValid = true;
+            ['pCode', 'pTitle', 'pPrice'].forEach(id => {
+                const val = document.getElementById(id).value.trim();
+                document.getElementById(id).classList.toggle('error-border', !val);
+                document.getElementById(id + 'Error').style.display = val ? 'none' : 'block';
+                if(!val) isValid = false;
+            });
+            if(!isValid) return;
+
+            properties.unshift({
+                code: document.getElementById('pCode').value,
+                title: document.getElementById('pTitle').value,
+                price: document.getElementById('pPrice').value,
+                imgs: currentImgList.length > 0 ? [...currentImgList] : ['https://picsum.photos/400/300']
+            });
             updateUI(); closePropModal();
         }
 
         function updateUI() {
-            // رندر ویترین با اسلایدر ورق‌زدنی
-            document.getElementById('propertyContainer').innerHTML = properties.map(p => `
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 relative">
-                    <div class="swiper-container h-64">
-                        ${p.imgs.map(img => `<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
+            document.getElementById('propertyContainer').innerHTML = properties.map((p, idx) => `
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-sm relative border dark:border-slate-800">
+                    <div class="relative">
+                        <div class="swiper-container" onscroll="updateDots(this, ${idx})">
+                            ${p.imgs.map(img => `<div class="swiper-slide h-64"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
+                        </div>
+                        <div class="dots-${idx} absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">
+                            ${p.imgs.map((_, i) => `<div class="dot w-1.5 h-1.5 rounded-full bg-white/50 ${i===0?'active':''}"></div>`).join('')}
+                        </div>
                     </div>
                     <div class="p-6">
-                        <div class="flex justify-between items-center mb-4 text-right">
-                            <h3 class="font-bold">${p.title}</h3>
-                            <span class="text-blue-600 font-black text-sm">${p.price}</span>
-                        </div>
+                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold">${p.title}</h3><span class="text-blue-600 font-black">${p.price}</span></div>
                         <button onclick="handleExit('${p.code}')" class="w-full ${visits[p.code] ? 'bg-red-500 animate-pulse' : 'bg-black dark:bg-blue-600'} text-white py-4 rounded-2xl text-[10px] font-black">
-                            ${visits[p.code] ? 'در حال بازدید - ' + visits[p.code].consultant : 'ثبت خروج (واحد ' + p.code + ')'}
+                            ${visits[p.code] ? 'در حال بازدید' : 'ثبت خروج (واحد ' + p.code + ')'}
                         </button>
                     </div>
                 </div>`).join('');
-
-            // بروزرسانی آمار
+            
             document.getElementById('statFiles').innerText = properties.length;
             document.getElementById('statVisits').innerText = history.length + Object.keys(visits).length;
-
-            // رندر امنیت
-            const active = Object.keys(visits);
-            document.getElementById('securityLog').innerHTML = active.map(k => `
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border-r-4 border-red-500 flex justify-between items-center mb-2 text-[10px]">
-                    <span>🔑 واحد ${k} - ${visits[k].consultant}</span>
-                    <span class="text-slate-400">${visits[k].start}</span>
-                </div>`).join('') || '<p class="text-center text-slate-400 py-10 italic">امنیت کامل</p>';
-
-            // رندر تیم
-            document.getElementById('teamContainer').innerHTML = team.map(m => `
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl flex justify-between items-center border border-slate-50 dark:border-slate-800">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-xs font-bold">${m.name[0]}</div>
-                        <div class="text-right"><p class="text-xs font-black">${m.name}</p><p class="text-[8px] text-slate-400">${m.role}</p></div>
-                    </div>
-                    <span class="text-yellow-600 text-[10px]">⭐ ${m.score}</span>
-                </div>`).join('');
         }
 
         function handleExit(code) {
             if(visits[code]) {
-                if(confirm("کلید بازگشت؟")) {
-                    history.unshift({...visits[code], unit: code, end: new Date().toLocaleTimeString('fa-IR')});
-                    delete visits[code]; updateUI();
-                }
+                if(confirm("کلید بازگشت؟")) { history.unshift({...visits[code], unit: code}); delete visits[code]; updateUI(); }
             } else {
-                let name = prompt("نام مشاور؟", "مرتضی نوح‌پیشه");
-                if(name) {
-                    visits[code] = { consultant: name, start: new Date().toLocaleTimeString('fa-IR') };
-                    updateUI();
-                }
+                let name = prompt("نام مشاور؟", "نادر");
+                if(name) { visits[code] = { consultant: name, start: new Date().toLocaleTimeString('fa-IR') }; updateUI(); }
             }
         }
 
         function showTab(id, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('nav-active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
             btn.classList.add('nav-active');
         }
 
         function openPropModal() { 
-            currentImgList = []; // ریست لیست عکس‌ها برای فایل جدید
-            document.getElementById('previewGallery').innerHTML = "";
-            document.getElementById('pCode').value = "";
-            document.getElementById('pTitle').value = "";
+            currentImgList = []; document.getElementById('previewGallery').innerHTML = "";
+            ['pCode', 'pTitle', 'pPrice'].forEach(id => { document.getElementById(id).value = ""; document.getElementById(id).classList.remove('error-border'); document.getElementById(id+'Error').style.display='none'; });
             document.getElementById('propModal').classList.remove('hidden'); 
         }
         function closePropModal() { document.getElementById('propModal').classList.add('hidden'); }
@@ -208,5 +198,4 @@
         updateUI();
     </script>
 </body>
-
 </html>
