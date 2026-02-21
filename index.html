@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت پروژه نادر | نسخه بدون نقص</title>
+    <title>پنل نهایی مدیریت نادر</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap" rel="stylesheet">
     <script>tailwind.config = { darkMode: 'class' }</script>
@@ -24,87 +24,89 @@
 <body class="pb-36 text-right bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
 
     <header class="p-5 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b dark:border-slate-800">
-        <div class="flex items-center gap-2"><span class="text-xl font-black italic text-blue-600">پنل مدیریتی نادر</span></div>
+        <div class="flex items-center gap-2"><span class="text-xl font-black italic text-blue-600">پنل مدیریت نادر</span></div>
         <div class="flex items-center gap-3">
             <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800">🌙</button>
-            <div class="text-left leading-tight"><p class="text-[10px] font-bold">نادر</p><p class="text-[8px] text-blue-500 font-bold uppercase">Project Manager</p></div>
+            <div class="text-left leading-tight"><p class="text-[10px] font-bold">نادر</p></div>
             <img src="https://i.pravatar.cc/100?u=nader" class="w-10 h-10 rounded-full border-2 border-blue-500">
         </div>
     </header>
 
-    <main id="home" class="tab-content active px-5 py-4">
-        <div id="propertyContainer" class="space-y-6"></div>
-    </main>
+    <main id="home" class="tab-content active px-5 py-4"><div id="propertyContainer" class="space-y-6"></div></main>
 
     <main id="dashboard" class="tab-content p-6">
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border dark:border-slate-800 shadow-sm text-center">
-                <p class="text-[10px] text-slate-400 font-bold">کل فایل‌ها</p><span id="statFiles" class="font-bold text-xl text-blue-600">0</span>
-            </div>
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border dark:border-slate-800 shadow-sm text-center">
-                <p class="text-[10px] text-slate-400 font-bold">بازدیدهای امروز</p><span id="statVisits" class="font-bold text-xl text-blue-600">0</span>
-            </div>
+        <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border dark:border-slate-800 shadow-sm"><p class="text-[10px] text-slate-400 font-bold">کل فایل‌ها</p><span id="statFiles" class="font-bold text-xl">0</span></div>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border dark:border-slate-800 shadow-sm"><p class="text-[10px] text-slate-400 font-bold">بازدیدهای امروز</p><span id="statVisits" class="font-bold text-xl">0</span></div>
         </div>
 
         <div class="bg-blue-600 text-white p-6 rounded-[2.5rem] mb-6 shadow-xl">
-            <h3 class="font-bold mb-4 text-sm">🧮 محاسبه کمیسیون</h3>
+            <h3 class="font-bold mb-4 text-xs">🧮 محاسبه کمیسیون</h3>
             <input type="number" id="dealPrice" placeholder="قیمت ملک (تومان)" class="w-full p-4 rounded-2xl bg-white/10 placeholder-white/50 outline-none mb-3 font-bold border border-white/10">
-            <button onclick="calculateCommission()" class="w-full bg-white text-blue-600 py-3 rounded-xl font-black text-xs">محاسبه</button>
+            <button onclick="calculateCommission()" class="w-full bg-white text-blue-600 py-3 rounded-xl font-black text-xs">محاسبه سهم املاک</button>
             <div id="commResult" class="mt-4 space-y-2 text-[11px] hidden border-t border-white/10 pt-4">
                 <div class="flex justify-between"><span>سهم هر طرف (۰.۲۵٪):</span><span id="eachSide" class="font-bold">0</span></div>
                 <div class="flex justify-between font-black text-sm text-yellow-300"><span>جمع کل با مالیات:</span><span id="totalComm">0</span></div>
             </div>
         </div>
-
-        <button onclick="generateFinalReport()" class="w-full bg-black text-white py-4 rounded-2xl font-black text-[10px] mb-4">استخراج گزارش عملکرد</button>
+        
+        <button onclick="generateFinalReport()" class="w-full bg-green-500 text-white py-4 rounded-2xl font-black text-xs mb-6">ارسال گزارش واتس‌اپ</button>
+        <h3 class="font-black mb-4 text-xs">تاریخچه بازدیدها</h3>
         <div id="visitHistory" class="space-y-2"></div>
     </main>
 
     <main id="visits" class="tab-content p-6">
-        <h2 class="text-2xl font-black mb-6 text-red-600 italic text-center">مانیتورینگ کلیدها</h2>
+        <h2 class="text-2xl font-black mb-6 text-red-600 italic text-center">وضعیت فعلی کلیدها</h2>
         <div id="securityLog" class="space-y-4"></div>
     </main>
 
     <main id="contacts" class="tab-content p-6">
         <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] mb-6 border dark:border-slate-800">
-            <h3 class="font-bold mb-4 text-blue-600">📅 رزرو بازدید</h3>
+            <h3 class="font-bold mb-4 text-blue-600">📅 ثبت رزرو بازدید</h3>
             <div class="space-y-3">
                 <input type="text" id="schClient" placeholder="نام مشتری" class="w-full bg-slate-50 dark:bg-slate-800 p-3 rounded-xl text-xs outline-none">
-                <input type="text" id="schTime" placeholder="زمان بازدید" class="w-full bg-slate-50 dark:bg-slate-800 p-3 rounded-xl text-xs outline-none">
-                <button onclick="addSchedule()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-xs">ثبت برنامه</button>
+                <input type="text" id="schTime" placeholder="زمان (مثلاً ساعت ۱۷)" class="w-full bg-slate-50 dark:bg-slate-800 p-3 rounded-xl text-xs outline-none">
+                <button onclick="addSchedule()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-xs">افزودن به برنامه</button>
             </div>
         </div>
-        <div id="scheduleContainer" class="space-y-3 mb-8"></div>
-        <div id="teamContainer" class="space-y-3"></div>
+        <div id="scheduleContainer" class="space-y-3"></div>
     </main>
 
-    <div id="propModal" class="fixed inset-0 z-[120] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 max-h-[90vh] overflow-y-auto shadow-2xl">
-            <h3 class="text-xl font-black mb-6 text-center text-blue-600">افزودن فایل جدید</h3>
+    <div id="exitModal" class="fixed inset-0 z-[150] hidden backdrop-blur-md bg-black/60 flex items-center justify-center p-6">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl text-center">
+            <h3 class="font-black text-lg mb-4">ثبت خروج کلید</h3>
+            <input type="text" id="consultantName" value="نادر" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none text-sm font-bold mb-4 border-2 border-blue-500">
+            <div class="flex gap-2">
+                <button onclick="closeModal('exitModal')" class="flex-1 text-slate-400 font-bold text-xs">لغو</button>
+                <button onclick="confirmKeyExit()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black text-xs">تایید خروج</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="returnModal" class="fixed inset-0 z-[150] hidden backdrop-blur-md bg-black/60 flex items-center justify-center p-6 text-center">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-green-500">
+            <h3 class="font-black text-lg mb-2">بازگشت کلید</h3>
+            <p id="retInfo" class="text-[10px] text-slate-500 mb-6 font-bold"></p>
+            <div class="flex gap-2">
+                <button onclick="closeModal('returnModal')" class="flex-1 text-slate-400 font-bold text-xs">لغو</button>
+                <button onclick="confirmKeyReturn()" class="flex-[2] bg-green-500 text-white py-4 rounded-2xl font-black text-xs">اتمام بازدید</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="propModal" class="fixed inset-0 z-[120] hidden backdrop-blur-md bg-black/60 flex items-center justify-center p-6">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-black mb-6 text-center text-blue-600">ثبت فایل جدید</h3>
             <div class="space-y-4">
-                <div>
-                    <label class="w-full h-20 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex items-center justify-center cursor-pointer text-slate-400 text-[10px]">
-                        📸 عکس‌های ملک
-                        <input type="file" id="pImages" multiple accept="image/*" class="hidden" onchange="addImagesToList(this)">
-                    </label>
-                    <div id="previewGallery" class="flex gap-2 mt-2 overflow-x-auto"></div>
-                </div>
-                <div>
-                    <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
-                    <p id="pCodeError" class="error-text">وارد کردن کد ملک الزامی است</p>
-                </div>
-                <div>
-                    <input type="text" id="pTitle" placeholder="عنوان فایل" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
-                    <p id="pTitleError" class="error-text">وارد کردن عنوان الزامی است</p>
-                </div>
-                <div>
-                    <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
-                    <p id="pPriceError" class="error-text">وارد کردن قیمت الزامی است</p>
-                </div>
+                <label class="w-full h-20 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex items-center justify-center cursor-pointer text-slate-400 text-[10px]">📸 افزودن تصاویر<input type="file" id="pImages" multiple class="hidden" onchange="addImagesToList(this)"></label>
+                <div id="previewGallery" class="flex gap-2 mt-2 overflow-x-auto"></div>
+                <div><input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm"><p id="pCodeError" class="error-text">کد الزامی است</p></div>
+                <div><input type="text" id="pTitle" placeholder="عنوان فایل" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm"><p id="pTitleError" class="error-text">عنوان الزامی است</p></div>
+                <div><input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm"><p id="pPriceError" class="error-text">قیمت الزامی است</p></div>
             </div>
             <div class="flex gap-2 mt-8">
-                <button onclick="closePropModal()" class="flex-1 font-bold text-slate-400">لغو</button>
-                <button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-bold">ثبت فایل</button>
+                <button onclick="closeModal('propModal')" class="flex-1 text-slate-400 font-bold">لغو</button>
+                <button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-bold">ذخیره فایل</button>
             </div>
         </div>
     </div>
@@ -114,99 +116,75 @@
         <button onclick="showTab('dashboard', this)" class="nav-item text-slate-300 text-[10px] font-bold">آمار</button>
         <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-12 border-4 border-white dark:border-slate-950">+</button>
         <button onclick="showTab('visits', this)" class="nav-item text-slate-300 text-[10px] font-bold">امنیت</button>
-        <button onclick="showTab('contacts', this)" class="nav-item text-slate-300 text-[10px] font-bold">تیم/تقویم</button>
+        <button onclick="showTab('contacts', this)" class="nav-item text-slate-300 text-[10px] font-bold">تقویم</button>
     </nav>
 
     <script>
-        let properties = []; let visits = {}; let history = []; let schedules = []; let currentImgList = [];
-        let team = [{id:1, name:'نادر', role:'مدیر پروژه', score:5}];
+        let properties = []; let visits = {}; let history = []; let schedules = []; let currentImgList = []; let activeCode = null;
 
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
 
-        // --- اعتبار سنجی (Validation) ---
+        // --- منطق امنیت با مودال ---
+        function handleKeyAction(code) {
+            activeCode = code;
+            if (visits[code]) {
+                document.getElementById('retInfo').innerText = `واحد ${code} - مشاور: ${visits[code].consultant}\nشروع: ${visits[code].start}`;
+                document.getElementById('returnModal').classList.remove('hidden');
+            } else {
+                document.getElementById('exitModal').classList.remove('hidden');
+            }
+        }
+
+        function confirmKeyExit() {
+            let name = document.getElementById('consultantName').value;
+            visits[activeCode] = { consultant: name, start: new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}) };
+            closeModal('exitModal'); updateUI();
+        }
+
+        function confirmKeyReturn() {
+            let end = new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+            history.unshift({ ...visits[activeCode], unit: activeCode, end: end });
+            delete visits[activeCode];
+            closeModal('returnModal'); updateUI();
+        }
+
+        // --- اعتبار سنجی فرم ---
         function saveProperty() {
             let isValid = true;
-            const fields = ['pCode', 'pTitle', 'pPrice'];
-            
-            fields.forEach(id => {
-                const input = document.getElementById(id);
-                const error = document.getElementById(id + 'Error');
-                if (!input.value.trim()) {
-                    input.classList.add('error-border');
-                    error.style.display = 'block';
-                    isValid = false;
-                } else {
-                    input.classList.remove('error-border');
-                    error.style.display = 'none';
-                }
+            ['pCode', 'pTitle', 'pPrice'].forEach(id => {
+                const inp = document.getElementById(id); const err = document.getElementById(id+'Error');
+                if(!inp.value.trim()){ inp.classList.add('error-border'); err.style.display='block'; isValid=false; }
+                else { inp.classList.remove('error-border'); err.style.display='none'; }
             });
-
-            if (!isValid) return;
-
-            properties.unshift({
-                code: document.getElementById('pCode').value,
-                title: document.getElementById('pTitle').value,
-                price: document.getElementById('pPrice').value,
-                imgs: currentImgList.length > 0 ? [...currentImgList] : ['https://picsum.photos/400/300']
-            });
-            updateUI(); closePropModal();
+            if(!isValid) return;
+            properties.unshift({ code: document.getElementById('pCode').value, title: document.getElementById('pTitle').value, price: document.getElementById('pPrice').value, imgs: currentImgList.length>0 ? [...currentImgList] : ['https://picsum.photos/400/300'] });
+            updateUI(); closeModal('propModal');
         }
 
         function calculateCommission() {
-            let price = document.getElementById('dealPrice').value;
-            if(!price) return;
-            let comm = price * 0.0025;
-            let total = comm + (comm * 0.09);
+            let price = document.getElementById('dealPrice').value; if(!price) return;
+            let comm = price * 0.0025; let total = comm * 1.09;
             document.getElementById('commResult').classList.remove('hidden');
             document.getElementById('eachSide').innerText = Math.round(comm).toLocaleString() + " ت";
             document.getElementById('totalComm').innerText = Math.round(total).toLocaleString() + " ت";
         }
 
         function addSchedule() {
-            let client = document.getElementById('schClient').value;
-            let time = document.getElementById('schTime').value;
-            if(client && time) { schedules.unshift({ client, time }); updateUI(); }
-        }
-
-        function addImagesToList(input) {
-            Array.from(input.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    currentImgList.push(e.target.result);
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = "w-12 h-12 object-cover rounded-lg shrink-0 border border-blue-500";
-                    document.getElementById('previewGallery').appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function updateDots(el, idx) {
-            const activeIdx = Math.round(Math.abs(el.scrollLeft) / el.offsetWidth);
-            document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
-        }
-
-        function generateFinalReport() {
-            let report = `گزارش مدیریت نادر:%0Aکل فایل‌ها: ${properties.length}%0Aبازدیدهای امروز: ${history.length}`;
-            window.open(`https://wa.me/?text=${report}`, '_blank');
+            let c = document.getElementById('schClient').value; let t = document.getElementById('schTime').value;
+            if(c && t) { schedules.unshift({ client:c, time:t }); updateUI(); }
         }
 
         function updateUI() {
             document.getElementById('propertyContainer').innerHTML = properties.map((p, idx) => `
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-sm relative border dark:border-slate-800">
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-sm border dark:border-slate-800">
                     <div class="relative">
-                        <div class="swiper-container" onscroll="updateDots(this, ${idx})">
-                            ${p.imgs.map(img => `<div class="swiper-slide h-64"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
-                        </div>
-                        <div class="dots-${idx} absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">
-                            ${p.imgs.map((_, i) => `<div class="dot w-1.5 h-1.5 rounded-full bg-white/50 ${i===0?'active':''}"></div>`).join('')}
-                        </div>
+                        <div class="swiper-container" onscroll="updateDots(this, ${idx})">${p.imgs.map(img => `<div class="swiper-slide h-64"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}</div>
+                        <div class="dots-${idx} absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">${p.imgs.map((_, i) => `<div class="dot w-1.5 h-1.5 rounded-full bg-white/50 ${i===0?'active':''}"></div>`).join('')}</div>
                     </div>
                     <div class="p-6">
                         <div class="flex justify-between items-center mb-4"><h3 class="font-bold">${p.title}</h3><span class="text-blue-600 font-bold">${p.price}</span></div>
-                        <button onclick="handleExit('${p.code}')" class="w-full ${visits[p.code] ? 'bg-red-500 animate-pulse' : 'bg-black dark:bg-blue-600'} text-white py-4 rounded-2xl text-[10px] font-black">
-                            ${visits[p.code] ? 'در حال بازدید: ' + visits[p.code].consultant : 'خروج کلید (' + p.code + ')'}
+                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-red-500 animate-pulse' : 'bg-black dark:bg-blue-600'} text-white py-4 rounded-2xl text-[10px] font-black">
+                            ${visits[p.code] ? 'در حال بازدید (پایان؟)' : 'ثبت خروج کلید (' + p.code + ')'}
                         </button>
                     </div>
                 </div>`).join('');
@@ -214,43 +192,26 @@
             document.getElementById('securityLog').innerHTML = Object.keys(visits).map(code => `
                 <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border-r-8 border-red-500 shadow-sm flex justify-between items-center text-xs">
                     <div><p class="text-slate-400 font-bold">واحد ${code}</p><p class="font-bold text-red-600">${visits[code].consultant}</p></div>
-                    <p class="text-[10px] text-slate-400">${visits[code].start}</p>
+                    <p class="text-[10px] text-slate-400 font-bold">${visits[code].start}</p>
                 </div>`).join('') || '<p class="text-center py-10 italic text-slate-300">امنیت برقرار است</p>';
 
+            document.getElementById('visitHistory').innerHTML = history.map(h => `<div class="bg-slate-100 dark:bg-slate-800 p-2 rounded-xl flex justify-between text-[9px] font-bold"><span>واحد ${h.unit} (${h.consultant})</span><span class="text-green-600">${h.start} - ${h.end}</span></div>`).join('');
             document.getElementById('scheduleContainer').innerHTML = schedules.map(s => `<div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border-r-4 border-blue-600 flex justify-between text-xs font-bold"><span>${s.client}</span><span class="text-blue-600">${s.time}</span></div>`).join('');
-            document.getElementById('teamContainer').innerHTML = team.map(m => `<div class="bg-white dark:bg-slate-900 p-3 rounded-xl flex justify-between border dark:border-slate-800 text-xs"><span>${m.name}</span><span class="text-yellow-500 font-bold">⭐ ${m.score}</span></div>`).join('');
             document.getElementById('statFiles').innerText = properties.length;
             document.getElementById('statVisits').innerText = history.length + Object.keys(visits).length;
         }
 
-        function handleExit(code) {
-            if(visits[code]) {
-                if(confirm(`کلید واحد ${code} بازگشت؟`)) { history.unshift({...visits[code], unit: code}); delete visits[code]; updateUI(); }
-            } else {
-                let name = prompt("نام مشاور؟", "نادر");
-                if(name) { visits[code] = { consultant: name, start: new Date().toLocaleTimeString('fa-IR') }; updateUI(); }
-            }
+        function updateDots(el, idx) {
+            const activeIdx = Math.round(Math.abs(el.scrollLeft) / el.offsetWidth);
+            document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
         }
 
-        function showTab(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => { n.classList.remove('nav-active'); n.classList.add('text-slate-300'); });
-            btn.classList.add('nav-active'); btn.classList.remove('text-slate-300');
-        }
-
-        function openPropModal() { 
-            currentImgList = []; document.getElementById('previewGallery').innerHTML = "";
-            ['pCode', 'pTitle', 'pPrice'].forEach(id => {
-                document.getElementById(id).value = "";
-                document.getElementById(id).classList.remove('error-border');
-                document.getElementById(id + 'Error').style.display = 'none';
-            });
-            document.getElementById('propModal').classList.remove('hidden'); 
-        }
-        function closePropModal() { document.getElementById('propModal').classList.add('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openPropModal() { currentImgList = []; document.getElementById('previewGallery').innerHTML = ""; document.getElementById('propModal').classList.remove('hidden'); }
+        function addImagesToList(i) { Array.from(i.files).forEach(f => { let r = new FileReader(); r.onload = (e) => { currentImgList.push(e.target.result); let img = document.createElement('img'); img.src = e.target.result; img.className = "w-12 h-12 object-cover rounded-lg shrink-0"; document.getElementById('previewGallery').appendChild(img); }; r.readAsDataURL(f); }); }
+        function showTab(id, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active')); btn.classList.add('nav-active'); }
+        function generateFinalReport() { window.open(`https://wa.me/?text=گزارش نادر: ${history.length} بازدید امروز ثبت شد.`, '_blank'); }
         updateUI();
     </script>
 </body>
-
 </html>
