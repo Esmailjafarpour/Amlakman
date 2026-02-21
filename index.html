@@ -216,4 +216,12 @@
         }
 
         function previewAvatar(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = (e) => { document.getElementById('tempAvatarPreview').src = e.target.result; document.getElementById('tempAvatarPreview').classList.remove('hidden'); document.getElementById('camIcon').classList.add('hidden'); }; r.readAsDataURL(input.files[0]); } }
-        function addImagesToList(i) { Array.from(i.files).forEach(f => { let r = new FileReader(); r.onload = (e) => { currentImgList.push(e.target.result); let img = document.createElement('img'); img.src = e.target.result; img.className = "w-12 h-12 object-cover rounded-lg shrink-0"; document.getElementById('previewGallery').appendChild(img); };
+        function addImagesToList(i) { Array.from(i.files).forEach(f => { let r = new FileReader(); r.onload = (e) => { currentImgList.push(e.target.result); let img = document.createElement('img'); img.src = e.target.result; img.className = "w-12 h-12 object-cover rounded-lg shrink-0"; document.getElementById('previewGallery').appendChild(img); }; r.readAsDataURL(f); }); }
+        function handleLogout() { document.getElementById('mainApp').classList.add('hidden'); document.getElementById('authPage').classList.remove('hidden'); isSignupMode = false; }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+        function showTab(id, btn) { document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active', 'text-blue-600')); btn.classList.add('nav-active', 'text-blue-600'); }
+        function updateDots(el, idx) { const activeIdx = Math.round(Math.abs(el.scrollLeft) / el.offsetWidth); document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx)); }
+    </script>
+</body>
+</html>
