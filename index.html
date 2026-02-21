@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل املاک مرتضی | اسلایدر حرفه‌ای</title>
+    <title>پنل املاک مرتضی | نسخه نهایی و کامل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap" rel="stylesheet">
     <script>tailwind.config = { darkMode: 'class' }</script>
@@ -12,10 +12,10 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .nav-active { color: #2563eb !important; }
-        /* استایل اسلایدر موبایلی بدون نیاز به کتابخانه سنگین */
-        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
         .swiper-container::-webkit-scrollbar { display: none; }
         .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; }
+        .camera-gradient { background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
     </style>
 </head>
 <body class="pb-36 text-right bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
@@ -36,17 +36,42 @@
         <div id="propertyContainer" class="space-y-6"></div>
     </main>
 
+    <main id="dashboard" class="tab-content p-6">
+        <div class="grid grid-cols-2 gap-4 mb-6 text-center font-black">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-50 dark:border-slate-800">
+                <p class="text-[10px] text-slate-400">کل فایل‌ها</p><span id="statFiles">0</span>
+            </div>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-50 dark:border-slate-800">
+                <p class="text-[10px] text-slate-400">کل بازدیدها</p><span id="statVisits">0</span>
+            </div>
+        </div>
+        <h3 class="text-sm font-black mb-4">سوابق اخیر</h3>
+        <div id="visitHistory" class="space-y-3"></div>
+    </main>
+
+    <main id="visits" class="tab-content p-6">
+        <h2 class="text-2xl font-black mb-6 text-red-600 italic">کنترل زنده کلیدها</h2>
+        <div id="securityLog" class="space-y-4 text-center text-slate-400 py-10 italic">همه موارد در وضعیت عادی است</div>
+    </main>
+
+    <main id="contacts" class="tab-content p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-black">تیم ما</h2>
+            <button onclick="openMemberModal()" class="bg-blue-600 text-white text-[10px] px-4 py-2 rounded-xl font-bold">+ عضو جدید</button>
+        </div>
+        <div id="teamContainer" class="space-y-3"></div>
+    </main>
+
     <div id="propModal" class="fixed inset-0 z-[120] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
             <h3 id="propModalTitle" class="text-xl font-black mb-6 text-center">جزئیات ملک</h3>
-            <div class="space-y-4 text-right">
-                <div class="flex flex-col items-center mb-4">
-                    <label class="w-full h-24 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                        <svg class="w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-                        <span class="text-[10px] font-bold text-slate-400 mt-2">انتخاب عکس‌ها (چندگانه)</span>
-                        <input type="file" id="pImages" accept="image/*" multiple class="hidden" onchange="handleMultiplePreviews(this)">
+            <div class="space-y-4">
+                <div class="flex flex-col items-center">
+                    <label class="w-full h-20 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex items-center justify-center cursor-pointer">
+                        <span class="text-[10px] font-bold text-slate-400">📸 افزودن عکس جدید</span>
+                        <input type="file" id="pImages" accept="image/*" multiple class="hidden" onchange="addImagesToList(this)">
                     </label>
-                    <div id="previewGallery" class="flex gap-2 mt-4 overflow-x-auto w-full p-2"></div>
+                    <div id="previewGallery" class="flex gap-2 mt-4 overflow-x-auto w-full p-2 border-b dark:border-slate-800"></div>
                 </div>
                 <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
                 <input type="text" id="pTitle" placeholder="عنوان فایل" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
@@ -54,100 +79,131 @@
             </div>
             <div class="flex gap-2 mt-8">
                 <button onclick="closePropModal()" class="flex-1 font-bold text-slate-400">لغو</button>
-                <button onclick="saveProperty()" class="flex-[2] bg-black dark:bg-blue-600 text-white py-4 rounded-2xl font-bold">ذخیره فایل</button>
+                <button onclick="saveProperty()" class="flex-[2] bg-black dark:bg-blue-600 text-white py-4 rounded-2xl font-bold">ذخیره</button>
             </div>
         </div>
     </div>
 
     <nav class="fixed bottom-8 left-6 right-6 bg-white dark:bg-slate-900 shadow-2xl h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50 border border-slate-100 dark:border-slate-800">
-        <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center italic text-xs"><svg class="w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>ویترین</button>
-        <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-12 border-4 border-white dark:border-slate-900"><svg class="w-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg></button>
-        <button onclick="showTab('dashboard', this)" class="nav-item text-slate-300 dark:text-slate-600 flex flex-col items-center text-xs"><svg class="w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>آمار</button>
+        <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>ویترین</button>
+        <button onclick="showTab('dashboard', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>آمار</button>
+        <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-12 border-4 border-white dark:border-slate-950"><svg class="w-8" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg></button>
+        <button onclick="showTab('visits', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>امنیت</button>
+        <button onclick="showTab('contacts', this)" class="nav-item text-slate-300 flex flex-col items-center text-[10px] font-bold"><svg class="w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>تیم</button>
     </nav>
 
     <script>
-        let properties = [];
-        let currentImgList = [];
+        let properties = []; 
+        let team = [{id:1, name:'مرتضی نوح‌پیشه', role:'مدیر پروژه', score:5}];
+        let visits = {}; let history = []; 
+        let currentImgList = []; // لیست موقت عکس‌ها برای هر ملک
 
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
             document.getElementById('themeIcon').innerText = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
         }
 
-        // مدیریت انتخاب چندین عکس
-        function handleMultiplePreviews(input) {
+        // --- اصلاح بخش عکس: حالا عکس‌ها به لیست اضافه می‌شوند (جایگزین نمی‌شوند) ---
+        function addImagesToList(input) {
             const files = Array.from(input.files);
-            currentImgList = [];
             const gallery = document.getElementById('previewGallery');
-            gallery.innerHTML = "";
 
             files.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    currentImgList.push(e.target.result);
-                    gallery.innerHTML += `<img src="${e.target.result}" class="w-16 h-16 object-cover rounded-xl border-2 border-blue-500">`;
+                    currentImgList.push(e.target.result); // اضافه کردن به لیست فعلی
+                    const imgThumb = document.createElement('img');
+                    imgThumb.src = e.target.result;
+                    imgThumb.className = "w-12 h-12 object-cover rounded-lg border-2 border-blue-500 shrink-0";
+                    gallery.appendChild(imgThumb);
                 };
                 reader.readAsDataURL(file);
             });
-        }
-
-        function openPropModal() {
-            currentImgList = [];
-            document.getElementById('previewGallery').innerHTML = "";
-            document.getElementById('propModal').classList.remove('hidden');
         }
 
         function saveProperty() {
             const code = document.getElementById('pCode').value;
             const title = document.getElementById('pTitle').value;
             const price = document.getElementById('pPrice').value;
+            if(!code || !title) return;
             
-            // اگر عکسی انتخاب نشود، یک عکس پیش‌فرض می‌گذارد
-            const imgs = currentImgList.length > 0 ? currentImgList : [`https://picsum.photos/seed/${code}/400/300`];
-            
+            const imgs = currentImgList.length > 0 ? [...currentImgList] : [`https://picsum.photos/seed/${code}/400/300`];
             properties.unshift({code, title, price, imgs});
-            updateUI();
-            closePropModal();
+            
+            updateUI(); closePropModal();
         }
 
         function updateUI() {
+            // رندر ویترین با اسلایدر ورق‌زدنی
             document.getElementById('propertyContainer').innerHTML = properties.map(p => `
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-lg border border-slate-50 dark:border-slate-800 relative">
-                    <div class="relative group">
-                        <div class="swiper-container">
-                            ${p.imgs.map(img => `
-                                <div class="swiper-slide h-64">
-                                    <img src="${img}" class="w-full h-full object-cover">
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
-                            ${p.imgs.map((_, i) => `<div class="w-1.5 h-1.5 rounded-full bg-white/50"></div>`).join('')}
-                        </div>
-                        <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white text-[10px] px-3 py-1 rounded-full font-bold">
-                            کد: ${p.code}
-                        </div>
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 relative">
+                    <div class="swiper-container h-64">
+                        ${p.imgs.map(img => `<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
                     </div>
-
                     <div class="p-6">
                         <div class="flex justify-between items-center mb-4 text-right">
-                            <h3 class="font-black text-lg">${p.title}</h3>
-                            <span class="text-blue-600 dark:text-blue-400 font-black">${p.price}</span>
+                            <h3 class="font-bold">${p.title}</h3>
+                            <span class="text-blue-600 font-black text-sm">${p.price}</span>
                         </div>
-                        <button class="w-full bg-slate-950 dark:bg-blue-600 text-white py-4 rounded-2xl text-[12px] font-black active:scale-95 transition-transform">
-                            ثبت گزارش بازدید
+                        <button onclick="handleExit('${p.code}')" class="w-full ${visits[p.code] ? 'bg-red-500 animate-pulse' : 'bg-black dark:bg-blue-600'} text-white py-4 rounded-2xl text-[10px] font-black">
+                            ${visits[p.code] ? 'در حال بازدید - ' + visits[p.code].consultant : 'ثبت خروج (واحد ' + p.code + ')'}
                         </button>
                     </div>
                 </div>`).join('');
+
+            // بروزرسانی آمار
+            document.getElementById('statFiles').innerText = properties.length;
+            document.getElementById('statVisits').innerText = history.length + Object.keys(visits).length;
+
+            // رندر امنیت
+            const active = Object.keys(visits);
+            document.getElementById('securityLog').innerHTML = active.map(k => `
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border-r-4 border-red-500 flex justify-between items-center mb-2 text-[10px]">
+                    <span>🔑 واحد ${k} - ${visits[k].consultant}</span>
+                    <span class="text-slate-400">${visits[k].start}</span>
+                </div>`).join('') || '<p class="text-center text-slate-400 py-10 italic">امنیت کامل</p>';
+
+            // رندر تیم
+            document.getElementById('teamContainer').innerHTML = team.map(m => `
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl flex justify-between items-center border border-slate-50 dark:border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-xs font-bold">${m.name[0]}</div>
+                        <div class="text-right"><p class="text-xs font-black">${m.name}</p><p class="text-[8px] text-slate-400">${m.role}</p></div>
+                    </div>
+                    <span class="text-yellow-600 text-[10px]">⭐ ${m.score}</span>
+                </div>`).join('');
         }
 
-        function closePropModal() { document.getElementById('propModal').classList.add('hidden'); }
+        function handleExit(code) {
+            if(visits[code]) {
+                if(confirm("کلید بازگشت؟")) {
+                    history.unshift({...visits[code], unit: code, end: new Date().toLocaleTimeString('fa-IR')});
+                    delete visits[code]; updateUI();
+                }
+            } else {
+                let name = prompt("نام مشاور؟", "مرتضی نوح‌پیشه");
+                if(name) {
+                    visits[code] = { consultant: name, start: new Date().toLocaleTimeString('fa-IR') };
+                    updateUI();
+                }
+            }
+        }
+
         function showTab(id, btn) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('nav-active'));
             btn.classList.add('nav-active');
         }
+
+        function openPropModal() { 
+            currentImgList = []; // ریست لیست عکس‌ها برای فایل جدید
+            document.getElementById('previewGallery').innerHTML = "";
+            document.getElementById('pCode').value = "";
+            document.getElementById('pTitle').value = "";
+            document.getElementById('propModal').classList.remove('hidden'); 
+        }
+        function closePropModal() { document.getElementById('propModal').classList.add('hidden'); }
 
         updateUI();
     </script>
