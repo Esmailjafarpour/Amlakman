@@ -61,6 +61,7 @@
     <div id="mainApp" class="hidden">
         <header class="p-5 glass sticky top-0 z-50 border-b dark:border-slate-800 flex justify-between items-center">
             <div class="flex items-center gap-3">
+                <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover shadow-lg">
                 <div class="text-right leading-tight">
                     <div class="flex items-center gap-1 justify-end">
                         <span id="userRoleTag" class="hidden bg-blue-600 text-[8px] px-2 py-0.5 rounded-full text-white font-black">ADMIN</span>
@@ -68,7 +69,6 @@
                     </div>
                     <p id="userPhoneDisplay" class="text-[10px] text-slate-400 font-bold"></p>
                 </div>
-                <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover shadow-lg">
             </div>
             <div class="flex items-center gap-3">
                 <button onclick="handleLogout()" class="bg-red-500/10 text-red-500 p-2 rounded-xl text-xs font-bold">خروج</button>
