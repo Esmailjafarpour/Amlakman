@@ -495,19 +495,63 @@
         let properties = []; let visits = {}; let appointments = []; let currentImgList = [];
         let currentUser = null; let editIndex = null;
 
-        function processAuth() {
-            const phone = document.getElementById('authPhone').value;
-            if (phone === "09337301641") {
-                currentUser = { phone, name: "نادر (مدیریت)", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" };
-                document.getElementById('authPage').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                document.getElementById('userNameDisplay').innerText = currentUser.name;
-                document.getElementById('userPhoneDisplay').innerText = currentUser.phone;
-                document.getElementById('headerAvatar').src = currentUser.avatar;
-                document.getElementById('userRoleTag').classList.remove('hidden');
-                updateUI();
-            } else { alert("فقط ادمین اجازه دسترسی دارد"); }
+       function processAuth() {
+    const phoneInp = document.getElementById('authPhone');
+    const phone = phoneInp.value.trim();
+
+    // ولیدیشن شماره همراه
+    if (!/^09\d{9}$/.test(phone)) {
+        phoneInp.classList.add('error-shake');
+        alert("لطفاً یک شماره همراه معتبر ۱۱ رقمی وارد کنید");
+        setTimeout(() => phoneInp.classList.remove('error-shake'), 500);
+        return;
+    }
+
+    // اگر شماره خودت بود (ادمین)
+    if (phone === "09337301641") {
+        currentUser = { phone, name: "نادر (مدیریت)", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" };
+        launchApp();
+        return;
+    }
+
+    // چک کردن مشاورین (ذخیره شده در LocalStorage)
+    const saved = localStorage.getItem('nader_final_user_' + phone);
+    if (saved) {
+        currentUser = JSON.parse(saved);
+        launchApp();
+    } else {
+        // اگر مشاور جدید بود، بفرستش برای ثبت نام (یا می‌توانی اینجا مستقیماً لاگین کنی)
+        let name = prompt("خوش آمدید! لطفاً نام و نام خانوادگی خود را وارد کنید:");
+        if (name && name.length > 2) {
+            currentUser = { 
+                phone, 
+                name: name, 
+                avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135823.png" // آواتار پیش‌فرض برای مشاور
+            };
+            localStorage.setItem('nader_final_user_' + phone, JSON.stringify(currentUser));
+            launchApp();
+        } else {
+            alert("نام وارد شده معتبر نیست.");
         }
+    }
+}
+
+// تابع کمکی برای اجرای برنامه
+function launchApp() {
+    document.getElementById('authPage').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    document.getElementById('userNameDisplay').innerText = currentUser.name;
+    document.getElementById('userPhoneDisplay').innerText = currentUser.phone;
+    document.getElementById('headerAvatar').src = currentUser.avatar;
+    
+    // نمایش تگ ادمین فقط برای تو
+    if (currentUser.phone === "09337301641") {
+        document.getElementById('userRoleTag').classList.remove('hidden');
+    } else {
+        document.getElementById('userRoleTag').classList.add('hidden');
+    }
+    updateUI();
+}
 
         // --- مدیریت تصاویر با قابلیت حذف تکی ---
         function addImagesToList(input) {
