@@ -3,126 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل جامع املاک نادر</title>
+    <title>پنل فوق پیشرفته املاک نادر</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap" rel="stylesheet">
     <script>tailwind.config = { darkMode: 'class' }</script>
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; transition: all 0.3s; }
+        body { font-family: 'Vazirmatn', sans-serif; transition: all 0.3s; scroll-behavior: smooth; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .nav-active { color: #2563eb !important; }
-        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-active { color: #2563eb !important; transform: scale(1.1); }
+        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; }
         .swiper-container::-webkit-scrollbar { display: none; }
-        .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; }
+        .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; height: 260px; }
+        .dot { transition: all 0.3s; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); }
+        .dot.active { background: white !important; width: 18px; border-radius: 10px; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
     </style>
 </head>
-<body class="pb-36 text-right bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+<body class="pb-36 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
 
-    <div id="authPage" class="fixed inset-0 z-[200] bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 overflow-y-auto">
+    <div id="authPage" class="fixed inset-0 z-[500] bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 overflow-y-auto">
         <div class="w-full max-w-sm text-center">
-            <h1 class="text-3xl font-black text-blue-600 mb-2 italic">Nader Panel</h1>
-            <p id="authDesc" class="text-slate-500 text-sm mb-8 font-bold">ورود مشاورین و مدیریت</p>
+            <h1 class="text-4xl font-black text-blue-600 mb-2 italic tracking-tighter">NADER ESTATE</h1>
+            <p id="authDesc" class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest">Real Estate Management System</p>
             
-            <div class="space-y-4">
-                <input type="tel" id="authPhone" placeholder="شماره موبایل..." class="w-full border-b-2 border-slate-200 dark:border-slate-800 bg-transparent py-3 px-2 outline-none focus:border-blue-600 transition-all text-left text-lg tracking-widest font-bold">
+            <div class="space-y-5">
+                <div class="relative">
+                    <input type="tel" id="authPhone" placeholder="شماره موبایل..." class="w-full bg-slate-100 dark:bg-slate-900 border-none py-5 px-6 rounded-2xl outline-none focus:ring-2 ring-blue-600 transition-all text-left text-lg font-bold tracking-widest">
+                </div>
                 
-                <div id="signupFormSection" class="hidden space-y-4 pt-4 border-t dark:border-slate-800">
-                    <input type="text" id="signupName" placeholder="نام و نام خانوادگی" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
+                <div id="signupFormSection" class="hidden space-y-5 pt-5 border-t dark:border-slate-800 animate-fadeIn">
+                    <input type="text" id="signupName" placeholder="نام و نام خانوادگی مشاور" class="w-full bg-slate-100 dark:bg-slate-900 py-4 px-6 rounded-2xl outline-none font-bold text-sm">
                     <div class="flex flex-col items-center gap-3">
-                        <label class="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-blue-400 flex flex-col items-center justify-center cursor-pointer overflow-hidden relative shadow-inner">
+                        <label class="w-28 h-28 rounded-full bg-slate-200 dark:bg-slate-800 border-4 border-white dark:border-slate-700 flex flex-col items-center justify-center cursor-pointer overflow-hidden relative shadow-2xl">
                             <img id="tempAvatarPreview" class="hidden w-full h-full object-cover">
-                            <span id="camIcon" class="text-2xl">📸</span>
+                            <span id="camIcon" class="text-3xl">📸</span>
                             <input type="file" id="signupAvatarInput" accept="image/*" class="hidden" onchange="previewAvatar(this)">
                         </label>
-                        <p class="text-[10px] text-blue-500 font-bold">آپلود عکس پروفایل</p>
+                        <p class="text-[10px] text-blue-500 font-black">تصویر پرسنلی خود را انتخاب کنید</p>
                     </div>
                 </div>
-                <button id="authBtn" onclick="processAuth()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-all">ورود به سیستم</button>
+                <button id="authBtn" onclick="processAuth()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-xl shadow-blue-500/30 active:scale-95 transition-all">تایید و ورود به پنل</button>
             </div>
         </div>
     </div>
 
     <div id="mainApp" class="hidden">
-        <header class="p-5 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b dark:border-slate-800">
-            <div class="flex items-center gap-4">
-                <button onclick="handleLogout()" class="text-[10px] font-bold text-red-500 bg-red-50 px-3 py-1.5 rounded-lg border border-red-200">خروج</button>
-                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm">🌙</button>
+        <header class="p-5 glass sticky top-0 z-50 border-b dark:border-slate-800 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <button onclick="handleLogout()" class="bg-red-500/10 text-red-500 p-2 rounded-xl text-xs font-bold">خروج</button>
+                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800">🌙</button>
             </div>
             <div class="flex items-center gap-3">
-                <div class="text-right leading-tight">
+                <div class="text-right">
                     <div class="flex items-center gap-1 justify-end">
-                        <span id="userRoleTag" class="hidden bg-blue-600 text-white text-[7px] px-1.5 py-0.5 rounded-full font-black uppercase">Admin</span>
-                        <p id="userNameDisplay" class="text-[11px] font-bold">کاربر</p>
+                        <span id="userRoleTag" class="hidden bg-blue-600 text-[8px] px-2 py-0.5 rounded-full text-white font-black">ADMIN</span>
+                        <p id="userNameDisplay" class="text-xs font-black">نام کاربر</p>
                     </div>
-                    <p id="userPhoneDisplay" class="text-[9px] text-slate-400 font-bold"></p>
+                    <p id="userPhoneDisplay" class="text-[10px] text-slate-400 font-bold"></p>
                 </div>
-                <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover bg-slate-200 shadow-sm">
+                <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover shadow-lg">
             </div>
         </header>
 
-        <main id="home" class="tab-content active px-5 py-4">
-            <div id="propertyContainer" class="space-y-6"></div>
+        <main id="home" class="tab-content active px-5 py-6">
+            <div id="propertyContainer" class="space-y-8"></div>
         </main>
         
         <main id="dashboard" class="tab-content p-6">
-            <div class="grid grid-cols-2 gap-4 mb-6 text-center text-[10px] font-bold">
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border shadow-sm">تعداد فایل‌ها: <span id="statFiles" class="text-blue-600 text-lg block">0</span></div>
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border shadow-sm">کل بازدیدها: <span id="statVisits" class="text-blue-600 text-lg block">0</span></div>
-            </div>
-            <div class="bg-slate-900 text-white p-6 rounded-[2.5rem] mb-6 shadow-xl">
-                <h3 class="font-bold mb-4 text-xs italic text-blue-400">💰 محاسبه کمیسیون</h3>
-                <input type="number" id="dealPrice" placeholder="مبلغ معامله..." class="w-full p-4 rounded-2xl bg-white/10 outline-none mb-3 font-bold text-left">
-                <button onclick="calculateCommission()" class="w-full bg-blue-600 py-3 rounded-xl font-black text-xs">محاسبه</button>
-                <div id="commResult" class="mt-4 space-y-2 text-[11px] hidden border-t border-white/10 pt-4">
-                    <div class="flex justify-between"><span>سهم هر طرف:</span><span id="eachSide" class="font-bold">0</span></div>
-                    <div class="flex justify-between text-blue-400"><span>با مالیات:</span><span id="totalComm" class="font-bold">0</span></div>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] shadow-sm border dark:border-slate-800 text-center">
+                    <p class="text-[10px] text-slate-400 font-black mb-1">فایل‌های فعال</p>
+                    <span id="statFiles" class="text-3xl font-black text-blue-600">0</span>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] shadow-sm border dark:border-slate-800 text-center">
+                    <p class="text-[10px] text-slate-400 font-black mb-1">بازدیدهای ثبت شده</p>
+                    <span id="statVisits" class="text-3xl font-black text-blue-600">0</span>
                 </div>
             </div>
-            <div id="visitHistory" class="space-y-2"></div>
+
+            <div class="bg-slate-900 text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl">💰</div>
+                <h3 class="font-black text-sm mb-6 flex items-center gap-2">ماشین حساب کمیسیون <span class="bg-blue-600 text-[8px] px-2 py-1 rounded-lg">0.25%</span></h3>
+                <input type="number" id="dealPrice" placeholder="مبلغ کل معامله را وارد کنید..." class="w-full bg-white/10 border-none p-5 rounded-2xl outline-none mb-4 font-black text-center text-lg">
+                <button onclick="calculateCommission()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black transition-all">محاسبه سهم دفتر</button>
+                
+                <div id="commResult" class="hidden mt-6 space-y-4 border-t border-white/10 pt-6 animate-fadeIn">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="opacity-60">کمیسیون هر طرف:</span>
+                        <span id="eachSide" class="font-black">0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-blue-400">
+                        <span class="font-bold">مجموع با مالیات (۹٪):</span>
+                        <span id="totalComm" class="text-xl font-black">0</span>
+                    </div>
+                </div>
+            </div>
         </main>
 
-        <main id="visits" class="tab-content p-6"><div id="securityLog" class="space-y-4"></div></main>
+        <main id="visits" class="tab-content p-6">
+            <h2 class="font-black text-lg mb-6 flex items-center gap-2">🛡️ وضعیت کلیدها</h2>
+            <div id="securityLog" class="space-y-4"></div>
+        </main>
 
         <main id="contacts" class="tab-content p-6">
-            <div class="bg-blue-600 text-white p-6 rounded-[2.5rem] mb-6 shadow-lg">
-                <h3 class="font-bold text-sm mb-2">تقویم کاری</h3>
-                <p class="text-[10px] opacity-80 font-bold">برنامه بازدیدها و جلسات امروز</p>
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="font-black text-xl">📅 تقویم کاری</h2>
+                <span class="text-[10px] font-black bg-slate-200 dark:bg-slate-800 px-3 py-1 rounded-full uppercase">Today</span>
             </div>
-            <div id="scheduleContainer" class="space-y-3">
-                <p class="text-center py-10 text-slate-400 text-xs">رویدادی برای امروز ثبت نشده است</p>
+            <div id="scheduleContainer" class="space-y-4">
+                <div class="bg-blue-600/10 border-r-4 border-blue-600 p-5 rounded-2xl">
+                    <p class="text-blue-600 font-black text-xs">جلسه قرارداد</p>
+                    <p class="text-[10px] font-bold opacity-70 mt-1">ساعت ۱۸:۳۰ - دفتر مرکزی</p>
+                </div>
             </div>
         </main>
 
-        <div id="propModal" class="fixed inset-0 z-[120] hidden backdrop-blur-md bg-black/60 flex items-center justify-center p-6">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
-                <h3 class="text-xl font-black mb-6 text-blue-600 text-center">ثبت فایل جدید</h3>
+        <div id="propModal" class="fixed inset-0 z-[200] hidden glass flex items-center justify-center p-6">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 shadow-2xl border dark:border-slate-800">
+                <h3 class="text-2xl font-black mb-8 text-blue-600 text-center italic">New Property</h3>
                 <div class="space-y-4">
-                    <label class="w-full h-20 border-2 border-dashed border-slate-200 rounded-3xl flex items-center justify-center cursor-pointer text-slate-400 text-[10px]">📸 تصاویر ملک<input type="file" id="pImages" multiple class="hidden" onchange="addImagesToList(this)"></label>
-                    <div id="previewGallery" class="flex gap-2 overflow-x-auto"></div>
-                    <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
-                    <input type="text" id="pTitle" placeholder="عنوان فایل" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
-                    <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
+                    <label class="w-full h-24 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] flex flex-col items-center justify-center cursor-pointer text-slate-400 hover:bg-slate-50 transition-all">
+                        <span class="text-2xl">🖼️</span>
+                        <span class="text-[10px] font-black mt-1">انتخاب تصاویر ملک</span>
+                        <input type="file" id="pImages" multiple class="hidden" onchange="addImagesToList(this)">
+                    </label>
+                    <div id="previewGallery" class="flex gap-2 overflow-x-auto pb-2"></div>
+                    <input type="text" id="pCode" placeholder="کد ملک (مثلاً ۱۰۱)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <input type="text" id="pTitle" placeholder="عنوان فایل" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <input type="text" id="pPrice" placeholder="قیمت (مثلاً ۲.۵ میلیارد)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
                 </div>
-                <div class="flex gap-2 mt-8"><button onclick="closeModal('propModal')" class="flex-1 text-slate-400 font-bold">لغو</button><button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-bold">ذخیره</button></div>
+                <div class="flex gap-3 mt-8">
+                    <button onclick="closeModal('propModal')" class="flex-1 text-slate-400 font-black text-xs">انصراف</button>
+                    <button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-[1.5rem] font-black shadow-lg">ثبت فایل</button>
+                </div>
             </div>
         </div>
 
-        <div id="adminErrorModal" class="fixed inset-0 z-[300] hidden backdrop-blur-xl bg-slate-950/40 flex items-center justify-center p-6">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[3rem] p-10 shadow-2xl border-t-4 border-blue-600 text-center">
-                <span class="text-5xl block mb-4">🔐</span>
-                <h3 class="font-black text-lg mb-2">دسترسی ادمین</h3>
-                <p class="text-[11px] text-slate-500 mb-8 font-bold">ثبت فایل جدید فقط توسط "نادر" امکان‌پذیر است.</p>
-                <button onclick="closeModal('adminErrorModal')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xs">فهمیدم</button>
+        <div id="adminErrorModal" class="fixed inset-0 z-[300] hidden glass flex items-center justify-center p-6">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[3rem] p-10 text-center shadow-2xl">
+                <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">🔒</div>
+                <h3 class="font-black text-lg mb-2">عدم دسترسی</h3>
+                <p class="text-[11px] text-slate-500 font-bold leading-relaxed mb-8">نادر جان تنظیم کرده که فقط خودش بتونه فایل جدید اضافه کنه!</p>
+                <button onclick="closeModal('adminErrorModal')" class="w-full bg-slate-900 dark:bg-blue-600 text-white py-4 rounded-2xl font-black text-xs">متوجه شدم</button>
             </div>
         </div>
 
-        <nav class="fixed bottom-8 left-6 right-6 bg-white dark:bg-slate-900 shadow-2xl h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50 border dark:border-slate-800">
-            <button onclick="showTab('home', this)" class="nav-item nav-active text-[10px] font-bold">ویترین</button>
-            <button onclick="showTab('dashboard', this)" class="nav-item text-slate-300 text-[10px] font-bold">آمار</button>
-            <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-12 border-4 border-white dark:border-slate-950 text-2xl font-bold">+</button>
-            <button onclick="showTab('visits', this)" class="nav-item text-slate-300 text-[10px] font-bold">امنیت</button>
-            <button onclick="showTab('contacts', this)" class="nav-item text-slate-300 text-[10px] font-bold">تقویم</button>
+        <nav class="fixed bottom-8 left-6 right-6 glass h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50 border shadow-2xl dark:border-slate-800">
+            <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center gap-1">
+                <span class="text-xl">🏠</span><span class="text-[8px] font-black">ویترین</span>
+            </button>
+            <button onclick="showTab('dashboard', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1">
+                <span class="text-xl">📊</span><span class="text-[8px] font-black">آمار</span>
+            </button>
+            <button onclick="openPropModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl shadow-blue-600/50 -mt-14 border-4 border-white dark:border-slate-950 text-2xl font-bold transition-transform active:scale-90">+</button>
+            <button onclick="showTab('visits', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1">
+                <span class="text-xl">🔑</span><span class="text-[8px] font-black">امنیت</span>
+            </button>
+            <button onclick="showTab('contacts', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1">
+                <span class="text-xl">📅</span><span class="text-[8px] font-black">تقویم</span>
+            </button>
         </nav>
     </div>
 
@@ -130,28 +172,39 @@
         let properties = []; let visits = {}; let history = []; let currentImgList = [];
         let isSignupMode = false; let currentUser = null;
 
+        // --- سیستم احراز هویت هوشمند ---
         function processAuth() {
             const phone = document.getElementById('authPhone').value.trim();
-            if (phone.length < 11) { alert("شماره اشتباه است"); return; }
-            const savedUser = localStorage.getItem('nader_v4_user_' + phone);
+            if (phone.length < 11) { alert("لطفاً شماره موبایل ۱۱ رقمی وارد کنید"); return; }
             
-            if (savedUser && !isSignupMode) {
-                currentUser = JSON.parse(savedUser); launchApp(); return;
-            }
-            if (!savedUser && !isSignupMode) {
-                isSignupMode = true;
-                document.getElementById('signupFormSection').classList.remove('hidden');
-                document.getElementById('authBtn').innerText = "ثبت‌نام و ورود";
+            // ادمین مستقیم وارد می شود
+            if (phone === "09337301641") {
+                currentUser = { phone: "09337301641", name: "نادر (مدیریت)", avatar: "https://www.w3schools.com/howto/img_avatar.png" };
+                launchApp();
                 return;
             }
-            if (isSignupMode) {
-                const name = document.getElementById('signupName').value.trim();
-                const avatar = document.getElementById('tempAvatarPreview').src;
-                if (!name || !avatar || avatar.includes('undefined')) { alert("نام و عکس را وارد کنید"); return; }
-                const user = { phone, name, avatar };
-                localStorage.setItem('nader_v4_user_' + phone, JSON.stringify(user));
-                currentUser = user; launchApp();
+
+            const savedUser = localStorage.getItem('nader_v5_user_' + phone);
+            if (savedUser && !isSignupMode) {
+                currentUser = JSON.parse(savedUser);
+                launchApp();
+                return;
             }
+
+            if (!isSignupMode) {
+                isSignupMode = true;
+                document.getElementById('signupFormSection').classList.remove('hidden');
+                document.getElementById('authBtn').innerText = "تکمیل ثبت‌نام و ورود";
+                return;
+            }
+
+            const name = document.getElementById('signupName').value.trim();
+            const avatar = document.getElementById('tempAvatarPreview').src;
+            if (!name || !avatar || avatar.includes('undefined')) { alert("نام و تصویر پروفایل الزامی است"); return; }
+            
+            currentUser = { phone, name, avatar };
+            localStorage.setItem('nader_v5_user_' + phone, JSON.stringify(currentUser));
+            launchApp();
         }
 
         function launchApp() {
@@ -164,15 +217,28 @@
             updateUI();
         }
 
+        // --- مدیریت املاک ---
         function openPropModal() {
-            if (currentUser.phone !== "09337301641") { document.getElementById('adminErrorModal').classList.remove('hidden'); return; }
+            if (currentUser.phone !== "09337301641") {
+                document.getElementById('adminErrorModal').classList.remove('hidden');
+                return;
+            }
             currentImgList = []; document.getElementById('previewGallery').innerHTML = "";
             document.getElementById('propModal').classList.remove('hidden');
         }
 
+        function saveProperty() {
+            const code = document.getElementById('pCode').value;
+            const title = document.getElementById('pTitle').value;
+            const price = document.getElementById('pPrice').value;
+            if(!code || !title) return;
+            properties.unshift({ code, title, price, imgs: currentImgList.length > 0 ? [...currentImgList] : ['https://picsum.photos/400/300'] });
+            updateUI(); closeModal('propModal');
+        }
+
         function handleKeyAction(code) {
             if (visits[code]) {
-                if(confirm("پایان بازدید واحد " + code + "؟")) {
+                if(confirm(`آیا بازدید واحد ${code} به پایان رسیده است؟`)) {
                     history.unshift({ ...visits[code], unit: code, end: new Date().toLocaleTimeString('fa-IR') });
                     delete visits[code]; updateUI();
                 }
@@ -184,42 +250,82 @@
 
         function updateUI() {
             document.getElementById('propertyContainer').innerHTML = properties.map((p, idx) => `
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-sm border dark:border-slate-800">
-                    <div class="relative"><div class="swiper-container">${p.imgs.map(img => `<div class="swiper-slide h-64"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}</div></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sm">${p.title}</h3><span class="text-blue-600 font-bold text-sm">${p.price}</span></div>
-                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500 animate-pulse' : 'bg-black dark:bg-blue-600'} text-white py-4 rounded-2xl text-[10px] font-black italic">
-                            ${visits[p.code] ? 'IN VISIT' : 'EXIT KEY (' + p.code + ')'}
+                <div class="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none border dark:border-slate-800">
+                    <div class="relative">
+                        <div class="swiper-container" onscroll="updateDots(this, ${idx})">
+                            ${p.imgs.map(img => `<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
+                        </div>
+                        <div class="dots-${idx} absolute bottom-6 left-0 right-0 flex justify-center gap-1.5 px-10">
+                            ${p.imgs.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('')}
+                        </div>
+                        <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white text-[10px] px-3 py-1 rounded-full font-black">کد: ${p.code}</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-6">
+                            <h3 class="font-black text-lg leading-tight">${p.title}</h3>
+                            <div class="text-left"><p class="text-[9px] text-slate-400 font-bold uppercase">Price</p><p class="text-blue-600 font-black text-sm">${p.price}</p></div>
+                        </div>
+                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500 animate-pulse' : 'bg-slate-900 dark:bg-blue-600'} text-white py-5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest shadow-lg">
+                            ${visits[p.code] ? '⚠️ In Visit (' + visits[p.code].consultant + ')' : '🔓 Exit Key'}
                         </button>
                     </div>
                 </div>`).join('');
+            
             document.getElementById('statFiles').innerText = properties.length;
             document.getElementById('statVisits').innerText = history.length + Object.keys(visits).length;
+            
             document.getElementById('securityLog').innerHTML = Object.keys(visits).map(code => `
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border-r-8 border-blue-600 flex justify-between items-center text-xs shadow-sm">
-                    <div class="text-right font-bold"><p class="text-slate-400">واحد ${code}</p><p class="text-blue-600">${visits[code].consultant}</p></div>
-                    <p class="text-[10px] text-slate-400 font-bold">${visits[code].start}</p>
-                </div>`).join('') || '<p class="text-center py-10 text-slate-300 text-xs italic">امنیت برقرار است</p>';
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border-r-8 border-blue-600 flex justify-between items-center shadow-sm">
+                    <div class="text-right font-black"><p class="text-[10px] text-slate-400">واحد ${code}</p><p class="text-sm text-blue-600">${visits[code].consultant}</p></div>
+                    <div class="text-left font-bold"><p class="text-[9px] opacity-40 uppercase">Started At</p><p class="text-xs">${visits[code].start}</p></div>
+                </div>`).join('') || '<p class="text-center py-10 text-slate-300 text-xs italic">تمام کلیدها در دفتر موجود است</p>';
         }
 
-        function previewAvatar(input) { if (input.files && input.files[0]) { const r = new FileReader(); r.onload = (e) => { document.getElementById('tempAvatarPreview').src = e.target.result; document.getElementById('tempAvatarPreview').classList.remove('hidden'); document.getElementById('camIcon').classList.add('hidden'); }; r.readAsDataURL(input.files[0]); } }
-        function addImagesToList(i) { Array.from(i.files).forEach(f => { let r = new FileReader(); r.onload = (e) => { currentImgList.push(e.target.result); let img = document.createElement('img'); img.src = e.target.result; img.className = "w-12 h-12 object-cover rounded-lg shrink-0"; document.getElementById('previewGallery').appendChild(img); }; r.readAsDataURL(f); }); }
-        function saveProperty() {
-            const code = document.getElementById('pCode').value; const title = document.getElementById('pTitle').value; const price = document.getElementById('pPrice').value;
-            if(!code || !title) return;
-            properties.unshift({ code, title, price, imgs: currentImgList.length > 0 ? [...currentImgList] : ['https://picsum.photos/400/300'] });
-            updateUI(); closeModal('propModal');
+        // --- توابع کمکی ---
+        function updateDots(el, idx) {
+            const activeIdx = Math.round(el.scrollLeft / el.offsetWidth);
+            document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
         }
-        function handleLogout() { location.reload(); }
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const r = new FileReader();
+                r.onload = (e) => {
+                    document.getElementById('tempAvatarPreview').src = e.target.result;
+                    document.getElementById('tempAvatarPreview').classList.remove('hidden');
+                    document.getElementById('camIcon').classList.add('hidden');
+                };
+                r.readAsDataURL(input.files[0]);
+            }
+        }
+        function addImagesToList(i) {
+            Array.from(i.files).forEach(f => {
+                let r = new FileReader();
+                r.onload = (e) => {
+                    currentImgList.push(e.target.result);
+                    let img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = "w-14 h-14 object-cover rounded-xl shrink-0 border-2 border-blue-100";
+                    document.getElementById('previewGallery').appendChild(img);
+                };
+                r.readAsDataURL(f);
+            });
+        }
+        function calculateCommission() {
+            let price = document.getElementById('dealPrice').value; if(!price) return;
+            let comm = price * 0.0025; let total = comm * 1.09;
+            document.getElementById('commResult').classList.remove('hidden');
+            document.getElementById('eachSide').innerText = Math.round(comm).toLocaleString() + " تومان";
+            document.getElementById('totalComm').innerText = Math.round(total).toLocaleString() + " تومان";
+        }
+        function showTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            btn.classList.add('nav-active');
+        }
+        function handleLogout() { if(confirm("خارج می‌شوید؟")) location.reload(); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-        function showTab(id, btn) { 
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); 
-            document.getElementById(id).classList.add('active'); 
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active', 'text-blue-600'));
-            btn.classList.add('nav-active', 'text-blue-600');
-        }
-        function calculateCommission() { let price = document.getElementById('dealPrice').value; if(!price) return; let comm = price * 0.0025; let total = comm * 1.09; document.getElementById('commResult').classList.remove('hidden'); document.getElementById('eachSide').innerText = Math.round(comm).toLocaleString() + " تومان"; document.getElementById('totalComm').innerText = Math.round(total).toLocaleString() + " تومان"; }
     </script>
 </body>
 </html>
