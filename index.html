@@ -47,10 +47,6 @@
 
     <div id="mainApp" class="hidden">
         <header class="p-5 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b dark:border-slate-800">
-            <div class="flex items-center gap-4">
-                <button onclick="handleLogout()" class="text-[10px] font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg border border-red-200">خروج</button>
-                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm">🌙</button>
-            </div>
             <div class="flex items-center gap-3">
                 <div class="text-left leading-tight text-right">
                     <div class="flex items-center gap-1 justify-end">
@@ -60,6 +56,13 @@
                     <p id="userPhoneDisplay" class="text-[8px] text-slate-400 font-bold"></p>
                 </div>
                 <img id="headerAvatar" src="" class="w-10 h-10 rounded-full border-2 border-blue-500 object-cover bg-slate-200 shadow-sm">
+            </div>
+            <div class="flex items-center gap-1 justify-center">
+                <p class="text-[14px] text-slate-400 font-bold">املاک من</p>
+            </div>
+             <div class="flex items-center gap-4">
+                <button onclick="handleLogout()" class="text-[10px] font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg border border-red-200">خروج</button>
+                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm">🌙</button>
             </div>
         </header>
 
