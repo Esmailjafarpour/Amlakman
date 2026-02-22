@@ -102,7 +102,8 @@
 
         <div id="propModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
             <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 overflow-y-auto max-h-[90vh]">
-            <h3 id="modalTitle" class="text-xl font-black mb-6 text-blue-600">ثبت ملک جدید</h3>               
+            <h3 id="modalTitle" class="text-xl font-black mb-6 text-blue-600">ثبت ملک جدید</h3>  
+            <input type="hidden" id="editIndex" value="-1">             
             <div class="space-y-4">
                     <input type="file" id="pImages" multiple class="hidden" onchange="handleImageUpload(this)">
                     <label for="pImages" id="modalImgLabel" class="w-full h-20 border-2 border-dashed rounded-2xl flex items-center justify-center text-slate-400">📸 عکس‌ها</label>
@@ -252,54 +253,62 @@ function clearErrors() {
         }
 
         // --- توابع اصلی ---
-        function handlePlusButtonClick() { if(!currentUser.isAdmin) return alert("فقط ادمین"); currentImgList=[]; document.getElementById('previewGallery').innerHTML=''; document.getElementById('propModal').classList.remove('hidden'); }
-        function handleImageUpload(i) { Array.from(i.files).forEach(f=>{const r=new FileReader(); r.onload=(e)=>{currentImgList.push(e.target.result); renderPreview();}; r.readAsDataURL(f);}); }
+function handlePlusButtonClick() { 
+    if(!currentUser.isAdmin) return alert("فقط ادمین اجازه دسترسی دارد."); 
+    
+    // ریست کردن همه فیلدها برای ثبت جدید
+    window.editingIndex = -1; 
+    document.getElementById('modalTitle').innerText = "ثبت ملک جدید";
+    document.getElementById('pCode').value = '';
+    document.getElementById('pTitle').value = '';
+    document.getElementById('pPrice').value = '';
+    currentImgList = []; 
+    document.getElementById('previewGallery').innerHTML = ''; 
+    
+    document.getElementById('propModal').classList.remove('hidden'); 
+}        function handleImageUpload(i) { Array.from(i.files).forEach(f=>{const r=new FileReader(); r.onload=(e)=>{currentImgList.push(e.target.result); renderPreview();}; r.readAsDataURL(f);}); }
         function renderPreview() { document.getElementById('previewGallery').innerHTML=currentImgList.map(s=>`<img src="${s}" class="w-12 h-12 rounded object-cover">`).join(''); }
-        function saveProperty() {
-            const c = document.getElementById('pCode');
-            const t = document.getElementById('pTitle');
-            const imgLabel = document.getElementById('modalImgLabel'); // لیبل یا کادر آپلود عکس
-            
-            // پاک کردن ارورهای قبلی
-            document.querySelectorAll('.error-text-prop').forEach(e => e.remove());
-            let hasError = false;
+       function saveProperty() {
+    const c = document.getElementById('pCode');
+    const t = document.getElementById('pTitle');
+    const imgLabel = document.getElementById('modalImgLabel');
+    
+    // پاک کردن ارورهای قبلی
+    document.querySelectorAll('.error-text-prop').forEach(e => e.remove());
+    let hasError = false;
 
-            // ۱. چک کردن عکس (حتماً باید حداقل یک عکس باشد)
-            if (currentImgList.length === 0) {
-                showPropError(imgLabel, "حتماً باید حداقل یک عکس برای ملک انتخاب کنید");
-                hasError = true;
-            }
+    // اعتبار سنجی عکس
+    if (currentImgList.length === 0) {
+        showPropError(imgLabel, "حداقل یک عکس انتخاب کنید");
+        hasError = true;
+    }
+    // اعتبار سنجی کد و عنوان
+    if (!c.value.trim()) { showPropError(c, "کد الزامی است"); hasError = true; }
+    if (!t.value.trim()) { showPropError(t, "عنوان الزامی است"); hasError = true; }
 
-            // ۲. چک کردن کد ملک
-            if (!c.value.trim()) {
-                showPropError(c, "کد ملک الزامی است");
-                hasError = true;
-            }
+    if (hasError) return;
 
-            // ۳. چک کردن عنوان
-            if (!t.value.trim()) {
-                showPropError(t, "عنوان ملک را وارد کنید");
-                hasError = true;
-            }
+    const propData = {
+        code: c.value,
+        title: t.value,
+        price: document.getElementById('pPrice').value || "توافقی",
+        imgs: [...currentImgList]
+    };
 
-            if (hasError) return; // اگر هر کدام خطا داشت، متوقف شو
+    // چک کردن اینکه آیا در حالت ویرایش هستیم یا ثبت جدید
+    if (window.editingIndex !== undefined && window.editingIndex !== -1) {
+        properties[window.editingIndex] = propData;
+        window.editingIndex = -1; // ریست کردن بعد از ویرایش
+    } else {
+        properties.unshift(propData); // اضافه کردن به اول لیست
+    }
 
-            // ادامه مراحل ذخیره (همان کدهای قبلی...)
-            const propData = {
-                code: c.value,
-                title: t.value,
-                price: document.getElementById('pPrice').value || "توافقی",
-                imgs: [...currentImgList]
-            };
-
-            const idx = document.getElementById('editIndex').value;
-            if (idx === "-1") properties.unshift(propData);
-            else properties[idx] = propData;
-
-            localStorage.setItem('nader_props', JSON.stringify(properties));
-            closePropModal();
-            updateUI();
-        }
+    // ذخیره در مرورگر
+    localStorage.setItem('nader_props', JSON.stringify(properties));
+    
+    closePropModal();
+    updateUI();
+}
 
         // تابع کمکی برای نمایش ارور در مودال ملک
         function showPropError(el, msg) {
