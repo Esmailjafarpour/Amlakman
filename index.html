@@ -357,7 +357,7 @@
 </html> -->
 
 
-
+<!-- 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -693,6 +693,270 @@ function launchApp() {
         function handleKeyAction(code) {
             if (visits[code]) { if(confirm("کلید بازگشت؟")) { delete visits[code]; updateUI(); } }
             else { visits[code] = { name: currentUser.name, time: new Date().toLocaleTimeString('fa-IR') }; updateUI(); }
+        }
+    </script>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت املاک نادر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700;900&display=swap" rel="stylesheet">
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; transition: 0.3s; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-active { color: #2563eb !important; transform: scale(1.1); }
+        .swiper-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .swiper-container::-webkit-scrollbar { display: none; }
+        .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; height: 280px; }
+        .dot { transition: 0.3s; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); }
+        .dot.active { background: white !important; width: 18px; border-radius: 10px; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+    </style>
+</head>
+<body class="pb-36 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-right">
+
+    <div id="authPage" class="fixed inset-0 z-[600] bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8">
+        <h1 class="text-5xl font-black text-blue-600 mb-2 italic">NADER</h1>
+        <input type="tel" id="authPhone" placeholder="09337301641" maxlength="11" class="w-full max-w-sm bg-slate-100 dark:bg-slate-900 py-5 px-6 rounded-3xl outline-none text-center text-xl font-bold border-2 border-transparent">
+        <button onclick="processAuth()" class="w-full max-w-sm bg-blue-600 text-white py-5 rounded-3xl font-black mt-6 shadow-xl">ورود به پنل</button>
+    </div>
+
+    <div id="mainApp" class="hidden">
+        <header class="p-5 glass sticky top-0 z-50 border-b dark:border-slate-800 flex justify-between items-center flex-row-reverse">
+            <div onclick="openProfileEdit()" class="flex items-center gap-3 flex-row-reverse cursor-pointer">
+                <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover shadow-lg">
+                <div class="text-right leading-tight">
+                    <div class="flex items-center gap-1 justify-end">
+                        <span id="userRoleTag" class="hidden bg-blue-600 text-[8px] px-2 py-0.5 rounded-full text-white font-black">ADMIN</span>
+                        <p id="userNameDisplay" class="text-xs font-black"></p>
+                    </div>
+                    <p id="userPhoneDisplay" class="text-[10px] text-slate-400 font-bold"></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800">🌙</button>
+                <button onclick="handleLogout()" class="bg-red-500/10 text-red-500 p-2 rounded-xl text-xs font-bold">خروج</button>
+            </div>
+        </header>
+
+        <main id="home" class="tab-content active px-5 py-8"><div id="propertyContainer" class="space-y-10"></div></main>
+        
+        <main id="dashboard" class="tab-content p-6 text-right">
+            <h2 class="font-black text-lg mb-6 italic text-blue-600 underline">داشبورد گزارشات</h2>
+            
+            <div id="adminOnlyTools" class="hidden space-y-6">
+                <button onclick="openAddConsultantModal()" class="w-full bg-blue-600 text-white p-5 rounded-3xl font-black flex justify-between items-center shadow-lg">
+                    <span>ثبت مشاور جدید</span><span class="text-xl">+</span>
+                </button>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border dark:border-slate-800">
+                    <h3 class="text-[10px] font-black mb-4 opacity-50 uppercase tracking-widest">تیم مشاورین نادر</h3>
+                    <div id="consultantItems" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="font-black text-sm mb-4 flex items-center gap-2">📝 سوابق بازدیدهای من</h3>
+                <div id="myVisitsLog" class="space-y-3">
+                    <p class="text-xs text-slate-400 italic">هنوز بازدیدی برای شما ثبت نشده است.</p>
+                </div>
+            </div>
+        </main>
+
+        <main id="visits" class="tab-content p-6 text-right">
+            <h2 class="font-black text-lg mb-6">🔑 وضعیت فعلی کلیدها</h2>
+            <div id="securityLog" class="space-y-4"></div>
+        </main>
+
+        <div id="visitActionModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 text-right animate-fadeIn">
+                <h3 class="font-black text-lg mb-2 text-center">جزئیات خروج کلید</h3>
+                <p id="targetPropTitle" class="text-center text-[10px] text-blue-600 font-bold mb-6 italic"></p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-[10px] font-black opacity-40 mr-2 uppercase">Consultant</label>
+                        <select id="visitConsultantSelect" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-sm"></select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black opacity-40 mr-2 uppercase">Customer Name</label>
+                        <input type="text" id="visitCustomerName" placeholder="نام مشتری (مثلاً آقای محمدی)" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-sm border-2 border-transparent">
+                    </div>
+                    <button onclick="confirmVisit()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-xl mt-4">ثبت و آزاد سازی کلید</button>
+                    <button onclick="closeVisitModal()" class="w-full text-slate-400 font-bold text-xs">انصراف</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-8 left-6 right-6 glass h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50 border shadow-2xl dark:border-slate-800">
+            <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center gap-1"><span class="text-xl">🏠</span><span class="text-[8px] font-black">ویترین</span></button>
+            <button onclick="showTab('dashboard', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1"><span class="text-xl">📊</span><span class="text-[8px] font-black">گزارشات</span></button>
+            <button onclick="handlePlusButtonClick()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-14 border-4 border-white dark:border-slate-950 text-2xl font-bold">+</button>
+            <button onclick="showTab('visits', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1"><span class="text-xl">🔑</span><span class="text-[8px] font-black">امنیت</span></button>
+            <button onclick="showTab('contacts', this)" class="nav-item text-slate-400 flex flex-col items-center gap-1"><span class="text-xl">📅</span><span class="text-[8px] font-black">تقویم</span></button>
+        </nav>
+    </div>
+
+    <script>
+        // دیتابیس فرضی
+        let properties = []; 
+        let visits = {}; 
+        let visitHistory = []; // تمام بازدیدهای ثبت شده در تاریخچه
+        let consultants = JSON.parse(localStorage.getItem('nader_team')) || [
+            {phone: "09337301641", name: "نادر (مدیریت)", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
+        ];
+        let currentUser = null;
+        let activeKeyOutCode = null;
+
+        function processAuth() {
+            const phone = document.getElementById('authPhone').value.trim();
+            const found = consultants.find(c => c.phone === phone);
+            if (!found) return alert("شماره در تیم نادر ثبت نشده است.");
+            currentUser = {...found, isAdmin: phone === "09337301641"};
+            launchApp();
+        }
+
+        function launchApp() {
+            document.getElementById('authPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('userNameDisplay').innerText = currentUser.name;
+            document.getElementById('userPhoneDisplay').innerText = currentUser.phone;
+            document.getElementById('headerAvatar').src = currentUser.avatar;
+            if (currentUser.isAdmin) document.getElementById('userRoleTag').classList.remove('hidden'), document.getElementById('adminOnlyTools').classList.remove('hidden');
+            updateUI();
+        }
+
+        // --- منطق بازدید و خروج کلید ---
+        function handleKeyAction(code) {
+            if (visits[code]) {
+                if(confirm("آیا کلید توسط " + visits[code].consultant + " بازگردانده شد؟")) {
+                    delete visits[code];
+                    updateUI();
+                }
+            } else {
+                activeKeyOutCode = code;
+                const prop = properties.find(p => p.code === code);
+                document.getElementById('targetPropTitle').innerText = prop ? prop.title : "کد ملک: " + code;
+                
+                // پر کردن لیست مشاورین در مودال
+                const select = document.getElementById('visitConsultantSelect');
+                select.innerHTML = consultants.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                document.getElementById('visitActionModal').classList.remove('hidden');
+            }
+        }
+
+        function confirmVisit() {
+            const consultantName = document.getElementById('visitConsultantSelect').value;
+            const customerName = document.getElementById('visitCustomerName').value.trim();
+            const prop = properties.find(p => p.code === activeKeyOutCode);
+
+            if(!customerName) {
+                const inp = document.getElementById('visitCustomerName');
+                inp.classList.add('error-shake');
+                setTimeout(() => inp.classList.remove('error-shake'), 500);
+                return;
+            }
+
+            const visitData = {
+                code: activeKeyOutCode,
+                propTitle: prop ? prop.title : "ملک " + activeKeyOutCode,
+                consultant: consultantName,
+                customer: customerName,
+                time: new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}),
+                date: new Date().toLocaleDateString('fa-IR')
+            };
+
+            visits[activeKeyOutCode] = visitData; // ثبت در وضعیت فعلی کلیدها
+            visitHistory.unshift(visitData); // ثبت در تاریخچه برای آمار
+            
+            closeVisitModal();
+            updateUI();
+        }
+
+        function updateUI() {
+            // آپدیت ویترین املاک
+            const container = document.getElementById('propertyContainer');
+            if (properties.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 opacity-20 font-black">ویترین خالی است. ملکی ثبت کنید.</div>`;
+            } else {
+                container.innerHTML = properties.map((p, idx) => `
+                    <div class="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-xl border dark:border-slate-800">
+                        <div class="relative">
+                            <div class="swiper-container" onscroll="updateDots(this, ${idx})">
+                                ${p.imgs.map(img => `<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
+                            </div>
+                            <div class="dots-${idx} absolute bottom-6 left-0 right-0 flex justify-center gap-1.5 px-10">
+                                ${p.imgs.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('')}
+                            </div>
+                            <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white text-[9px] px-3 py-1 rounded-full font-black tracking-widest uppercase italic">Code: ${p.code}</div>
+                            <div class="absolute top-4 left-4 bg-blue-600 text-white text-[9px] px-3 py-1 rounded-full font-black shadow-lg">${p.status}</div>
+                        </div>
+                        <div class="p-8">
+                            <div class="flex justify-between items-start mb-6 text-right">
+                                <h3 class="font-black text-lg">${p.title}</h3>
+                                <div class="text-left">
+                                    <div class="text-blue-600 font-black text-sm">${p.price}</div>
+                                    ${currentUser.isAdmin ? `<button onclick="editProperty(${idx})" class="text-[9px] text-slate-400 font-black mt-2">ویرایش فایل 📝</button>` : ''}
+                                </div>
+                            </div>
+                            <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500' : 'bg-slate-900 dark:bg-blue-600'} text-white py-5 rounded-[1.8rem] font-black text-[10px] tracking-widest uppercase">
+                                ${visits[p.code] ? '⚠️ دست: ' + (visits[p.code].consultant === currentUser.name ? 'خود شما' : visits[p.code].consultant) : '🔓 خروج کلید واحد ' + p.code}
+                            </button>
+                        </div>
+                    </div>`).join('');
+            }
+
+            // آپدیت داشبورد (سوابق شخصی مشاور)
+            const myVisitsContainer = document.getElementById('myVisitsLog');
+            const myData = visitHistory.filter(h => h.consultant === currentUser.name);
+            if (myData.length > 0) {
+                myVisitsContainer.innerHTML = myData.map(h => `
+                    <div class="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-blue-500">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-black text-xs">${h.propTitle}</span>
+                            <span class="text-[8px] opacity-40">${h.date}</span>
+                        </div>
+                        <p class="text-[10px] font-bold text-slate-500">مشتری: ${h.customer} <span class="mx-2">|</span> ساعت: ${h.time}</p>
+                    </div>
+                `).join('');
+            }
+
+            // لیست مشاورین (فقط ادمین)
+            if(currentUser.isAdmin) {
+                document.getElementById('consultantItems').innerHTML = consultants.map(c => `
+                    <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-transparent hover:border-blue-500/30 transition-all">
+                        <div class="flex items-center gap-3">
+                            <img src="${c.avatar}" class="w-8 h-8 rounded-full object-cover border">
+                            <div class="text-right"><p class="text-xs font-black">${c.name}</p><p class="text-[9px] opacity-40">${c.phone}</p></div>
+                        </div>
+                        <div class="text-[9px] font-bold text-blue-600">${visitHistory.filter(h => h.consultant === c.name).length} بازدید</div>
+                    </div>`).join('');
+            }
+        }
+
+        function closeVisitModal() { document.getElementById('visitActionModal').classList.add('hidden'); document.getElementById('visitCustomerName').value = ""; }
+        function openAddConsultantModal() { /* کد باز کردن مودال ثبت نام مشاور */ alert("در حال باز شدن مودال ثبت مشاور..."); }
+        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+        function handleLogout() { location.reload(); }
+        function showTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            btn.classList.add('nav-active');
+        }
+        function updateDots(el, idx) {
+            const activeIdx = Math.round(el.scrollLeft / el.offsetWidth);
+            document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
         }
     </script>
 </body>
