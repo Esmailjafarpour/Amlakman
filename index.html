@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -19,6 +18,8 @@
         .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; height: 280px; }
         .dot { transition: 0.3s; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); }
         .dot.active { background: white !important; width: 18px; border-radius: 10px; }
+        .error-shake { animation: shake 0.5s; border: 2px solid #ef4444 !important; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
         .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
         .dark .glass { background: rgba(15, 23, 42, 0.8); }
     </style>
@@ -27,6 +28,7 @@
 
     <div id="authPage" class="fixed inset-0 z-[600] bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8">
         <h1 class="text-5xl font-black text-blue-600 mb-2 italic">NADER</h1>
+        <p class="text-[10px] mb-8 opacity-50">خوش آمدید، لطفاً شماره خود را وارد کنید</p>
         <input type="tel" id="authPhone" placeholder="09337301641" maxlength="11" class="w-full max-w-sm bg-slate-100 dark:bg-slate-900 py-5 px-6 rounded-3xl outline-none text-center text-xl font-bold border-2 border-transparent">
         <button onclick="processAuth()" class="w-full max-w-sm bg-blue-600 text-white py-5 rounded-3xl font-black mt-6 shadow-xl">ورود به پنل</button>
     </div>
@@ -37,7 +39,7 @@
                 <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover shadow-lg">
                 <div class="text-right leading-tight">
                     <div class="flex items-center gap-1 justify-end">
-                        <span id="userRoleTag" class="hidden bg-blue-600 text-[8px] px-2 py-0.5 rounded-full text-white font-black">ADMIN</span>
+                        <span id="userRoleTag" class="hidden bg-blue-600 text-[8px] px-2 py-0.5 rounded-full text-white font-black uppercase tracking-tighter">Admin</span>
                         <p id="userNameDisplay" class="text-xs font-black"></p>
                     </div>
                     <p id="userPhoneDisplay" class="text-[10px] text-slate-400 font-bold"></p>
@@ -53,7 +55,6 @@
         
         <main id="dashboard" class="tab-content p-6 text-right">
             <h2 class="font-black text-lg mb-6 italic text-blue-600 underline">داشبورد گزارشات</h2>
-            
             <div id="adminOnlyTools" class="hidden space-y-6">
                 <button onclick="openAddConsultantModal()" class="w-full bg-blue-600 text-white p-5 rounded-3xl font-black flex justify-between items-center shadow-lg">
                     <span>ثبت مشاور جدید</span><span class="text-xl">+</span>
@@ -63,35 +64,45 @@
                     <div id="consultantItems" class="space-y-3"></div>
                 </div>
             </div>
-
             <div class="mt-8">
                 <h3 class="font-black text-sm mb-4 flex items-center gap-2">📝 سوابق بازدیدهای من</h3>
-                <div id="myVisitsLog" class="space-y-3">
-                    <p class="text-xs text-slate-400 italic">هنوز بازدیدی برای شما ثبت نشده است.</p>
-                </div>
+                <div id="myVisitsLog" class="space-y-3"></div>
             </div>
         </main>
 
-        <main id="visits" class="tab-content p-6 text-right">
-            <h2 class="font-black text-lg mb-6">🔑 وضعیت فعلی کلیدها</h2>
-            <div id="securityLog" class="space-y-4"></div>
-        </main>
+        <div id="propModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 text-right overflow-y-auto max-h-[90vh]">
+                <h3 id="modalTitle" class="text-xl font-black mb-6 text-blue-600 text-center">ثبت ملک جدید</h3>
+                <div class="space-y-4">
+                    <label id="modalImgLabel" class="w-full h-24 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex items-center justify-center cursor-pointer text-slate-400">
+                        <span>📸 افزودن تصاویر ملک</span>
+                        <input type="file" id="pImages" multiple class="hidden" onchange="addImagesToList(this)">
+                    </label>
+                    <div id="previewGallery" class="flex gap-2 overflow-x-auto py-2"></div>
+                    <input type="text" id="pCode" placeholder="کد ملک (مثلاً 101)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
+                    <input type="text" id="pTitle" placeholder="عنوان ملک" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
+                    <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
+                    <select id="pStatus" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm">
+                        <option value="بنگاه">🔑 کلید نزد بنگاه</option>
+                        <option value="مالک">🏠 سکونت مالک</option>
+                        <option value="مستاجر">👥 سکونت مستاجر</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 mt-8">
+                    <button onclick="closePropModal()" class="flex-1 font-bold text-slate-400">انصراف</button>
+                    <button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black">ذخیره فایل</button>
+                </div>
+            </div>
+        </div>
 
         <div id="visitActionModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 text-right animate-fadeIn">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 text-right">
                 <h3 class="font-black text-lg mb-2 text-center">جزئیات خروج کلید</h3>
                 <p id="targetPropTitle" class="text-center text-[10px] text-blue-600 font-bold mb-6 italic"></p>
-                
                 <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-black opacity-40 mr-2 uppercase">Consultant</label>
-                        <select id="visitConsultantSelect" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-sm"></select>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black opacity-40 mr-2 uppercase">Customer Name</label>
-                        <input type="text" id="visitCustomerName" placeholder="نام مشتری (مثلاً آقای محمدی)" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-sm border-2 border-transparent">
-                    </div>
-                    <button onclick="confirmVisit()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-xl mt-4">ثبت و آزاد سازی کلید</button>
+                    <select id="visitConsultantSelect" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-sm"></select>
+                    <input type="text" id="visitCustomerName" placeholder="نام مشتری" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-sm border-2 border-transparent">
+                    <button onclick="confirmVisit()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-xl mt-4">تایید خروج کلید</button>
                     <button onclick="closeVisitModal()" class="w-full text-slate-400 font-bold text-xs">انصراف</button>
                 </div>
             </div>
@@ -107,15 +118,16 @@
     </div>
 
     <script>
-        // دیتابیس فرضی
         let properties = []; 
         let visits = {}; 
-        let visitHistory = []; // تمام بازدیدهای ثبت شده در تاریخچه
+        let visitHistory = [];
+        let currentImgList = [];
         let consultants = JSON.parse(localStorage.getItem('nader_team')) || [
             {phone: "09337301641", name: "نادر (مدیریت)", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
         ];
         let currentUser = null;
         let activeKeyOutCode = null;
+        let editIndex = null;
 
         function processAuth() {
             const phone = document.getElementById('authPhone').value.trim();
@@ -125,60 +137,88 @@
             launchApp();
         }
 
-        function handlePlusButtonClick() {
-    // شرط ادمین بودن با شماره خودت
-    if (currentUser.phone === "09337301641" || currentUser.isAdmin === true) {
-        openPropModal(); // باز کردن فرم ثبت ملک
-    } else {
-        // اگر ادمین نبود، مودال عدم دسترسی رو نشون بده
-        document.getElementById('accessDeniedModal').classList.remove('hidden');
-    }
-}
-
-function saveProperty() {
-    const c = document.getElementById('pCode');
-    const t = document.getElementById('pTitle');
-    const p = document.getElementById('pPrice');
-    
-    // انیمیشن لرزش (همون که تاکید داشتی)
-    let hasError = false;
-    if(!c.value) { triggerError(c); hasError = true; }
-    if(!t.value) { triggerError(t); hasError = true; }
-    if(currentImgList.length === 0) { triggerError(document.getElementById('modalImgLabel')); hasError = true; }
-    
-    if(hasError) return; // اگر خطا داشت متوقف شو
-
-    // فقط ادمین اجازه نهایی کردن ذخیره رو داره
-    if(currentUser.phone === "09337301641") {
-        const data = { 
-            code: c.value, 
-            title: t.value, 
-            price: p.value, 
-            status: document.getElementById('pStatus').value, 
-            imgs: [...currentImgList] 
-        };
-        
-        if(editIndex !== null) properties[editIndex] = data; 
-        else properties.unshift(data);
-        
-        closePropModal();
-        updateUI();
-    } else {
-        alert("خطای سیستمی: شما دسترسی ثبت ندارید.");
-    }
-}
-
         function launchApp() {
             document.getElementById('authPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             document.getElementById('userNameDisplay').innerText = currentUser.name;
             document.getElementById('userPhoneDisplay').innerText = currentUser.phone;
             document.getElementById('headerAvatar').src = currentUser.avatar;
-            if (currentUser.isAdmin) document.getElementById('userRoleTag').classList.remove('hidden'), document.getElementById('adminOnlyTools').classList.remove('hidden');
+            if (currentUser.isAdmin) {
+                document.getElementById('userRoleTag').classList.remove('hidden');
+                document.getElementById('adminOnlyTools').classList.remove('hidden');
+            }
             updateUI();
         }
 
-        // --- منطق بازدید و خروج کلید ---
+        // --- مدیریت املاک توسط ادمین ---
+        function handlePlusButtonClick() {
+            if (currentUser.isAdmin) {
+                editIndex = null;
+                currentImgList = [];
+                document.getElementById('pCode').value = '';
+                document.getElementById('pTitle').value = '';
+                document.getElementById('previewGallery').innerHTML = '';
+                document.getElementById('propModal').classList.remove('hidden');
+            } else {
+                alert("فقط ادمین اجازه ثبت ملک را دارد.");
+            }
+        }
+
+        function saveProperty() {
+            const c = document.getElementById('pCode');
+            const t = document.getElementById('pTitle');
+            const p = document.getElementById('pPrice');
+            
+            let hasError = false;
+            if(!c.value) { triggerError(c); hasError = true; }
+            if(!t.value) { triggerError(t); hasError = true; }
+            if(currentImgList.length === 0) { triggerError(document.getElementById('modalImgLabel')); hasError = true; }
+            
+            if(hasError) return;
+
+            const data = { 
+                code: c.value, 
+                title: t.value, 
+                price: p.value || "توافقی", 
+                status: document.getElementById('pStatus').value, 
+                imgs: [...currentImgList] 
+            };
+            
+            if(editIndex !== null) properties[editIndex] = data; 
+            else properties.unshift(data);
+            
+            document.getElementById('propModal').classList.add('hidden');
+            updateUI();
+        }
+
+        function editProperty(idx) {
+            editIndex = idx;
+            const item = properties[idx];
+            document.getElementById('pCode').value = item.code;
+            document.getElementById('pTitle').value = item.title;
+            document.getElementById('pPrice').value = item.price;
+            document.getElementById('pStatus').value = item.status;
+            currentImgList = [...item.imgs];
+            renderPreviewGallery();
+            document.getElementById('propModal').classList.remove('hidden');
+        }
+
+        function addImagesToList(input) {
+            Array.from(input.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => { currentImgList.push(e.target.result); renderPreviewGallery(); };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderPreviewGallery() {
+            document.getElementById('previewGallery').innerHTML = currentImgList.map((src, i) => `
+                <div class="relative shrink-0"><img src="${src}" class="w-16 h-16 object-cover rounded-xl border">
+                <button onclick="currentImgList.splice(${i},1);renderPreviewGallery()" class="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full text-xs">×</button></div>
+            `).join('');
+        }
+
+        // --- بازدید و UI ---
         function handleKeyAction(code) {
             if (visits[code]) {
                 if(confirm("آیا کلید توسط " + visits[code].consultant + " بازگردانده شد؟")) {
@@ -187,10 +227,6 @@ function saveProperty() {
                 }
             } else {
                 activeKeyOutCode = code;
-                const prop = properties.find(p => p.code === code);
-                document.getElementById('targetPropTitle').innerText = prop ? prop.title : "کد ملک: " + code;
-                
-                // پر کردن لیست مشاورین در مودال
                 const select = document.getElementById('visitConsultantSelect');
                 select.innerHTML = consultants.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
                 document.getElementById('visitActionModal').classList.remove('hidden');
@@ -198,38 +234,30 @@ function saveProperty() {
         }
 
         function confirmVisit() {
-            const consultantName = document.getElementById('visitConsultantSelect').value;
-            const customerName = document.getElementById('visitCustomerName').value.trim();
-            const prop = properties.find(p => p.code === activeKeyOutCode);
-
-            if(!customerName) {
-                const inp = document.getElementById('visitCustomerName');
-                inp.classList.add('error-shake');
-                setTimeout(() => inp.classList.remove('error-shake'), 500);
-                return;
-            }
+            const cName = document.getElementById('visitConsultantSelect').value;
+            const custName = document.getElementById('visitCustomerName').value.trim();
+            if(!custName) return triggerError(document.getElementById('visitCustomerName'));
 
             const visitData = {
                 code: activeKeyOutCode,
-                propTitle: prop ? prop.title : "ملک " + activeKeyOutCode,
-                consultant: consultantName,
-                customer: customerName,
+                consultant: cName,
+                customer: custName,
                 time: new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}),
                 date: new Date().toLocaleDateString('fa-IR')
             };
-
-            visits[activeKeyOutCode] = visitData; // ثبت در وضعیت فعلی کلیدها
-            visitHistory.unshift(visitData); // ثبت در تاریخچه برای آمار
-            
-            closeVisitModal();
+            visits[activeKeyOutCode] = visitData;
+            visitHistory.unshift(visitData);
+            document.getElementById('visitActionModal').classList.add('hidden');
+            document.getElementById('visitCustomerName').value = '';
             updateUI();
         }
 
+        function triggerError(el) { el.classList.add('error-shake'); setTimeout(() => el.classList.remove('error-shake'), 500); }
+
         function updateUI() {
-            // آپدیت ویترین املاک
             const container = document.getElementById('propertyContainer');
             if (properties.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 opacity-20 font-black">ویترین خالی است. ملکی ثبت کنید.</div>`;
+                container.innerHTML = `<div class="text-center py-20 opacity-20 font-black">ویترین خالی است.</div>`;
             } else {
                 container.innerHTML = properties.map((p, idx) => `
                     <div class="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-xl border dark:border-slate-800">
@@ -240,54 +268,48 @@ function saveProperty() {
                             <div class="dots-${idx} absolute bottom-6 left-0 right-0 flex justify-center gap-1.5 px-10">
                                 ${p.imgs.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('')}
                             </div>
-                            <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white text-[9px] px-3 py-1 rounded-full font-black tracking-widest uppercase italic">Code: ${p.code}</div>
-                            <div class="absolute top-4 left-4 bg-blue-600 text-white text-[9px] px-3 py-1 rounded-full font-black shadow-lg">${p.status}</div>
+                            <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white text-[9px] px-3 py-1 rounded-full font-black italic">Code: ${p.code}</div>
                         </div>
                         <div class="p-8">
-                            <div class="flex justify-between items-start mb-6 text-right">
+                            <div class="flex justify-between items-start mb-6">
                                 <h3 class="font-black text-lg">${p.title}</h3>
                                 <div class="text-left">
                                     <div class="text-blue-600 font-black text-sm">${p.price}</div>
-                                    ${currentUser.isAdmin ? `<button onclick="editProperty(${idx})" class="text-[9px] text-slate-400 font-black mt-2">ویرایش فایل 📝</button>` : ''}
+                                    ${currentUser.isAdmin ? `<button onclick="editProperty(${idx})" class="text-[9px] text-slate-400 font-black">ویرایش 📝</button>` : ''}
                                 </div>
                             </div>
-                            <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500' : 'bg-slate-900 dark:bg-blue-600'} text-white py-5 rounded-[1.8rem] font-black text-[10px] tracking-widest uppercase">
+                            <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500' : 'bg-slate-900 dark:bg-blue-600'} text-white py-5 rounded-[1.8rem] font-black text-[10px] uppercase">
                                 ${visits[p.code] ? '⚠️ دست: ' + (visits[p.code].consultant === currentUser.name ? 'خود شما' : visits[p.code].consultant) : '🔓 خروج کلید واحد ' + p.code}
                             </button>
                         </div>
                     </div>`).join('');
             }
 
-            // آپدیت داشبورد (سوابق شخصی مشاور)
             const myVisitsContainer = document.getElementById('myVisitsLog');
             const myData = visitHistory.filter(h => h.consultant === currentUser.name);
-            if (myData.length > 0) {
-                myVisitsContainer.innerHTML = myData.map(h => `
-                    <div class="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-blue-500">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-black text-xs">${h.propTitle}</span>
-                            <span class="text-[8px] opacity-40">${h.date}</span>
-                        </div>
-                        <p class="text-[10px] font-bold text-slate-500">مشتری: ${h.customer} <span class="mx-2">|</span> ساعت: ${h.time}</p>
+            myVisitsContainer.innerHTML = myData.length ? myData.map(h => `
+                <div class="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-blue-500">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-black text-xs">واحد ${h.code}</span>
+                        <span class="text-[8px] opacity-40">${h.date}</span>
                     </div>
-                `).join('');
-            }
+                    <p class="text-[10px] font-bold text-slate-500">مشتری: ${h.customer} <span class="mx-2">|</span> ${h.time}</p>
+                </div>`).join('') : '<p class="text-xs opacity-30">بازدیدی ثبت نشده.</p>';
 
-            // لیست مشاورین (فقط ادمین)
             if(currentUser.isAdmin) {
                 document.getElementById('consultantItems').innerHTML = consultants.map(c => `
-                    <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-transparent hover:border-blue-500/30 transition-all">
+                    <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl">
                         <div class="flex items-center gap-3">
-                            <img src="${c.avatar}" class="w-8 h-8 rounded-full object-cover border">
-                            <div class="text-right"><p class="text-xs font-black">${c.name}</p><p class="text-[9px] opacity-40">${c.phone}</p></div>
+                            <img src="${c.avatar}" class="w-8 h-8 rounded-full border">
+                            <div class="text-right"><p class="text-xs font-black">${c.name}</p></div>
                         </div>
                         <div class="text-[9px] font-bold text-blue-600">${visitHistory.filter(h => h.consultant === c.name).length} بازدید</div>
                     </div>`).join('');
             }
         }
 
-        function closeVisitModal() { document.getElementById('visitActionModal').classList.add('hidden'); document.getElementById('visitCustomerName').value = ""; }
-        function openAddConsultantModal() { /* کد باز کردن مودال ثبت نام مشاور */ alert("در حال باز شدن مودال ثبت مشاور..."); }
+        function closePropModal() { document.getElementById('propModal').classList.add('hidden'); }
+        function closeVisitModal() { document.getElementById('visitActionModal').classList.add('hidden'); }
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
         function handleLogout() { location.reload(); }
         function showTab(id, btn) {
