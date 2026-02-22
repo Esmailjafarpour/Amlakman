@@ -111,8 +111,11 @@
                     <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
                     <input type="text" id="pTitle" placeholder="عنوان" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
                     <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
-                    <button onclick="saveProperty()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ذخیره</button>
-                    <button onclick="closePropModal()" class="w-full text-slate-400">انصراف</button>
+                      <div class="flex gap-2"> 
+                         <button onclick="saveProperty()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ذخیره</button>
+                        <button onclick="closePropModal()" class="w-full text-slate-400">انصراف</button>
+                    </div>
+                  
                 </div>
             </div>
         </div>
@@ -130,7 +133,7 @@
         </div>
 
         <div id="calModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-xl p-8">
                 <h3 class="font-black text-lg mb-4">ثبت قرار جدید</h3>
                 <div class="space-y-4">
                     <input type="text" id="calTitle" placeholder="موضوع جلسه" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl font-bold">
@@ -140,8 +143,10 @@
                         <option value="بازدید">🏠 بازدید حضوری</option>
                         <option value="کارشناسی">📏 کارشناسی ملک</option>
                     </select>
-                    <button onclick="saveCalendar()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ثبت در تقویم</button>
-                    <button onclick="document.getElementById('calModal').classList.add('hidden')" class="w-full text-slate-400">انصراف</button>
+                    <div class="flex gap-2">
+                        <button onclick="saveCalendar()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ثبت در تقویم</button>
+                        <button onclick="document.getElementById('calModal').classList.add('hidden')" class="w-full text-slate-400">انصراف</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -342,25 +347,32 @@ function handlePlusButtonClick() {
         // --- آپدیت رابط کاربری ---
         function updateUI() {
             // ویترین
-            document.getElementById('propertyContainer').innerHTML = properties.map((p, idx)=>`
-                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-lg border dark:border-slate-800">
-                    <div class="swiper-container">${p.imgs.map(img=>`<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}</div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-4"><h3 class="font-black">${p.title}</h3><span class="text-blue-600 text-xs">${p.price}</span></div>
-                        <div class="relative ...">
-                        ${currentUser.isAdmin ? `
-                            <button onclick="prepareEdit(${idx})" class="absolute top-4 left-4 z-20 bg-white/90 dark:bg-slate-800/90 p-2 rounded-full shadow-lg border border-blue-500">
-                                ✏️
-                            </button>
-                        ` : ''}
-                        
-                        ...
-                    </div>
-                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs">
-                            ${visits[p.code]?'⚠️ دست: '+visits[p.code].consultant : '🔓 خروج کلید واحد '+p.code}
-                        </button>
-                    </div>
-                </div>`).join('');
+           document.getElementById('propertyContainer').innerHTML = properties.map((p, idx)=>`
+    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-lg border dark:border-slate-800 relative">
+        ${currentUser.isAdmin ? `
+            <button onclick="prepareEdit(${idx})" class="absolute top-4 left-4 z-20 bg-white/90 dark:bg-slate-800/90 p-2 rounded-full shadow-lg border border-blue-500">✏️</button>
+        ` : ''}
+
+        <div class="relative group">
+            <div id="slider-${idx}" onscroll="updateDots(${idx})" class="swiper-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth shadow-inner">
+                ${p.imgs.map(img=>`<div class="swiper-slide min-w-full snap-start h-72"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
+            </div>
+            
+            <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">
+                ${p.imgs.map((_, i) => `<div id="dot-${idx}-${i}" class="w-2 h-2 rounded-full bg-white/40 transition-all ${i===0?'bg-white w-4':''}"></div>`).join('')}
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4 text-right">
+                <h3 class="font-black text-lg">${p.title}</h3>
+                <span class="text-blue-600 font-bold">${p.price}</span>
+            </div>
+            <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs">
+                ${visits[p.code]?'⚠️ دست: '+visits[p.code].consultant : '🔓 خروج کلید واحد '+p.code}
+            </button>
+        </div>
+    </div>`).join('');
 
             // امنیت کلیدها
             document.getElementById('securityKeyList').innerHTML = Object.values(visits).map(v=>`
@@ -423,6 +435,25 @@ function handlePlusButtonClick() {
     
     // باز کردن مودال
     document.getElementById('propModal').classList.remove('hidden');
+}
+
+function updateDots(propIdx) {
+    const slider = document.getElementById(`slider-${propIdx}`);
+    const scrollLeft = Math.abs(slider.scrollLeft); // مقدار اسکرول شده
+    const width = slider.offsetWidth; // عرض هر عکس
+    const activeIndex = Math.round(scrollLeft / width); // محاسبه اینکه کدام عکس روبروست
+
+    // پیدا کردن تمام نقطه‌های مربوط به این ملک و آپدیت کردنشان
+    const dots = document.querySelectorAll(`[id^="dot-${propIdx}-"]`);
+    dots.forEach((dot, i) => {
+        if (i === activeIndex) {
+            dot.classList.add('bg-white', 'w-4'); // نقطه فعال: سفید و کشیده
+            dot.classList.remove('bg-white/40');
+        } else {
+            dot.classList.remove('bg-white', 'w-4'); // نقطه غیرفعال: کدر و کوچک
+            dot.classList.add('bg-white/40');
+        }
+    });
 }
     </script>
 </body>
