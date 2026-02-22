@@ -272,7 +272,12 @@ function handlePlusButtonClick() {
     
     document.getElementById('propModal').classList.remove('hidden'); 
 }        function handleImageUpload(i) { Array.from(i.files).forEach(f=>{const r=new FileReader(); r.onload=(e)=>{currentImgList.push(e.target.result); renderPreview();}; r.readAsDataURL(f);}); }
-        function renderPreview() { document.getElementById('previewGallery').innerHTML=currentImgList.map(s=>`<img src="${s}" class="w-12 h-12 rounded object-cover">`).join(''); }
+        function renderPreview() { document.getElementById('previewGallery').innerHTML=currentImgList.map(s=>`<div class="relative shrink-0 group">
+            <img src="${s}" class="w-16 h-16 rounded-xl object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm">
+            <button onclick="removeImage(${i})" class="absolute -top-2 -left-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[12px] font-bold shadow-lg border border-white">
+                ×
+            </button>
+        </div>`).join(''); }
        function saveProperty() {
     const c = document.getElementById('pCode');
     const t = document.getElementById('pTitle');
@@ -454,6 +459,13 @@ function updateDots(propIdx) {
             dot.classList.add('bg-white/40');
         }
     });
+}
+
+function removeImage(index) {
+    // حذف عکس از لیست بر اساس ایندکس آن
+    currentImgList.splice(index, 1);
+    // بروزرسانی پیش‌نمایش در مودال
+    renderPreview();
 }
     </script>
 </body>
