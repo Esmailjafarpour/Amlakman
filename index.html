@@ -256,32 +256,60 @@ function clearErrors() {
         function handleImageUpload(i) { Array.from(i.files).forEach(f=>{const r=new FileReader(); r.onload=(e)=>{currentImgList.push(e.target.result); renderPreview();}; r.readAsDataURL(f);}); }
         function renderPreview() { document.getElementById('previewGallery').innerHTML=currentImgList.map(s=>`<img src="${s}" class="w-12 h-12 rounded object-cover">`).join(''); }
         function saveProperty() {
-    const c = document.getElementById('pCode');
-    const t = document.getElementById('pTitle');
-    
-    if (!c.value || !t.value) return triggerError(c), triggerError(t);
+            const c = document.getElementById('pCode');
+            const t = document.getElementById('pTitle');
+            const imgLabel = document.getElementById('modalImgLabel'); // لیبل یا کادر آپلود عکس
+            
+            // پاک کردن ارورهای قبلی
+            document.querySelectorAll('.error-text-prop').forEach(e => e.remove());
+            let hasError = false;
 
-    const propData = {
-        code: c.value,
-        title: t.value,
-        price: document.getElementById('pPrice').value,
-        imgs: [...currentImgList]
-    };
+            // ۱. چک کردن عکس (حتماً باید حداقل یک عکس باشد)
+            if (currentImgList.length === 0) {
+                showPropError(imgLabel, "حتماً باید حداقل یک عکس برای ملک انتخاب کنید");
+                hasError = true;
+            }
 
-    if (window.editingIndex !== undefined && window.editingIndex !== -1) {
-        // حالت ویرایش: جایگزین کردن در لیست
-        properties[window.editingIndex] = propData;
-        window.editingIndex = -1; // ریست کردن وضعیت
-    } else {
-        // حالت جدید: اضافه کردن به ابتدای لیست
-        properties.unshift(propData);
-    }
+            // ۲. چک کردن کد ملک
+            if (!c.value.trim()) {
+                showPropError(c, "کد ملک الزامی است");
+                hasError = true;
+            }
 
-    // ذخیره در حافظه و آپدیت صفحه
-    localStorage.setItem('nader_props', JSON.stringify(properties));
-    closePropModal();
-    updateUI();
-}
+            // ۳. چک کردن عنوان
+            if (!t.value.trim()) {
+                showPropError(t, "عنوان ملک را وارد کنید");
+                hasError = true;
+            }
+
+            if (hasError) return; // اگر هر کدام خطا داشت، متوقف شو
+
+            // ادامه مراحل ذخیره (همان کدهای قبلی...)
+            const propData = {
+                code: c.value,
+                title: t.value,
+                price: document.getElementById('pPrice').value || "توافقی",
+                imgs: [...currentImgList]
+            };
+
+            const idx = document.getElementById('editIndex').value;
+            if (idx === "-1") properties.unshift(propData);
+            else properties[idx] = propData;
+
+            localStorage.setItem('nader_props', JSON.stringify(properties));
+            closePropModal();
+            updateUI();
+        }
+
+        // تابع کمکی برای نمایش ارور در مودال ملک
+        function showPropError(el, msg) {
+            el.classList.add('error-shake', 'border-red-500');
+            const err = document.createElement('div');
+            err.className = 'error-text-prop text-[10px] text-red-500 font-bold mt-1';
+            err.innerText = '⚠️ ' + msg;
+            el.parentNode.insertBefore(err, el.nextSibling);
+            setTimeout(() => el.classList.remove('error-shake'), 500);
+        }
 
         function handleKeyAction(code) {
             if(visits[code]) { if(confirm("بازگشت کلید؟")) { delete visits[code]; updateUI(); } }
