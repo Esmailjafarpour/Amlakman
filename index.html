@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل جامع املاک نادر</title>
+    <title>پنل فوق پیشرفته املاک نادر</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700;900&display=swap" rel="stylesheet">
     <script>tailwind.config = { darkMode: 'class' }</script>
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; transition: 0.3s; scroll-behavior: smooth; }
+        body { font-family: 'Vazirmatn', sans-serif; transition: 0.3s; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .error-shake { animation: shake 0.5s; border: 2px solid #ef4444 !important; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
@@ -18,43 +18,38 @@
         .dark .glass { background: rgba(15, 23, 42, 0.8); }
         .swiper-container { display: flex; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x mandatory; }
         .swiper-slide { flex-shrink: 0; width: 100%; scroll-snap-align: start; height: 280px; }
-        .dot { transition: 0.3s; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); }
-        .dot.active { background: white !important; width: 18px; border-radius: 10px; }
+        .nav-active { color: #2563eb !important; transform: scale(1.1); }
     </style>
 </head>
 <body class="pb-36 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-right">
 
     <div id="authPage" class="fixed inset-0 z-[600] bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 overflow-y-auto">
-        <h1 class="text-6xl font-black text-blue-600 mb-2 italic">NADER</h1>
+        <h1 class="text-6xl font-black text-blue-600 mb-8 italic">NADER</h1>
         
         <div id="loginBox" class="w-full max-w-sm space-y-4 text-center">
-            <p class="text-xs opacity-50 mb-6 font-bold">ورود به پنل مدیریت املاک</p>
-            <input type="tel" id="authPhone" placeholder="شماره موبایل" maxlength="11" class="w-full bg-slate-100 dark:bg-slate-900 py-5 px-6 rounded-3xl outline-none text-center text-xl font-bold border-2 border-transparent focus:border-blue-500 transition-all">
-            <button onclick="processAuth()" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black shadow-xl hover:bg-blue-700">ورود</button>
-            <button onclick="toggleAuthMode(true)" class="text-blue-600 font-bold text-sm mt-4">درخواست عضویت مشاور جدید</button>
+            <input type="tel" id="authPhone" placeholder="شماره موبایل" maxlength="11" class="w-full bg-slate-100 dark:bg-slate-900 py-5 px-6 rounded-3xl outline-none text-center text-xl font-bold border-2 border-transparent focus:border-blue-500">
+            <button onclick="processAuth()" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black shadow-xl">ورود به پنل</button>
+            <button onclick="toggleAuthMode(true)" class="text-blue-600 font-bold text-sm mt-4">ثبت‌نام مشاور جدید</button>
         </div>
 
-        <div id="registerBox" class="hidden w-full max-w-sm space-y-4 animate-fadeIn">
-            <div class="text-center mb-6">
-                <label class="cursor-pointer inline-block relative group">
-                    <img id="regAvatarPreview" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-24 h-24 rounded-full border-4 border-blue-500 object-cover shadow-2xl">
+        <div id="registerBox" class="hidden w-full max-w-sm space-y-4">
+            <div class="text-center mb-4">
+                <label class="cursor-pointer inline-block relative">
+                    <img id="regAvatarPreview" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="w-24 h-24 rounded-full border-4 border-blue-500 object-cover">
                     <input type="file" id="regAvatar" class="hidden" onchange="previewRegAvatar(this)">
-                    <span class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full text-xs shadow-lg">📸</span>
                 </label>
-                <p class="text-[10px] mt-2 opacity-50 font-black uppercase">Upload Profile Image</p>
             </div>
-            <input type="text" id="regName" placeholder="نام" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
-            <input type="text" id="regFamily" placeholder="نام خانوادگی" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
-            <input type="tel" id="regPhone" placeholder="شماره موبایل مشاور" maxlength="11" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold border-2 border-transparent text-center">
-            <button onclick="handleRegister()" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black shadow-xl">ارسال درخواست برای نادر</button>
-            <button onclick="toggleAuthMode(false)" class="w-full text-slate-400 font-bold text-sm">بازگشت به صفحه ورود</button>
+            <input type="text" id="regName" placeholder="نام" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold">
+            <input type="text" id="regFamily" placeholder="نام خانوادگی" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold">
+            <input type="tel" id="regPhone" placeholder="شماره موبایل" maxlength="11" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-center">
+            <button onclick="handleRegister()" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-black">ارسال درخواست عضویت</button>
+            <button onclick="toggleAuthMode(false)" class="w-full text-slate-400 font-bold text-sm">بازگشت</button>
         </div>
 
-        <div id="pendingBox" class="hidden text-center space-y-6 animate-fadeIn p-6 bg-blue-50 dark:bg-blue-900/10 rounded-[3rem]">
-            <div class="text-6xl animate-bounce">⏳</div>
-            <h2 class="font-black text-xl">نادر در حال بررسی است...</h2>
-            <p class="text-slate-500 text-xs leading-relaxed px-4">اطلاعات شما ثبت شد. پس از اینکه نادر (مدیریت) حساب شما را تایید کرد، دسترسی باز خواهد شد.</p>
-            <button onclick="location.reload()" class="bg-white dark:bg-slate-800 px-8 py-3 rounded-2xl shadow-md font-bold text-sm">بررسی مجدد</button>
+        <div id="pendingBox" class="hidden text-center space-y-4">
+            <div class="text-6xl">⏳</div>
+            <h2 class="font-black text-xl">در انتظار تایید نادر...</h2>
+            <button onclick="location.reload()" class="text-blue-600 font-bold">بروزرسانی</button>
         </div>
     </div>
 
@@ -62,302 +57,206 @@
         <header class="p-5 glass sticky top-0 z-50 border-b dark:border-slate-800 flex justify-between items-center flex-row-reverse">
             <div class="flex items-center gap-3 flex-row-reverse">
                 <img id="headerAvatar" src="" class="w-12 h-12 rounded-full border-2 border-blue-500 object-cover shadow-lg">
-                <div class="text-right leading-tight">
+                <div class="text-right">
                     <p id="userNameDisplay" class="text-xs font-black"></p>
-                    <span id="adminBadge" class="hidden bg-blue-600 text-[8px] px-2 py-0.5 rounded-full text-white font-black uppercase tracking-tighter">Admin</span>
+                    <span id="adminBadge" class="hidden bg-blue-600 text-[8px] px-2 py-0.5 rounded-full text-white font-black uppercase">Admin</span>
                 </div>
             </div>
             <div class="flex items-center gap-2">
                 <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800">🌙</button>
-                <button onclick="handleLogout()" class="bg-red-500/10 text-red-500 px-3 py-2 rounded-xl text-[10px] font-black">خروج</button>
+                <button onclick="handleLogout()" class="bg-red-500/10 text-red-500 p-2 rounded-xl text-xs font-bold">خروج</button>
             </div>
         </header>
 
-        <main id="home" class="tab-content active px-5 py-8">
-            <div id="propertyContainer" class="space-y-10"></div>
-        </main>
+        <main id="home" class="tab-content active px-5 py-8"><div id="propertyContainer" class="space-y-10"></div></main>
         
-        <main id="dashboard" class="tab-content p-6 text-right">
-            <h2 class="font-black text-lg mb-6 italic text-blue-600 underline decoration-4">مدیریت تیم و آمار</h2>
-            
-            <div id="adminTools" class="hidden space-y-8">
-                <div class="bg-orange-50 dark:bg-orange-900/10 p-6 rounded-[2.5rem] border-2 border-orange-200 dark:border-orange-800/30">
-                    <h3 class="text-[10px] font-black mb-4 text-orange-600 uppercase tracking-widest">🔔 تایید مشاورین جدید</h3>
-                    <div id="pendingList" class="space-y-3"></div>
+        <main id="dashboard" class="tab-content p-6">
+            <h2 class="font-black text-lg mb-6 text-blue-600">گزارشات و مدیریت</h2>
+            <div id="adminTools" class="hidden space-y-6 mb-8">
+                <div class="bg-orange-50 dark:bg-orange-900/10 p-4 rounded-3xl border border-orange-200">
+                    <h3 class="text-xs font-black mb-3">🔔 تایید مشاورین</h3>
+                    <div id="pendingList" class="space-y-2"></div>
                 </div>
-
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border dark:border-slate-800 shadow-sm">
-                    <h3 class="text-[10px] font-black mb-4 opacity-50 uppercase tracking-widest">تیم فعال</h3>
-                    <div id="activeConsultants" class="space-y-3"></div>
-                </div>
+                <div id="activeConsultants" class="space-y-2"></div>
             </div>
+            <div id="myVisitsLog" class="space-y-3"></div>
+        </main>
 
-            <div class="mt-8 bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border dark:border-slate-800">
-                <h3 class="font-black text-sm mb-4 text-blue-600">📝 سوابق بازدیدهای من</h3>
-                <div id="myVisitsLog" class="space-y-3"></div>
-            </div>
+        <main id="security" class="tab-content p-6">
+            <h2 class="font-black text-lg mb-6">🔑 وضعیت کلیدهای خارج شده</h2>
+            <div id="securityKeyList" class="space-y-4"></div>
+        </main>
+
+        <main id="calendar" class="tab-content p-6">
+            <h2 class="font-black text-lg mb-6">📅 تقویم نشست‌ها و قرارها</h2>
+            <button onclick="openCalendarModal()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black mb-6">+ ثبت جلسه جدید</button>
+            <div id="calendarList" class="space-y-4"></div>
         </main>
 
         <div id="propModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 text-right overflow-y-auto max-h-[90vh]">
-                <h3 class="text-xl font-black mb-6 text-blue-600 text-center">ثبت ملک جدید</h3>
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 overflow-y-auto max-h-[90vh]">
+                <h3 class="text-xl font-black mb-6 text-blue-600">ثبت ملک</h3>
                 <div class="space-y-4">
-                    <label id="modalImgLabel" class="w-full h-24 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-3xl flex items-center justify-center cursor-pointer text-slate-400">
-                        <span>📸 افزودن تصاویر</span>
-                        <input type="file" id="pImages" multiple class="hidden" onchange="handleImageUpload(this)">
-                    </label>
-                    <div id="previewGallery" class="flex gap-2 overflow-x-auto py-2"></div>
-                    <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
-                    <input type="text" id="pTitle" placeholder="عنوان (مثال: ۳ خواب معالی آباد)" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
-                    <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
-                </div>
-                <div class="flex gap-3 mt-8">
-                    <button onclick="closePropModal()" class="flex-1 font-bold text-slate-400">لغو</button>
-                    <button onclick="saveProperty()" class="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-black shadow-lg">ثبت فایل</button>
+                    <input type="file" id="pImages" multiple class="hidden" onchange="handleImageUpload(this)">
+                    <label for="pImages" id="modalImgLabel" class="w-full h-20 border-2 border-dashed rounded-2xl flex items-center justify-center text-slate-400">📸 عکس‌ها</label>
+                    <div id="previewGallery" class="flex gap-2 overflow-x-auto"></div>
+                    <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <input type="text" id="pTitle" placeholder="عنوان" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                    <button onclick="saveProperty()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ذخیره</button>
+                    <button onclick="closePropModal()" class="w-full text-slate-400">انصراف</button>
                 </div>
             </div>
         </div>
 
-        <div id="visitModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6 text-right">
-            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 animate-fadeIn">
-                <h3 class="font-black text-lg mb-2 text-center">جزئیات بازدید</h3>
-                <p id="targetPropTitle" class="text-center text-[10px] text-blue-600 font-bold mb-6 italic"></p>
+        <div id="visitModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8">
+                <h3 class="font-black text-lg mb-4 text-center">جزئیات خروج کلید</h3>
                 <div class="space-y-4">
-                    <label class="text-[10px] font-black opacity-40 mr-2 uppercase italic">Select Consultant</label>
-                    <select id="visitConsultantSelect" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold text-sm"></select>
-                    <label class="text-[10px] font-black opacity-40 mr-2 uppercase italic">Customer Name</label>
-                    <input type="text" id="visitCustomerName" placeholder="نام مشتری را وارد کنید" class="w-full bg-slate-100 dark:bg-slate-900 p-4 rounded-2xl outline-none font-bold border-2 border-transparent">
-                    <button onclick="confirmVisit()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-xl mt-4">تایید و آزاد سازی کلید</button>
-                    <button onclick="closeVisitModal()" class="w-full text-slate-400 font-bold text-xs mt-2">انصراف</button>
+                    <select id="visitConsultantSelect" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl font-bold"></select>
+                    <input type="text" id="visitCustomerName" placeholder="نام مشتری" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl font-bold">
+                    <button onclick="confirmVisit()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">تایید</button>
+                    <button onclick="closeVisitModal()" class="w-full text-slate-400">انصراف</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="calModal" class="fixed inset-0 z-[700] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-6">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8">
+                <h3 class="font-black text-lg mb-4">ثبت قرار جدید</h3>
+                <div class="space-y-4">
+                    <input type="text" id="calTitle" placeholder="موضوع جلسه" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl font-bold">
+                    <input type="date" id="calDate" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl font-bold">
+                    <select id="calType" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl font-bold">
+                        <option value="نشست">💎 نشست قرارداد</option>
+                        <option value="بازدید">🏠 بازدید حضوری</option>
+                        <option value="کارشناسی">📏 کارشناسی ملک</option>
+                    </select>
+                    <button onclick="saveCalendar()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ثبت در تقویم</button>
+                    <button onclick="document.getElementById('calModal').classList.add('hidden')" class="w-full text-slate-400">انصراف</button>
                 </div>
             </div>
         </div>
 
         <nav class="fixed bottom-8 left-6 right-6 glass h-20 rounded-[2.5rem] flex justify-around items-center px-4 z-50 border shadow-2xl dark:border-slate-800">
-            <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center"><span class="text-2xl">🏠</span></button>
-            <button onclick="showTab('dashboard', this)" class="nav-item text-slate-400 flex flex-col items-center"><span class="text-2xl">📊</span></button>
-            <button onclick="handlePlusButtonClick()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-14 border-4 border-white dark:border-slate-950 text-3xl font-bold">+</button>
-            <button onclick="showTab('security', this)" class="nav-item text-slate-400 flex flex-col items-center"><span class="text-2xl">🔑</span></button>
-            <button onclick="showTab('calendar', this)" class="nav-item text-slate-400 flex flex-col items-center"><span class="text-2xl">📅</span></button>
+            <button onclick="showTab('home', this)" class="nav-item nav-active flex flex-col items-center"><span class="text-xl">🏠</span><span class="text-[8px] font-black">ویترین</span></button>
+            <button onclick="showTab('dashboard', this)" class="nav-item text-slate-400 flex flex-col items-center"><span class="text-xl">📊</span><span class="text-[8px] font-black">تیم</span></button>
+            <button onclick="handlePlusButtonClick()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl -mt-14 border-4 border-white dark:border-slate-950 text-2xl font-bold">+</button>
+            <button onclick="showTab('security', this)" class="nav-item text-slate-400 flex flex-col items-center"><span class="text-xl">🔑</span><span class="text-[8px] font-black">امنیت</span></button>
+            <button onclick="showTab('calendar', this)" class="nav-item text-slate-400 flex flex-col items-center"><span class="text-xl">📅</span><span class="text-[8px] font-black">تقویم</span></button>
         </nav>
     </div>
 
     <script>
-        let properties = []; 
-        let currentImgList = [];
-        let visitHistory = [];
-        let visits = {};
-        let consultants = JSON.parse(localStorage.getItem('nader_db_v3')) || [
-            {phone: "09337301641", name: "نادر", family: "مدیریت", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", status: "active", isAdmin: true}
-        ];
-        let currentUser = null;
-        let activeCode = null;
-        let regAvatarBase64 = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+        let properties = [], visits = {}, visitHistory = [], calendarEvents = [], currentImgList = [];
+        let consultants = JSON.parse(localStorage.getItem('nader_v4_db')) || [{phone: "09337301641", name: "نادر", family: "مدیریت", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", status: "active", isAdmin: true}];
+        let currentUser = null, activeCode = null;
 
         // --- احراز هویت ---
-        function toggleAuthMode(isReg) {
-            document.getElementById('loginBox').classList.toggle('hidden', isReg);
-            document.getElementById('registerBox').classList.toggle('hidden', !isReg);
-        }
-
-        function previewRegAvatar(input) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                regAvatarBase64 = e.target.result;
-                document.getElementById('regAvatarPreview').src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-
+        function toggleAuthMode(isReg) { document.getElementById('loginBox').classList.toggle('hidden', isReg); document.getElementById('registerBox').classList.toggle('hidden', !isReg); }
+        function previewRegAvatar(i) { const r = new FileReader(); r.onload=(e)=>document.getElementById('regAvatarPreview').src=e.target.result; r.readAsDataURL(i.files[0]); }
         function handleRegister() {
-            const n = document.getElementById('regName'), f = document.getElementById('regFamily'), p = document.getElementById('regPhone');
-            let err = false;
-            if(!n.value) { triggerError(n); err = true; }
-            if(!f.value) { triggerError(f); err = true; }
-            if(p.value.length < 11) { triggerError(p); err = true; }
-            if(err) return;
-
-            consultants.push({ phone: p.value, name: n.value, family: f.value, avatar: regAvatarBase64, status: "pending", isAdmin: false });
-            saveDB();
-            document.getElementById('registerBox').classList.add('hidden');
-            document.getElementById('pendingBox').classList.remove('hidden');
+            const n=document.getElementById('regName'), f=document.getElementById('regFamily'), p=document.getElementById('regPhone');
+            if(!n.value || !f.value || p.value.length<11) { [n,f,p].forEach(el=>!el.value?triggerError(el):''); return; }
+            consultants.push({phone:p.value, name:n.value, family:f.value, avatar:document.getElementById('regAvatarPreview').src, status:"pending", isAdmin:false});
+            saveDB(); document.getElementById('registerBox').classList.add('hidden'); document.getElementById('pendingBox').classList.remove('hidden');
         }
-
         function processAuth() {
             const p = document.getElementById('authPhone').value;
-            const user = consultants.find(c => c.phone === p);
-            if(!user) return alert("شماره ثبت نشده است.");
-            if(user.status === "pending") {
-                document.getElementById('loginBox').classList.add('hidden');
-                document.getElementById('pendingBox').classList.remove('hidden');
-                return;
-            }
-            currentUser = user;
-            launchApp();
+            const u = consultants.find(c=>c.phone===p);
+            if(!u) return alert("یافت نشد.");
+            if(u.status==="pending") return document.getElementById('loginBox').classList.add('hidden'), document.getElementById('pendingBox').classList.remove('hidden');
+            currentUser=u; launchApp();
         }
-
         function launchApp() {
-            document.getElementById('authPage').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('headerAvatar').src = currentUser.avatar;
-            document.getElementById('userNameDisplay').innerText = currentUser.name + ' ' + currentUser.family;
-            if(currentUser.isAdmin) {
-                document.getElementById('adminBadge').classList.remove('hidden');
-                document.getElementById('adminTools').classList.remove('hidden');
-            }
+            document.getElementById('authPage').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('headerAvatar').src=currentUser.avatar; document.getElementById('userNameDisplay').innerText=currentUser.name;
+            if(currentUser.isAdmin) { document.getElementById('adminBadge').classList.remove('hidden'); document.getElementById('adminTools').classList.remove('hidden'); }
             updateUI();
         }
 
-        // --- مدیریت املاک ---
-        function handlePlusButtonClick() {
-            if(!currentUser.isAdmin) return alert("فقط نادر اجازه ثبت ملک دارد.");
-            currentImgList = [];
-            document.getElementById('previewGallery').innerHTML = '';
-            document.getElementById('propModal').classList.remove('hidden');
-        }
-
-        function handleImageUpload(input) {
-            Array.from(input.files).forEach(file => {
-                const r = new FileReader();
-                r.onload = (e) => { currentImgList.push(e.target.result); renderPreview(); };
-                r.readAsDataURL(file);
-            });
-        }
-
-        function renderPreview() {
-            document.getElementById('previewGallery').innerHTML = currentImgList.map((s, i) => `
-                <div class="relative shrink-0"><img src="${s}" class="w-16 h-16 object-cover rounded-xl border">
-                <button onclick="currentImgList.splice(${i},1);renderPreview()" class="absolute -top-1 -right-1 bg-red-500 text-white w-4 h-4 rounded-full text-[10px]">×</button></div>
-            `).join('');
-        }
-
+        // --- توابع اصلی ---
+        function handlePlusButtonClick() { if(!currentUser.isAdmin) return alert("فقط ادمین"); currentImgList=[]; document.getElementById('previewGallery').innerHTML=''; document.getElementById('propModal').classList.remove('hidden'); }
+        function handleImageUpload(i) { Array.from(i.files).forEach(f=>{const r=new FileReader(); r.onload=(e)=>{currentImgList.push(e.target.result); renderPreview();}; r.readAsDataURL(f);}); }
+        function renderPreview() { document.getElementById('previewGallery').innerHTML=currentImgList.map(s=>`<img src="${s}" class="w-12 h-12 rounded object-cover">`).join(''); }
         function saveProperty() {
-            const c = document.getElementById('pCode'), t = document.getElementById('pTitle');
-            if(!c.value || !t.value || currentImgList.length === 0) {
-                if(!c.value) triggerError(c); if(!t.value) triggerError(t);
-                if(currentImgList.length === 0) triggerError(document.getElementById('modalImgLabel'));
-                return;
-            }
-            properties.unshift({ code: c.value, title: t.value, price: document.getElementById('pPrice').value || "توافقی", imgs: [...currentImgList] });
-            closePropModal();
-            updateUI();
+            const c=document.getElementById('pCode'), t=document.getElementById('pTitle');
+            if(!c.value || !t.value) return triggerError(c), triggerError(t);
+            properties.unshift({code:c.value, title:t.value, price:document.getElementById('pPrice').value, imgs:[...currentImgList]});
+            closePropModal(); updateUI();
         }
 
-        // --- خروج کلید ---
         function handleKeyAction(code) {
-            if(visits[code]) {
-                if(confirm("آیا کلید بازگردانده شد؟")) { delete visits[code]; updateUI(); }
-            } else {
-                activeCode = code;
-                const activeTeam = consultants.filter(c => c.status === "active");
-                document.getElementById('visitConsultantSelect').innerHTML = activeTeam.map(c => `<option value="${c.name} ${c.family}">${c.name} ${c.family}</option>`).join('');
-                document.getElementById('visitModal').classList.remove('hidden');
-            }
+            if(visits[code]) { if(confirm("بازگشت کلید؟")) { delete visits[code]; updateUI(); } }
+            else { activeCode=code; document.getElementById('visitConsultantSelect').innerHTML=consultants.filter(c=>c.status==="active").map(c=>`<option>${c.name} ${c.family}</option>`).join(''); document.getElementById('visitModal').classList.remove('hidden'); }
         }
-
         function confirmVisit() {
-            const cust = document.getElementById('visitCustomerName');
-            if(!cust.value) return triggerError(cust);
-            const data = {
-                code: activeCode,
-                consultant: document.getElementById('visitConsultantSelect').value,
-                customer: cust.value,
-                time: new Date().toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}),
-                date: new Date().toLocaleDateString('fa-IR')
-            };
-            visits[activeCode] = data;
-            visitHistory.unshift(data);
-            closeVisitModal();
-            updateUI();
+            const cust=document.getElementById('visitCustomerName'); if(!cust.value) return triggerError(cust);
+            const data = {code:activeCode, consultant:document.getElementById('visitConsultantSelect').value, customer:cust.value, time:new Date().toLocaleTimeString('fa-IR')};
+            visits[activeCode]=data; visitHistory.unshift(data); closeVisitModal(); updateUI();
         }
 
-        // --- توابع کمکی ---
-        function approveConsultant(phone) {
-            const idx = consultants.findIndex(c => c.phone === phone);
-            consultants[idx].status = "active";
-            saveDB();
-            updateUI();
+        // --- تقویم ---
+        function openCalendarModal() { document.getElementById('calModal').classList.remove('hidden'); }
+        function saveCalendar() {
+            const t=document.getElementById('calTitle'), d=document.getElementById('calDate'), type=document.getElementById('calType');
+            if(!t.value || !d.value) return triggerError(t), triggerError(d);
+            calendarEvents.unshift({title:t.value, date:d.value, type:type.value, creator:currentUser.name});
+            document.getElementById('calModal').classList.add('hidden'); updateUI();
         }
 
-        function triggerError(el) { el.classList.add('error-shake'); setTimeout(() => el.classList.remove('error-shake'), 500); }
-        function saveDB() { localStorage.setItem('nader_db_v3', JSON.stringify(consultants)); }
-        function closePropModal() { document.getElementById('propModal').classList.add('hidden'); }
-        function closeVisitModal() { document.getElementById('visitModal').classList.add('hidden'); document.getElementById('visitCustomerName').value = ''; }
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-        function handleLogout() { location.reload(); }
-
+        // --- آپدیت رابط کاربری ---
         function updateUI() {
             // ویترین
-            const container = document.getElementById('propertyContainer');
-            container.innerHTML = properties.length ? properties.map((p, idx) => `
-                <div class="bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-xl border dark:border-slate-800">
-                    <div class="relative">
-                        <div class="swiper-container" onscroll="updateDots(this, ${idx})">
-                            ${p.imgs.map(img => `<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}
-                        </div>
-                        <div class="dots-${idx} absolute bottom-6 left-0 right-0 flex justify-center gap-1.5 px-10">
-                            ${p.imgs.map((_, i) => `<div class="dot ${i===0?'active':''}"></div>`).join('')}
-                        </div>
-                        <div class="absolute top-4 right-4 bg-black/50 backdrop-blur-md text-white text-[9px] px-3 py-1 rounded-full font-black uppercase italic">Code: ${p.code}</div>
-                    </div>
-                    <div class="p-8">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-black text-lg">${p.title}</h3>
-                            <div class="text-blue-600 font-black text-sm">${p.price}</div>
-                        </div>
-                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? 'bg-orange-500' : 'bg-slate-900 dark:bg-blue-600'} text-white py-5 rounded-[1.8rem] font-black text-[10px] uppercase tracking-widest transition-all">
-                            ${visits[p.code] ? '⚠️ دست: ' + (visits[p.code].consultant.includes(currentUser.name) ? 'خود شما' : visits[p.code].consultant) : '🔓 خروج کلید واحد ' + p.code}
+            document.getElementById('propertyContainer').innerHTML = properties.map((p, idx)=>`
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-lg border dark:border-slate-800">
+                    <div class="swiper-container">${p.imgs.map(img=>`<div class="swiper-slide"><img src="${img}" class="w-full h-full object-cover"></div>`).join('')}</div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4"><h3 class="font-black">${p.title}</h3><span class="text-blue-600 text-xs">${p.price}</span></div>
+                        <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs">
+                            ${visits[p.code]?'⚠️ دست: '+visits[p.code].consultant : '🔓 خروج کلید واحد '+p.code}
                         </button>
                     </div>
-                </div>`).join('') : '<div class="text-center py-20 opacity-20 font-black">ویترین خالی است</div>';
+                </div>`).join('');
 
-            // گزارشات مدیریت
+            // امنیت کلیدها
+            document.getElementById('securityKeyList').innerHTML = Object.values(visits).map(v=>`
+                <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border-r-4 border-orange-500 flex justify-between">
+                    <div><p class="font-black text-xs">واحد ${v.code}</p><p class="text-[10px] opacity-60">توسط: ${v.consultant} | برای: ${v.customer}</p></div>
+                    <button onclick="handleKeyAction('${v.code}')" class="text-[10px] bg-white dark:bg-slate-800 px-3 py-1 rounded-lg shadow-sm">تایید برگشت</button>
+                </div>`).join('') || '<p class="opacity-30 text-center">تمام کلیدها در بنگاه موجود است.</p>';
+
+            // تقویم
+            document.getElementById('calendarList').innerHTML = calendarEvents.map(e=>`
+                <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border-r-4 border-blue-500 shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div><p class="font-black text-sm">${e.title}</p><p class="text-[10px] opacity-50">${e.date} | ثبت توسط: ${e.creator}</p></div>
+                        <span class="text-[10px] bg-blue-100 dark:bg-blue-900 text-blue-600 px-2 py-1 rounded-full font-bold">${e.type}</span>
+                    </div>
+                </div>`).join('') || '<p class="opacity-30 text-center">رویدادی ثبت نشده.</p>';
+
+            // مدیریت ادمین
             if(currentUser.isAdmin) {
-                const pending = consultants.filter(c => c.status === "pending");
-                document.getElementById('pendingList').innerHTML = pending.length ? pending.map(c => `
-                    <div class="flex justify-between items-center p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-orange-200 dark:border-orange-900/50">
-                        <div class="flex items-center gap-3">
-                            <img src="${c.avatar}" class="w-10 h-10 rounded-full object-cover">
-                            <div class="text-right">
-                                <p class="text-xs font-black">${c.name} ${c.family}</p>
-                                <p class="text-[9px] opacity-60">${c.phone}</p>
-                            </div>
-                        </div>
-                        <button onclick="approveConsultant('${c.phone}')" class="bg-green-600 text-white px-3 py-2 rounded-xl text-[9px] font-black">تایید مشاور ✅</button>
-                    </div>`).join('') : '<p class="text-[10px] opacity-30">درخواستی نیست</p>';
-
-                const active = consultants.filter(c => c.status === "active" && !c.isAdmin);
-                document.getElementById('activeConsultants').innerHTML = active.map(c => `
-                    <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
-                        <div class="flex items-center gap-3">
-                            <img src="${c.avatar}" class="w-8 h-8 rounded-full">
-                            <p class="text-xs font-bold">${c.name} ${c.family}</p>
-                        </div>
-                        <span class="text-[9px] font-black text-blue-600">${visitHistory.filter(h => h.consultant.includes(c.name)).length} بازدید</span>
+                const pend = consultants.filter(c=>c.status==="pending");
+                document.getElementById('pendingList').innerHTML = pend.map(c=>`
+                    <div class="flex justify-between items-center bg-white p-2 rounded-xl">
+                        <span class="text-xs font-bold">${c.name}</span>
+                        <button onclick="approveConsultant('${c.phone}')" class="bg-green-600 text-white text-[8px] px-2 py-1 rounded-lg">تایید</button>
                     </div>`).join('');
             }
-
-            // سوابق من
-            const myData = visitHistory.filter(h => h.consultant.includes(currentUser.name));
-            document.getElementById('myVisitsLog').innerHTML = myData.length ? myData.map(h => `
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-blue-500 flex justify-between items-center">
-                    <div>
-                        <p class="text-xs font-black mb-1">واحد ${h.code} (مشتری: ${h.customer})</p>
-                        <p class="text-[9px] opacity-50">${h.date} - ${h.time}</p>
-                    </div>
-                    <span class="text-[20px]">✅</span>
-                </div>`).join('') : '<p class="text-xs opacity-30 text-center">هنوز بازدیدی ثبت نکرده‌اید</p>';
         }
 
-        function updateDots(el, idx) {
-            const activeIdx = Math.round(el.scrollLeft / el.offsetWidth);
-            document.querySelectorAll(`.dots-${idx} .dot`).forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
-        }
-
+        function approveConsultant(p) { const i=consultants.findIndex(c=>c.phone===p); consultants[i].status="active"; saveDB(); updateUI(); }
+        function saveDB() { localStorage.setItem('nader_v4_db', JSON.stringify(consultants)); }
+        function triggerError(el) { el.classList.add('error-shake'); setTimeout(()=>el.classList.remove('error-shake'),500); }
+        function closePropModal() { document.getElementById('propModal').classList.add('hidden'); }
+        function closeVisitModal() { document.getElementById('visitModal').classList.add('hidden'); }
+        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+        function handleLogout() { location.reload(); }
         function showTab(id, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(id === 'security' || id === 'calendar' ? 'home' : id).classList.add('active'); // فعلا تب های امنیتی به هوم برمیگردن
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('nav-active'));
             btn.classList.add('nav-active');
         }
     </script>
