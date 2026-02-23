@@ -121,11 +121,16 @@
                     <input type="text" id="pCode" placeholder="کد ملک" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
                     <input type="text" id="pTitle" placeholder="عنوان" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
                     <input type="text" id="pPrice" placeholder="قیمت" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
-                      <div class="flex gap-2"> 
+                    <select id="pStatus" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
+                        <option value="empty_key_office">🗝️ خالی - کلید در بنگاه</option>
+                        <option value="empty_key_owner">🏠 خالی - کلید دست مالک</option>
+                        <option value="owner_occupied">👤 مالک مستقر است</option>
+                        <option value="tenant_occupied">👥 مستأجر مستقر است</option>
+                    </select>
+                    <div class="flex gap-2"> 
                          <button onclick="saveProperty()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ذخیره</button>
                         <button onclick="closePropModal()" class="w-full text-slate-400">انصراف</button>
                     </div>
-                  
                 </div>
             </div>
         </div>
@@ -342,12 +347,13 @@ function handlePlusButtonClick() {
 
     if (hasError) return;
 
-    const propData = {
-        code: c.value,
-        title: t.value,
-        price: document.getElementById('pPrice').value || "توافقی",
-        imgs: [...currentImgList]
-    };
+  const propData = {
+    code: c.value,
+    title: t.value,
+    price: document.getElementById('pPrice').value || "توافقی",
+    status: document.getElementById('pStatus').value, // خط جدید برای ذخیره وضعیت
+    imgs: [...currentImgList]
+};
 
     // چک کردن اینکه آیا در حالت ویرایش هستیم یا ثبت جدید
     if (window.editingIndex !== undefined && window.editingIndex !== -1) {
@@ -415,6 +421,17 @@ function handlePlusButtonClick() {
         <div class="p-6">
             <div class="flex justify-between items-center mb-4 text-right">
                 <h3 class="font-black text-lg">${p.title}</h3>
+                <div class="flex flex-wrap gap-2 mb-4">
+   ${p.status === 'empty_key_office' ? `
+    <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs">
+        ${visits[p.code]?'⚠️ دست: '+visits[p.code].consultant : '🔓 خروج کلید واحد '+p.code}
+    </button>
+` : `
+    <div class="w-full bg-slate-100 dark:bg-slate-800 text-slate-400 py-4 rounded-2xl font-black text-xs text-center border-2 border-dashed">
+        ${getStatusStyle(p.status).text}
+    </div>
+`}
+</div>
                 <span class="text-blue-600 font-bold">${p.price}</span>
             </div>
             <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs">
@@ -484,6 +501,9 @@ function handlePlusButtonClick() {
     
     // باز کردن مودال
     document.getElementById('propModal').classList.remove('hidden');
+
+    // اضافه کردن این خط برای نمایش وضعیت قبلی هنگام ویرایش
+document.getElementById('pStatus').value = p.status || 'empty_key_office';
 }
 
 function updateDots(propIdx) {
@@ -511,6 +531,16 @@ function updateDots(propIdx) {
             // بروزرسانی پیش‌نمایش در مودال
             renderPreview();
         }
+
+        function getStatusStyle(status) {
+    switch(status) {
+        case 'empty_key_office': return {text: '🗝️ خالی - کلید نزد ما', class: 'bg-green-100 text-green-600 dark:bg-green-900/30'};
+        case 'empty_key_owner': return {text: '🏠 خالی - کلید دست مالک', class: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30'};
+        case 'owner_occupied': return {text: '👤 مالک مستقر', class: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30'};
+        case 'tenant_occupied': return {text: '👥 مستأجر مستقر', class: 'bg-red-100 text-red-600 dark:bg-red-900/30'};
+        default: return {text: 'نامشخص', class: 'bg-slate-100 text-slate-500'};
+    }
+}
     </script>
 
     <div id="errorModal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
