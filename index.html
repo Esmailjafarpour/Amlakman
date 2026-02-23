@@ -100,9 +100,26 @@
         </main>
 
         <main id="security" class="tab-content p-6">
-            <h2 class="font-black text-lg mb-6">🔑 وضعیت کلیدهای خارج شده</h2>
-            <div id="securityKeyList" class="space-y-4"></div>
-        </main>
+    <h2 class="font-black text-lg mb-6">🔑 مدیریت امنیت کلیدها</h2>
+    
+    <div class="mb-10">
+        <h3 class="text-xs font-black text-orange-500 mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+            کلیدهای خارج شده (در دست مشاور)
+        </h3>
+        <div id="securityKeyList" class="space-y-4"></div>
+    </div>
+
+    <hr class="border-slate-200 dark:border-slate-800 mb-10">
+
+    <div>
+        <h3 class="text-xs font-black text-green-500 mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+            تاریخچه بازگشت (امروز)
+        </h3>
+        <div id="returnedKeyList" class="space-y-4 opacity-80"></div>
+    </div>
+</main>
 
         <main id="calendar" class="tab-content p-6">
             <h2 class="font-black text-lg mb-6">📅 تقویم نشست‌ها و قرارها</h2>
@@ -380,10 +397,31 @@ function handlePlusButtonClick() {
             setTimeout(() => el.classList.remove('error-shake'), 500);
         }
 
-        function handleKeyAction(code) {
-            if(visits[code]) { if(confirm("بازگشت کلید؟")) { delete visits[code]; updateUI(); } }
-            else { activeCode=code; document.getElementById('visitConsultantSelect').innerHTML=consultants.filter(c=>c.status==="active").map(c=>`<option>${c.name} ${c.family}</option>`).join(''); document.getElementById('visitModal').classList.remove('hidden'); }
-        }
+       function handleKeyAction(code) {
+    if(visits[code]) { 
+        if(confirm("تایید بازگشت کلید واحد " + code + "؟")) {
+            // اضافه کردن زمان بازگشت به آبجکت قبل از انتقال به تاریخچه
+            const returnData = {
+                ...visits[code],
+                returnTime: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
+            };
+            
+            // اضافه کردن به ابتدای آرایه تاریخچه
+            visitHistory.unshift(returnData);
+            
+            // حذف از لیست کلیدهای فعال
+            delete visits[code]; 
+            updateUI(); 
+        } 
+    }
+    else { 
+        activeCode = code; 
+        document.getElementById('visitConsultantSelect').innerHTML = consultants
+            .filter(c => c.status === "active")
+            .map(c => `<option>${c.name} ${c.family}</option>`).join(''); 
+        document.getElementById('visitModal').classList.remove('hidden'); 
+    }
+}
         function confirmVisit() {
             const cust=document.getElementById('visitCustomerName'); if(!cust.value) return triggerError(cust);
             const data = {code:activeCode, consultant:document.getElementById('visitConsultantSelect').value, customer:cust.value, time:new Date().toLocaleTimeString('fa-IR')};
@@ -441,12 +479,28 @@ function handlePlusButtonClick() {
         </div>
     </div>`).join('');
 
-            // امنیت کلیدها
-            document.getElementById('securityKeyList').innerHTML = Object.values(visits).map(v=>`
-                <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border-r-4 border-orange-500 flex justify-between">
-                    <div><p class="font-black text-xs">واحد ${v.code}</p><p class="text-[10px] opacity-60">توسط: ${v.consultant} | برای: ${v.customer}</p></div>
-                    <button onclick="handleKeyAction('${v.code}')" class="text-[10px] bg-white dark:bg-slate-800 px-3 py-1 rounded-lg shadow-sm">تایید برگشت</button>
-                </div>`).join('') || '<p class="opacity-30 text-center">تمام کلیدها در بنگاه موجود است.</p>';
+        // --- امنیت: کلیدهای فعلی ---
+document.getElementById('securityKeyList').innerHTML = Object.values(visits).map(v => `
+    <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border-r-4 border-orange-500 flex justify-between items-center shadow-sm">
+        <div>
+            <p class="font-black text-sm text-orange-700 dark:text-orange-400">واحد ${v.code}</p>
+            <p class="text-[10px] opacity-70">👤 مشاور: ${v.consultant} | 🕒 خروج: ${v.time}</p>
+        </div>
+        <button onclick="handleKeyAction('${v.code}')" class="text-[10px] bg-white dark:bg-slate-800 px-3 py-2 rounded-xl shadow-md font-bold">تایید برگشت</button>
+    </div>`).join('') || '<p class="text-center opacity-40 py-4 text-xs italic">تمام کلیدها در دفتر موجود است.</p>';
+
+// --- امنیت: تاریخچه بازگشتی‌ها ---
+document.getElementById('returnedKeyList').innerHTML = visitHistory.map(v => `
+    <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-slate-300 dark:border-slate-700 flex justify-between items-center">
+        <div>
+            <p class="font-bold text-xs opacity-60">واحد ${v.code} (برگشت شد)</p>
+            <p class="text-[10px] opacity-50">توسط: ${v.consultant} | مشتری: ${v.customer}</p>
+        </div>
+        <div class="text-left text-[9px] font-bold opacity-40">
+            <p>خروج: ${v.time}</p>
+            <p>ورود: ${v.returnTime}</p>
+        </div>
+    </div>`).join('') || '<p class="text-center opacity-30 py-4 text-xs italic">هنوز موردی بازگردانده نشده است.</p>';
 
             // تقویم
             document.getElementById('calendarList').innerHTML = calendarEvents.map(e=>`
