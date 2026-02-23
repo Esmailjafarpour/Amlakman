@@ -396,23 +396,14 @@ function handlePlusButtonClick() {
             el.parentNode.insertBefore(err, el.nextSibling);
             setTimeout(() => el.classList.remove('error-shake'), 500);
         }
+let tempKeyCode = null; // برای ذخیره موقت کد ملکی که می‌خواهیم برگردانیم
 
-       function handleKeyAction(code) {
+function handleKeyAction(code) {
     if(visits[code]) { 
-        if(confirm("تایید بازگشت کلید واحد " + code + "؟")) {
-            // اضافه کردن زمان بازگشت به آبجکت قبل از انتقال به تاریخچه
-            const returnData = {
-                ...visits[code],
-                returnTime: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
-            };
-            
-            // اضافه کردن به ابتدای آرایه تاریخچه
-            visitHistory.unshift(returnData);
-            
-            // حذف از لیست کلیدهای فعال
-            delete visits[code]; 
-            updateUI(); 
-        } 
+        // به جای confirm، مودال را باز می‌کنیم
+        tempKeyCode = code;
+        document.getElementById('returnModalText').innerText = `آیا از بازگشت کلید واحد ${code} به بنگاه اطمینان دارید؟`;
+        showReturnModal();
     }
     else { 
         activeCode = code; 
@@ -421,6 +412,44 @@ function handlePlusButtonClick() {
             .map(c => `<option>${c.name} ${c.family}</option>`).join(''); 
         document.getElementById('visitModal').classList.remove('hidden'); 
     }
+}
+
+// تابع نهایی سازی بازگشت (وقتی دکمه تأیید مودال زده شود)
+function executeReturn() {
+    if(!tempKeyCode) return;
+    
+    const returnData = {
+        ...visits[tempKeyCode],
+        returnTime: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
+    };
+    
+    visitHistory.unshift(returnData);
+    delete visits[tempKeyCode];
+    
+    closeReturnModal();
+    updateUI();
+    tempKeyCode = null;
+}
+
+// توابع باز و بسته کردن مودال با انیمیشن
+function showReturnModal() {
+    const modal = document.getElementById('confirmReturnModal');
+    const content = document.getElementById('confirmReturnContent');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        content.classList.remove('scale-90');
+        content.classList.add('scale-100');
+    }, 10);
+}
+
+function closeReturnModal() {
+    const modal = document.getElementById('confirmReturnModal');
+    const content = document.getElementById('confirmReturnContent');
+    content.classList.add('scale-90');
+    content.classList.remove('scale-100');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 200);
 }
         function confirmVisit() {
             const cust=document.getElementById('visitCustomerName'); if(!cust.value) return triggerError(cust);
@@ -610,6 +639,27 @@ function updateDots(propIdx) {
         <button onclick="closeErrorModal()" class="w-full bg-slate-900 dark:bg-red-600 text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition-transform">
             متوجه شدم
         </button>
+    </div>
+
+</div>
+
+<div id="confirmReturnModal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[2.5rem] p-8 text-center shadow-2xl border border-green-100 dark:border-green-900/30 scale-90 transition-transform duration-300" id="confirmReturnContent">
+        <div class="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-4xl">🔑</span>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 dark:text-white mb-2">بازگشت کلید</h3>
+        <p id="returnModalText" class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+            آیا بازگشت کلید واحد را تأیید می‌کنید؟
+        </p>
+        <div class="flex gap-3">
+            <button onclick="executeReturn()" class="flex-1 bg-green-600 text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition-transform">
+                تأیید
+            </button>
+            <button onclick="closeReturnModal()" class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-500 py-4 rounded-2xl font-black active:scale-95 transition-transform">
+                لغو
+            </button>
+        </div>
     </div>
 </div>
 </body>
