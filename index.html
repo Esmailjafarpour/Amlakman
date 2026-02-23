@@ -141,8 +141,8 @@
                     <select id="pStatus" class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold">
                         <option value="empty_key_office">🗝️ خالی - کلید در بنگاه</option>
                         <option value="empty_key_owner">🏠 خالی - کلید دست مالک</option>
-                        <option value="owner_occupied">👤 مالک مستقر است</option>
-                        <option value="tenant_occupied">👥 مستأجر مستقر است</option>
+                        <option value="owner_occupied">👤 مالک ساکن است</option>
+                        <option value="tenant_occupied">👥 مستأجر ساکن است</option>
                     </select>
                     <div class="flex gap-2"> 
                          <button onclick="saveProperty()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black">ذخیره</button>
@@ -620,8 +620,8 @@ function updateDots(propIdx) {
     switch(status) {
         case 'empty_key_office': return {text: '🗝️ خالی - کلید نزد ما', class: 'bg-green-100 text-green-600 dark:bg-green-900/30'};
         case 'empty_key_owner': return {text: '🏠 خالی - کلید دست مالک', class: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30'};
-        case 'owner_occupied': return {text: '👤 مالک مستقر', class: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30'};
-        case 'tenant_occupied': return {text: '👥 مستأجر مستقر', class: 'bg-red-100 text-red-600 dark:bg-red-900/30'};
+        case 'owner_occupied': return {text: '👤 مالک ساکن', class: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30'};
+        case 'tenant_occupied': return {text: '👥 مستأجر ساکن', class: 'bg-red-100 text-red-600 dark:bg-red-900/30'};
         default: return {text: 'نامشخص', class: 'bg-slate-100 text-slate-500'};
     }
 }
