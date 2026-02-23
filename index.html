@@ -175,6 +175,28 @@
         let consultants = JSON.parse(localStorage.getItem('nader_v4_db')) || [{phone: "09337301641", name: "نادر", family: "مدیریت", avatar: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", status: "active", isAdmin: true}];
         let currentUser = null, activeCode = null;
 
+        function showErrorModal() {
+        const modal = document.getElementById('errorModal');
+        const content = document.getElementById('errorModalContent');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeErrorModal() {
+        const modal = document.getElementById('errorModal');
+        const content = document.getElementById('errorModalContent');
+        content.classList.add('scale-90');
+        content.classList.remove('scale-100');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.getElementById('authPhone').value = ''; // پاک کردن فیلد برای ورود مجدد
+            document.getElementById('authPhone').focus();
+        }, 200);
+    }
+
         // --- احراز هویت ---
         function toggleAuthMode(isReg) { document.getElementById('loginBox').classList.toggle('hidden', isReg); document.getElementById('registerBox').classList.toggle('hidden', !isReg); }
         function previewRegAvatar(i) { const r = new FileReader(); r.onload=(e)=>document.getElementById('regAvatarPreview').src=e.target.result; r.readAsDataURL(i.files[0]); }
@@ -483,13 +505,14 @@ function updateDots(propIdx) {
     });
 }
 
-function removeImage(index) {
-    // حذف عکس از لیست بر اساس ایندکس آن
-    currentImgList.splice(index, 1);
-    // بروزرسانی پیش‌نمایش در مودال
-    renderPreview();
-}
+        function removeImage(index) {
+            // حذف عکس از لیست بر اساس ایندکس آن
+            currentImgList.splice(index, 1);
+            // بروزرسانی پیش‌نمایش در مودال
+            renderPreview();
+        }
     </script>
+
     <div id="errorModal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
     <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[2.5rem] p-8 text-center shadow-2xl border border-red-100 dark:border-red-900/30 scale-90 transition-transform duration-300" id="errorModalContent">
         <div class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
