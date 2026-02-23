@@ -256,8 +256,13 @@ function clearErrors() {
         function processAuth() {
             const p = document.getElementById('authPhone').value;
             const u = consultants.find(c=>c.phone===p);
-            if(!u) return alert("یافت نشد.");
-            if(u.status==="pending") return document.getElementById('loginBox').classList.add('hidden'), document.getElementById('pendingBox').classList.remove('hidden');
+if (!u) {
+    const input = document.getElementById('authPhone');
+input.classList.add('error-shake', 'border-red-500');
+setTimeout(() => input.classList.remove('error-shake'), 500);
+        showErrorModal(); // نمایش مودال به جای آلرت
+        return;
+    }            if(u.status==="pending") return document.getElementById('loginBox').classList.add('hidden'), document.getElementById('pendingBox').classList.remove('hidden');
             currentUser=u; launchApp();
         }
         function launchApp() {
@@ -485,5 +490,19 @@ function removeImage(index) {
     renderPreview();
 }
     </script>
+    <div id="errorModal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[2.5rem] p-8 text-center shadow-2xl border border-red-100 dark:border-red-900/30 scale-90 transition-transform duration-300" id="errorModalContent">
+        <div class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-4xl">🚫</span>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 dark:text-white mb-2">کاربر یافت نشد!</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+            شماره وارد شده در سیستم ثبت نشده است. ابتدا ثبت‌نام کنید یا با مدیریت تماس بگیرید.
+        </p>
+        <button onclick="closeErrorModal()" class="w-full bg-slate-900 dark:bg-red-600 text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition-transform">
+            متوجه شدم
+        </button>
+    </div>
+</div>
 </body>
 </html>
