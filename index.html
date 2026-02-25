@@ -1022,46 +1022,46 @@
         }
 
         // ۳. بخش تاریخچه
-       const filteredHistory = currentUser.isAdmin
-    ? visitHistory
-    : visitHistory.filter((h) => h.consultantPhone === currentUser.phone);
+        const filteredHistory = currentUser.isAdmin
+            ? visitHistory
+            : visitHistory.filter((h) => h.consultantPhone === currentUser.phone);
 
-const historyContainer = document.getElementById("returnedKeyList");
+        const historyContainer = document.getElementById("returnedKeyList");
 
-if (historyContainer) {
-    historyContainer.innerHTML = filteredHistory.map((h) => {
-        // ۱. تعریف متغیر برای هر ردیف داخل حلقه
-        const isActiveCoord = h.isCoordination && visitHistory.find(item => item.code === h.code && item.isCoordination) === h;
+        if (historyContainer) {
+            historyContainer.innerHTML = filteredHistory.map((h) => {
+                // ۱. تعریف متغیر برای هر ردیف داخل حلقه
+                const isActiveCoord = h.isCoordination && visitHistory.find(item => item.code === h.code && item.isCoordination) === h;
 
-        return `
-        <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 ${h.isCoordination ? "border-orange-500" : "border-slate-300 dark:border-slate-700"} flex justify-between items-center shadow-sm">
-            <div class="text-right">
-                <div class="flex items-center gap-2">
-                    <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code}</p>
-                    ${h.isCoordination ? '<span class="text-[8px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-md font-black">📞 هماهنگی</span>' : ""}
-                </div>
-                <p class="text-[10px] opacity-60 mt-1">👤 مشاور: ${h.consultant}</p>
-                ${currentUser.isAdmin ? `<a href="tel:${h.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${h.consultantPhone}</a>` : ""}
-                <p class="text-[10px] opacity-60">👥 مشتری: ${h.customer}</p>
-            </div>
-            
-            <div class="flex flex-col items-end gap-2">
-                <div class="text-left ${h.isCoordination ? "bg-orange-50 dark:bg-orange-900/20" : "bg-slate-100 dark:bg-slate-700/50"} p-2 rounded-lg min-w-[80px]">
-                    ${h.isCoordination
-                        ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">موعد:<br>${h.outTime}</div>`
-                        : `<div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
-                           <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>`
-                    }
-                </div>
-                
-                ${currentUser.isAdmin && isActiveCoord
-                    ? `<button onclick="deleteHistoryItem(${visitHistory.indexOf(h)})" class="text-[9px] text-red-500 font-bold hover:underline">🗑️ لغو و حذف</button>`
-                    : ""
-                }
-            </div>
-        </div>`;
-    }).join("") || '<p class="text-center opacity-30 py-4 text-xs italic font-bold">موردی برای نمایش وجود ندارد.</p>';
-}
+                return `
+                <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 ${h.isCoordination ? "border-orange-500" : "border-slate-300 dark:border-slate-700"} flex justify-between items-center shadow-sm">
+                    <div class="text-right">
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code}</p>
+                            ${h.isCoordination ? '<span class="text-[8px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-md font-black">📞 هماهنگی</span>' : ""}
+                        </div>
+                        <p class="text-[10px] opacity-60 mt-1">👤 مشاور: ${h.consultant}</p>
+                        ${currentUser.isAdmin ? `<a href="tel:${h.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${h.consultantPhone}</a>` : ""}
+                        <p class="text-[10px] opacity-60">👥 مشتری: ${h.customer}</p>
+                    </div>
+                    
+                    <div class="flex flex-col items-end gap-2">
+                        <div class="text-left ${h.isCoordination ? "bg-orange-50 dark:bg-orange-900/20" : "bg-slate-100 dark:bg-slate-700/50"} p-2 rounded-lg min-w-[80px]">
+                            ${h.isCoordination
+                                ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">موعد:<br>${h.outTime}</div>`
+                                : `<div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
+                                <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>`
+                            }
+                        </div>
+                        
+                        ${currentUser.isAdmin && isActiveCoord
+                            ? `<button onclick="deleteHistoryItem(${visitHistory.indexOf(h)})" class="text-[9px] text-red-500 font-bold hover:underline">🗑️ لغو و حذف</button>`
+                            : ""
+                        }
+                    </div>
+                </div>`;
+            }).join("") || '<p class="text-center opacity-30 py-4 text-xs italic font-bold">موردی برای نمایش وجود ندارد.</p>';
+        }
 
         // ۴. آپدیت تقویم
         const calendarContainer = document.getElementById("calendarList");
@@ -1318,24 +1318,48 @@ if (historyContainer) {
         document.getElementById("coordTime").value = "";
       }
 
-      function deleteHistoryItem(index) {
-        // باز کردن یک تاییدیه ساده
-        if (
-          confirm("نادر جان، از لغو این مورد و پاک کردن از تاریخچه مطمئنی؟")
-        ) {
-          // ۱. حذف از آرایه تاریخچه
-          visitHistory.splice(index, 1);
+      let indexToDelete = null;
 
-          // ۲. به‌روزرسانی حافظه مرورگر
-          localStorage.setItem(
-            "nader_visit_history",
-            JSON.stringify(visitHistory),
-          );
+// تابع باز کردن مودال خوشگل
+function deleteHistoryItem(index) {
+    indexToDelete = index;
+    const item = visitHistory[index];
+    
+    // نمایش کد واحد در متن مودال
+    document.getElementById("cancelUnitCode").innerText = item.code;
+    
+    // نمایش مودال با حذف کلاس hidden
+    document.getElementById("cancelConfirmModal").classList.remove("hidden");
+    
+    // تنظیم عملکرد دکمه نهایی
+    document.getElementById("finalDeleteBtn").onclick = function() {
+        confirmFinalDelete();
+    };
+}
 
-          // ۳. آپدیت کردن رابط کاربری (که باعث میشه دکمه ملک دوباره آبی بشه)
-          updateUI();
-        }
-      }
+// تابع بستن مودال
+function closeCancelModal() {
+    document.getElementById("cancelConfirmModal").classList.add("hidden");
+    indexToDelete = null;
+}
+
+// عملیات حذف قطعی و آپدیت UI
+function confirmFinalDelete() {
+    if (indexToDelete !== null) {
+        // ۱. حذف از آرایه اصلی
+        visitHistory.splice(indexToDelete, 1);
+        
+        // ۲. ذخیره در حافظه ماندگار
+        localStorage.setItem("nader_visit_history", JSON.stringify(visitHistory));
+        
+        // ۳. بستن مودال‌های باز
+        closeCancelModal();
+        if (typeof closeManageModal === "function") closeManageModal(); 
+        
+        // ۴. بروزرسانی ویترین و لیست‌ها
+        updateUI();
+    }
+}
 
       function openManageCoordModal(index, code) {
         const modal = document.getElementById("manageCoordModal");
@@ -1672,5 +1696,34 @@ if (historyContainer) {
             </div>
         </div>
     </div>
+
+    <div id="cancelConfirmModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 shadow-2xl border-b-8 border-red-500 transform transition-all">
+        <div class="text-center">
+            <div class="bg-red-100 dark:bg-red-900/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y1="17"></line>
+                    <line x1="14" y1="11" x2="14" y1="17"></line>
+                </svg>
+            </div>
+            
+            <h3 class="text-xl font-black mb-2 text-slate-800 dark:text-white">لغو هماهنگی</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+                نادر جان، از لغو این هماهنگی برای واحد <span id="cancelUnitCode" class="font-bold text-red-500"></span> مطمئنی؟ با این کار وضعیت ملک دوباره آبی می‌شود.
+            </p>
+        </div>
+        
+        <div class="flex flex-col gap-3">
+            <button id="finalDeleteBtn" class="w-full bg-red-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all">
+                بله، لغو شود
+            </button>
+            <button onclick="closeCancelModal()" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-500 py-4 rounded-2xl font-bold text-sm active:scale-95 transition-all">
+                انصراف
+            </button>
+        </div>
+    </div>
+</div>
   </body>
 </html>
