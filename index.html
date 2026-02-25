@@ -352,6 +352,7 @@ function handlePlusButtonClick() {
     
     // پاک کردن ارورهای قبلی
     document.querySelectorAll('.error-text-prop').forEach(e => e.remove());
+    const rawPrice = document.getElementById('pPrice').value.replace(/,/g, '');
     let hasError = false;
 
     // اعتبار سنجی عکس
@@ -368,7 +369,7 @@ function handlePlusButtonClick() {
   const propData = {
     code: c.value,
     title: t.value,
-    price: document.getElementById('pPrice').value || "توافقی",
+    price: rawPrice || "توافقی",
     status: document.getElementById('pStatus').value, // خط جدید برای ذخیره وضعیت
     imgs: [...currentImgList]
 };
@@ -523,7 +524,10 @@ function closeReturnModal() {
             <div class="flex justify-between items-center mb-4 text-right">
                 <h3 class="font-black text-lg">${p.title}</h3>
                 
-                <span class="text-blue-600 font-bold">${p.price}</span>
+               // پیدا کردن بخش نمایش قیمت در innerHTML کارت ملک
+<div class="text-xs font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-2 rounded-xl inline-block">
+    ${formatPrice(p.price)}
+</div>
             </div>
             <div class="flex flex-wrap gap-2 mb-4">
             ${p.status === 'empty_key_office' ? `
@@ -708,6 +712,40 @@ function closeAccessModal() {
     setTimeout(() => {
         modal.classList.add('hidden');
     }, 200);
+}
+
+function formatPrice(price) {
+    if (!price || price === "توافقی") return "توافقی";
+    
+    // حذف هرگونه حروف یا کامای قبلی برای اطمینان از عدد بودن
+    const numericPrice = price.toString().replace(/[^0-9]/g, '');
+    
+    if (numericPrice === "") return "توافقی";
+    
+    // جدا کردن سه رقم سه رقم و اضافه کردن کلمه تومان
+    return parseInt(numericPrice).toLocaleString('fa-IR') + " تومان";
+
+
+    // --- بخش مدیریت رویدادهای ورودی ---
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // کد جداکننده سه رقم برای فیلد قیمت
+    const priceInput = document.getElementById('pPrice');
+    if (priceInput) {
+        priceInput.addEventListener('input', function (e) {
+            // ۱. حذف هر چیزی که عدد نیست
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            
+            if (value) {
+                // ۲. تبدیل به عدد و فرمت کردن (بدون نیاز به پکیج اضافه)
+                // استفاده از toLocaleString بدون آرگومان، کاما انگلیسی می‌گذارد که برای اینپوت بهتر است
+                e.target.value = parseInt(value).toLocaleString();
+            }
+        });
+    }
+    
+    // ... سایر کدهای لود اولیه ...
+});
 }
     </script>
 
