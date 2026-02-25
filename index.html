@@ -1022,53 +1022,46 @@
         }
 
         // ۳. بخش تاریخچه
-        const filteredHistory = currentUser.isAdmin
-          ? visitHistory
-          : visitHistory.filter((h) => h.consultantPhone === currentUser.phone);
+       const filteredHistory = currentUser.isAdmin
+    ? visitHistory
+    : visitHistory.filter((h) => h.consultantPhone === currentUser.phone);
 
-        const historyContainer = document.getElementById("returnedKeyList");
+const historyContainer = document.getElementById("returnedKeyList");
+
+if (historyContainer) {
+    historyContainer.innerHTML = filteredHistory.map((h) => {
+        // ۱. تعریف متغیر برای هر ردیف داخل حلقه
         const isActiveCoord = h.isCoordination && visitHistory.find(item => item.code === h.code && item.isCoordination) === h;
-        if (historyContainer) {
-          historyContainer.innerHTML =
-            filteredHistory
-              .map(
-                (h) => `
-               <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 ${h.isCoordination ? "border-orange-500" : "border-slate-300 dark:border-slate-700"} flex justify-between items-center shadow-sm">
-                    <div class="text-right">
-                        <div class="flex items-center gap-2">
-                            <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code}</p>
-                            ${h.isCoordination ? '<span class="text-[8px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-md font-black">📞 هماهنگی</span>' : ""}
-                        </div>
-                        <p class="text-[10px] opacity-60 mt-1">👤 مشاور: ${h.consultant}</p>
-                        ${currentUser.isAdmin ? `<a href="tel:${h.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${h.consultantPhone}</a>` : ""}
-                        <p class="text-[10px] opacity-60">👥 مشتری: ${h.customer}</p>
-                    </div>
-                    
-                    // پیدا کردن اینکه آیا این آیتم تاریخچه، آخرین هماهنگی فعال ملک است یا خیر
-                    <div class="flex flex-col items-end gap-2">
-                        <div class="text-left ${h.isCoordination ? "bg-orange-50 dark:bg-orange-900/20" : "bg-slate-100 dark:bg-slate-700/50"} p-2 rounded-lg min-w-[80px]">
-                            ${
-                            h.isCoordination
-                                ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">موعد:<br>${h.outTime}</div>`
-                                : `<div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>`
-                            }
-                        </div>
-                        
-                        ${
-                        currentUser.isAdmin && isActiveCoord
-                            ? `
-                            <button onclick="deleteHistoryItem(${visitHistory.indexOf(h)})" class="text-[9px] text-red-500 font-bold hover:underline">
-                                🗑️ لغو و حذف
-                            </button>
-                        `
-                            : ""
-                        }
-                    </div>
-                </div>`,
-              )
-              .join("") ||
-            '<p class="text-center opacity-30 py-4 text-xs italic font-bold">موردی برای نمایش وجود ندارد.</p>';
-        }
+
+        return `
+        <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 ${h.isCoordination ? "border-orange-500" : "border-slate-300 dark:border-slate-700"} flex justify-between items-center shadow-sm">
+            <div class="text-right">
+                <div class="flex items-center gap-2">
+                    <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code}</p>
+                    ${h.isCoordination ? '<span class="text-[8px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-md font-black">📞 هماهنگی</span>' : ""}
+                </div>
+                <p class="text-[10px] opacity-60 mt-1">👤 مشاور: ${h.consultant}</p>
+                ${currentUser.isAdmin ? `<a href="tel:${h.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${h.consultantPhone}</a>` : ""}
+                <p class="text-[10px] opacity-60">👥 مشتری: ${h.customer}</p>
+            </div>
+            
+            <div class="flex flex-col items-end gap-2">
+                <div class="text-left ${h.isCoordination ? "bg-orange-50 dark:bg-orange-900/20" : "bg-slate-100 dark:bg-slate-700/50"} p-2 rounded-lg min-w-[80px]">
+                    ${h.isCoordination
+                        ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">موعد:<br>${h.outTime}</div>`
+                        : `<div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
+                           <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>`
+                    }
+                </div>
+                
+                ${currentUser.isAdmin && isActiveCoord
+                    ? `<button onclick="deleteHistoryItem(${visitHistory.indexOf(h)})" class="text-[9px] text-red-500 font-bold hover:underline">🗑️ لغو و حذف</button>`
+                    : ""
+                }
+            </div>
+        </div>`;
+    }).join("") || '<p class="text-center opacity-30 py-4 text-xs italic font-bold">موردی برای نمایش وجود ندارد.</p>';
+}
 
         // ۴. آپدیت تقویم
         const calendarContainer = document.getElementById("calendarList");
