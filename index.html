@@ -1031,7 +1031,7 @@
                     <div class="flex flex-col items-center gap-2">
                         <div class="text-left ${h.isCoordination ? "bg-orange-50 dark:bg-orange-900/20" : "bg-slate-100 dark:bg-slate-700/50"} p-2 rounded-lg min-w-[80px]">
                             ${
-                            h.isCoordination
+                              h.isCoordination
                                 ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">
                                     موعد بازدید:<br>${h.outTime}
                                 </div>`
@@ -1040,12 +1040,16 @@
                             }
                         </div>
 
-                        ${currentUser.isAdmin ? `
+                        ${
+                          currentUser.isAdmin
+                            ? `
                             <button onclick="deleteHistoryItem(${visitHistory.indexOf(h)})" 
                                     class="flex items-center gap-1 text-[8px] font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md active:scale-90 transition-transform">
                                 <span class="text-[10px]">🗑️</span> لغو هماهنگی
                             </button>
-                        ` : ''}
+                        `
+                            : ""
+                        }
                     </div>
                 </div>`,
               )
@@ -1240,15 +1244,27 @@
       // باز کردن مودال جدید هماهنگی
       function openCoordinationModal(code) {
         activeCode = code;
-        document.getElementById("coordPropCode").innerText = code;
 
-        // پر کردن لیست مشاورین
-        document.getElementById("coordConsultant").innerHTML = consultants
-          .filter((c) => c.status === "active")
-          .map((c) => `<option>${c.name} ${c.family}</option>`)
-          .join("");
+        // چک می‌کنیم آیا از قبل هماهنگی دارد یا نه
+        const lastCoordIndex = visitHistory.findIndex(
+          (h) => h.code === code && h.isCoordination,
+        );
 
-        document.getElementById("coordinationModal").classList.remove("hidden");
+        if (lastCoordIndex !== -1) {
+          // اگر قبلاً هماهنگی ثبت شده، مودال "مدیریت" را باز کن
+          openManageCoordModal(lastCoordIndex, code);
+        } else {
+          // اگر هماهنگی جدید است، همان مودال ثبت فرم را باز کن
+          document.getElementById("coordPropCode").innerText = code;
+          document.getElementById("coordConsultant").innerHTML = consultants
+            .filter((c) => c.status === "active")
+            .map((c) => `<option>${c.name} ${c.family}</option>`)
+            .join("");
+
+          document
+            .getElementById("coordinationModal")
+            .classList.remove("hidden");
+        }
       }
 
       function closeCoordModal() {
@@ -1296,20 +1312,48 @@
         document.getElementById("coordTime").value = "";
       }
 
-
       function deleteHistoryItem(index) {
-            // باز کردن یک تاییدیه ساده
-            if (confirm("نادر جان، از لغو این مورد و پاک کردن از تاریخچه مطمئنی؟")) {
-                // ۱. حذف از آرایه تاریخچه
-                visitHistory.splice(index, 1);
-                
-                // ۲. به‌روزرسانی حافظه مرورگر
-                localStorage.setItem("nader_visit_history", JSON.stringify(visitHistory));
-                
-                // ۳. آپدیت کردن رابط کاربری (که باعث میشه دکمه ملک دوباره آبی بشه)
-                updateUI();
-            }
+        // باز کردن یک تاییدیه ساده
+        if (
+          confirm("نادر جان، از لغو این مورد و پاک کردن از تاریخچه مطمئنی؟")
+        ) {
+          // ۱. حذف از آرایه تاریخچه
+          visitHistory.splice(index, 1);
+
+          // ۲. به‌روزرسانی حافظه مرورگر
+          localStorage.setItem(
+            "nader_visit_history",
+            JSON.stringify(visitHistory),
+          );
+
+          // ۳. آپدیت کردن رابط کاربری (که باعث میشه دکمه ملک دوباره آبی بشه)
+          updateUI();
         }
+      }
+
+      function openManageCoordModal(index, code) {
+        const modal = document.getElementById("manageCoordModal");
+        const deleteBtn = document.getElementById("deleteCoordBtn");
+
+        // تنظیم عملکرد دکمه حذف برای همین آیتم خاص
+        deleteBtn.onclick = function () {
+          if (confirm("آیا از لغو هماهنگی واحد " + code + " مطمئن هستید؟")) {
+            visitHistory.splice(index, 1);
+            localStorage.setItem(
+              "nader_visit_history",
+              JSON.stringify(visitHistory),
+            );
+            closeManageModal();
+            updateUI();
+          }
+        };
+
+        modal.classList.remove("hidden");
+      }
+
+      function closeManageModal() {
+        document.getElementById("manageCoordModal").classList.add("hidden");
+      }
 
       // --- مدیریت رویدادهای ورودی (این بخش باید کاملاً مستقل باشد) ---
       document.addEventListener("DOMContentLoaded", function () {
@@ -1501,6 +1545,45 @@
               انصراف
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="manageCoordModal"
+      class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 shadow-2xl border-t-8 border-orange-500"
+      >
+        <div class="text-center">
+          <div
+            class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <span class="text-2xl">⚠️</span>
+          </div>
+          <h3 class="text-xl font-black mb-2 text-slate-800 dark:text-white">
+            هماهنگی قبلاً ثبت شده
+          </h3>
+          <p class="text-sm text-slate-500 mb-6">
+            این واحد در وضعیت «منتظر بازدید» است. برای مشاهده جزئیات به تاریخچه
+            مراجعه کنید.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <button
+            onclick="closeManageModal()"
+            class="w-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-4 rounded-2xl font-bold text-sm"
+          >
+            فهمیدم (بازگشت)
+          </button>
+          <button
+            id="deleteCoordBtn"
+            class="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2"
+          >
+            🗑️ حذف و لغو هماهنگی
+          </button>
         </div>
       </div>
     </div>
