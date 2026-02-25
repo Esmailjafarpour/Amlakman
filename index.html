@@ -539,9 +539,10 @@ function closeReturnModal() {
                 </div>
             `}
             </div>
-            <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs">
+            ${p.currentUser.isAdmin &&  <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs">
                 ${visits[p.code]?'⚠️ تحویل: '+visits[p.code].consultant : '🔓 خروج کلید واحد '+p.code}
-            </button>
+            </button>}
+           
         </div>
     </div>`).join('');
 
