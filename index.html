@@ -322,7 +322,11 @@ setTimeout(() => input.classList.remove('error-shake'), 500);
 
         // --- توابع اصلی ---
 function handlePlusButtonClick() { 
-    if(!currentUser.isAdmin) return alert("فقط ادمین اجازه دسترسی دارد."); 
+    // به جای alert، مودال شیک عدم دسترسی را نشان می‌دهیم
+    if(!currentUser.isAdmin) {
+        showAccessModal(); 
+        return; 
+    } 
     
     // ریست کردن همه فیلدها برای ثبت جدید
     window.editingIndex = -1; 
@@ -330,23 +334,16 @@ function handlePlusButtonClick() {
     document.getElementById('pCode').value = '';
     document.getElementById('pTitle').value = '';
     document.getElementById('pPrice').value = '';
+    
+    // یادت باشد اگر فیلد وضعیت سکونت را اضافه کردی، اینجا ریست شود
+    if(document.getElementById('pStatus')) {
+        document.getElementById('pStatus').value = 'empty_key_office';
+    }
+
     currentImgList = []; 
     document.getElementById('previewGallery').innerHTML = ''; 
     
     document.getElementById('propModal').classList.remove('hidden'); 
-}        function handleImageUpload(i) { Array.from(i.files).forEach(f=>{const r=new FileReader(); r.onload=(e)=>{currentImgList.push(e.target.result); renderPreview();}; r.readAsDataURL(f);}); }
-       function renderPreview() {
-    const container = document.getElementById('previewGallery');
-    // اضافه کردن flex-wrap برای اینکه عکس‌ها در چند خط جا شوند
-    container.className = "flex flex-wrap gap-2 mt-2"; 
-    container.innerHTML = currentImgList.map((s, i) => `
-        <div class="relative shrink-0 group">
-            <img src="${s}" class="w-16 h-16 rounded-xl object-cover border-2 border-slate-200 dark:border-slate-700 shadow-sm">
-            <button onclick="removeImage(${i})" class="absolute -top-2 -left-2 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[12px] font-bold shadow-lg border border-white">
-                ×
-            </button>
-        </div>
-    `).join('');
 }
        function saveProperty() {
     const c = document.getElementById('pCode');
@@ -691,6 +688,27 @@ function updateDots(propIdx) {
         default: return {text: 'نامشخص', class: 'bg-slate-100 text-slate-500'};
     }
 }
+
+
+function showAccessModal() {
+    const modal = document.getElementById('accessDeniedModal');
+    const content = document.getElementById('accessDeniedContent');
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        content.classList.remove('scale-90');
+        content.classList.add('scale-100');
+    }, 10);
+}
+
+function closeAccessModal() {
+    const modal = document.getElementById('accessDeniedModal');
+    const content = document.getElementById('accessDeniedContent');
+    content.classList.add('scale-90');
+    content.classList.remove('scale-100');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 200);
+}
     </script>
 
     <div id="errorModal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-6">
@@ -726,6 +744,21 @@ function updateDots(propIdx) {
                 لغو
             </button>
         </div>
+    </div>
+</div>
+
+<div id="accessDeniedModal" class="fixed inset-0 z-[1100] hidden bg-black/60 backdrop-blur-md flex items-center justify-center p-6">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-xs rounded-[2.5rem] p-8 text-center shadow-2xl border border-red-100 dark:border-red-900/30 transition-all duration-300 scale-90" id="accessDeniedContent">
+        <div class="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span class="text-4xl">🚫</span>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 dark:text-white mb-2">عدم دسترسی</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+            نادر عزیز (مدیریت)، محدودیت ثبت ملک را برای مشاورین فعال کرده است. برای ثبت ملک جدید با مدیریت هماهنگ کنید.
+        </p>
+        <button onclick="closeAccessModal()" class="w-full bg-slate-900 dark:bg-red-600 text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition-transform">
+            متوجه شدم
+        </button>
     </div>
 </div>
 </body>
