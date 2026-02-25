@@ -1368,6 +1368,56 @@
         document.getElementById("manageCoordModal").classList.add("hidden");
       }
 
+
+
+      function confirmReturn(code) {
+    // ۱. پیدا کردن ملک در لیست کلیدهای بیرون (نام لیستت را چک کن)
+    const outIndex = activeVisits.findIndex(item => item.code === code);
+    
+    if (outIndex !== -1) {
+        const outData = activeVisits[outIndex];
+        
+        // ۲. ساخت آیتم برای اضافه شدن به تاریخچه
+        const historyItem = {
+            code: outData.code,
+            consultant: outData.consultant,
+            consultantPhone: outData.consultantPhone || "",
+            customer: outData.customer,
+            outTime: outData.outTime,
+            inTime: new Date().toLocaleTimeString("fa-IR", {
+                hour: "2-digit",
+                minute: "2-digit",
+            }),
+            isCoordination: false
+        };
+
+        // ۳. اضافه کردن به تاریخچه و ذخیره در حافظه
+        visitHistory.unshift(historyItem);
+        localStorage.setItem("nader_visit_history", JSON.stringify(visitHistory));
+
+        // ۴. حذف از لیست کلیدهای بیرون و ذخیره
+        activeVisits.splice(outIndex, 1);
+        localStorage.setItem("nader_active_visits", JSON.stringify(activeVisits));
+
+        // ۵. تغییر وضعیت ملک در لیست اصلی به "کلید موجود در دفتر"
+        const propIndex = properties.findIndex(p => p.code === code);
+        if (propIndex !== -1) {
+            properties[propIndex].status = "empty_key_office";
+            localStorage.setItem("nader_properties", JSON.stringify(properties));
+        }
+
+        // ۶. بروزرسانی ظاهر صفحه
+        updateUI();
+        
+        // اگر تابعی برای بستن مودال داری اجرا کن
+        if (typeof closeReturnModal === "function") closeReturnModal();
+        
+        alert("برگشت کلید واحد " + code + " با موفقیت ثبت و به تاریخچه اضافه شد.");
+    } else {
+        alert("خطا: اطلاعات خروج برای این ملک یافت نشد!");
+    }
+}
+
       // --- مدیریت رویدادهای ورودی (این بخش باید کاملاً مستقل باشد) ---
       document.addEventListener("DOMContentLoaded", function () {
         const priceInput = document.getElementById("pPrice");
