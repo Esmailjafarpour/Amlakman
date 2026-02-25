@@ -1004,16 +1004,26 @@
             filteredHistory
               .map(
                 (h) => `
-                <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-slate-300 dark:border-slate-700 flex justify-between items-center shadow-sm">
+               <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 ${h.isCoordination ? "border-orange-500" : "border-slate-300 dark:border-slate-700"} flex justify-between items-center shadow-sm">
                     <div class="text-right">
-                        <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code}</p>
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code}</p>
+                            ${h.isCoordination ? '<span class="text-[8px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-md font-black">📞 هماهنگی</span>' : ""}
+                        </div>
                         <p class="text-[10px] opacity-60 mt-1">👤 مشاور: ${h.consultant}</p>
                         ${currentUser.isAdmin ? `<a href="tel:${h.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${h.consultantPhone}</a>` : ""}
                         <p class="text-[10px] opacity-60">👥 مشتری: ${h.customer}</p>
                     </div>
-                    <div class="text-left bg-slate-100 dark:bg-slate-700/50 p-2 rounded-lg min-w-[70px]">
-                        <div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
-                        <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>
+                    
+                    <div class="text-left ${h.isCoordination ? "bg-orange-50 dark:bg-orange-900/20" : "bg-slate-100 dark:bg-slate-700/50"} p-2 rounded-lg min-w-[80px]">
+                        ${
+                        h.isCoordination
+                            ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">
+                                موعد بازدید:<br>${h.outTime}
+                            </div>`
+                            : `<div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
+                            <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>`
+                        }
                     </div>
                 </div>`,
               )
@@ -1205,62 +1215,65 @@
         return parseInt(numericPrice).toLocaleString("fa-IR") + " تومان";
       } // اینجا تابع تمام می‌شود
 
-
-      // باز کردن مودال برای واحدهای ساکن‌دار
+      // باز کردن مودال جدید هماهنگی
       function openCoordinationModal(code) {
-    activeCode = code; // کد ملک را ذخیره می‌کنیم
-    
-    // پر کردن لیست مشاورین در مودال بازدید موجود
-    document.getElementById("visitConsultantSelect").innerHTML =
-        consultants
+        activeCode = code;
+        document.getElementById("coordPropCode").innerText = code;
+
+        // پر کردن لیست مشاورین
+        document.getElementById("coordConsultant").innerHTML = consultants
           .filter((c) => c.status === "active")
           .map((c) => `<option>${c.name} ${c.family}</option>`)
           .join("");
-          
-    // تغییر عنوان یا دکمه مودال برای اینکه کاربر بداند این "هماهنگی" است
-    document.getElementById("visitModal").classList.remove("hidden");
-    
-    // یک کلک کوچک: دکمه تایید مودال را موقتاً تغییر می‌دهیم که تابع هماهنگی را اجرا کند
-    const confirmBtn = document.querySelector("#visitModal button[onclick='confirmVisit()']");
-    confirmBtn.setAttribute("onclick", "saveCoordination()");
-    confirmBtn.innerText = "ثبت نهایی هماهنگی";
-}
 
-      // ذخیره مستقیم در تاریخچه (بدون درگیر کردن لیست کلیدهای نگهبانی)
+        document.getElementById("coordinationModal").classList.remove("hidden");
+      }
+
+      function closeCoordModal() {
+        document.getElementById("coordinationModal").classList.add("hidden");
+      }
+
+      // ذخیره هماهنگی در تاریخچه
       function saveCoordination() {
-    const cust = document.getElementById("visitCustomerName");
-    if (!cust.value) return triggerError(cust);
+        const cust = document.getElementById("coordCustomer");
+        const day = document.getElementById("coordDay").value;
+        const time = document.getElementById("coordTime").value;
+        const consultantName = document.getElementById("coordConsultant").value;
 
-    const selectedConsultantName = document.getElementById("visitConsultantSelect").value;
-    const consultantData = consultants.find((c) => `${c.name} ${c.family}` === selectedConsultantName);
+        if (!cust.value || !time) {
+          if (!cust.value) triggerError(cust);
+          if (!time) triggerError(document.getElementById("coordTime"));
+          return;
+        }
 
-    const historyItem = {
-        code: activeCode,
-        consultant: selectedConsultantName,
-        consultantPhone: consultantData ? consultantData.phone : "",
-        customer: cust.value,
-        outTime: "هماهنگ شده", // چون خروج کلید نداشتیم
-        inTime: new Date().toLocaleTimeString("fa-IR", {
-            hour: "2-digit",
-            minute: "2-digit",
-        }),
-    };
+        const consultantData = consultants.find(
+          (c) => `${c.name} ${c.family}` === consultantName,
+        );
 
-    // اضافه کردن مستقیم به تاریخچه
-    visitHistory.unshift(historyItem);
-    localStorage.setItem("nader_visit_history", JSON.stringify(visitHistory));
+        const historyItem = {
+          code: activeCode,
+          consultant: consultantName,
+          consultantPhone: consultantData ? consultantData.phone : "",
+          customer: cust.value,
+          outTime: `📅 ${day} ساعت ${time}`, // نمایش دقیق زمان هماهنگی
+          inTime: "✅ هماهنگ شد",
+          isCoordination: true, // یک علامت برای تشخیص در تاریخچه
+        };
 
-    // برگرداندن تنظیمات دکمه مودال به حالت اول برای استفاده‌های بعدی
-    const confirmBtn = document.querySelector("#visitModal button[onclick='saveCoordination()']");
-    confirmBtn.setAttribute("onclick", "confirmVisit()");
-    confirmBtn.innerText = "تأیید خروج کلید";
+        visitHistory.unshift(historyItem);
+        localStorage.setItem(
+          "nader_visit_history",
+          JSON.stringify(visitHistory),
+        );
 
-    closeVisitModal();
-    updateUI();
-    
-    // پاک کردن فیلد نام مشتری برای دفعه بعد
-    cust.value = "";
-}
+        closeCoordModal();
+        updateUI();
+
+        // ریست کردن فرم
+        cust.value = "";
+        document.getElementById("coordTime").value = "";
+      }
+
       // --- مدیریت رویدادهای ورودی (این بخش باید کاملاً مستقل باشد) ---
       document.addEventListener("DOMContentLoaded", function () {
         const priceInput = document.getElementById("pPrice");
@@ -1273,9 +1286,6 @@
           });
         }
       });
-
-
-
     </script>
 
     <div
@@ -1376,6 +1386,85 @@
         >
           متوجه شدم
         </button>
+      </div>
+    </div>
+
+    <div
+      id="coordinationModal"
+      class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 shadow-2xl"
+      >
+        <h3
+          class="text-xl font-black mb-6 text-orange-600 flex items-center gap-2"
+        >
+          <span>📞 هماهنگی بازدید واحد</span>
+          <span
+            id="coordPropCode"
+            class="bg-orange-100 px-2 py-1 rounded-lg text-sm"
+          ></span>
+        </h3>
+
+        <div class="space-y-4">
+          <div>
+            <label class="text-[10px] font-bold mr-2 opacity-50"
+              >👤 مشاور مربوطه</label
+            >
+            <select
+              id="coordConsultant"
+              class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm"
+            ></select>
+          </div>
+
+          <input
+            type="text"
+            id="coordCustomer"
+            placeholder="👤 نام مشتری"
+            class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm"
+          />
+
+          <div class="flex gap-2">
+            <div class="w-1/2">
+              <label class="text-[10px] font-bold mr-2 opacity-50"
+                >📅 روز بازدید</label
+              >
+              <select
+                id="coordDay"
+                class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm"
+              >
+                <option value="امروز">امروز</option>
+                <option value="فردا">فردا</option>
+                <option value="پس‌فردا">پس‌فردا</option>
+              </select>
+            </div>
+            <div class="w-1/2">
+              <label class="text-[10px] font-bold mr-2 opacity-50"
+                >🕒 ساعت</label
+              >
+              <input
+                type="time"
+                id="coordTime"
+                class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none font-bold text-sm"
+              />
+            </div>
+          </div>
+
+          <div class="flex gap-2 pt-2">
+            <button
+              onclick="saveCoordination()"
+              class="w-full bg-orange-500 text-white py-4 rounded-2xl font-black shadow-lg shadow-orange-200 dark:shadow-none"
+            >
+              ثبت نهایی
+            </button>
+            <button
+              onclick="closeCoordModal()"
+              class="w-full text-slate-400 font-bold"
+            >
+              انصراف
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </body>
