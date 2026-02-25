@@ -858,8 +858,8 @@
                   </button>`;
               } else if(currentUser.isAdmin) {
                 statusBtn = `
-                  <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? "bg-orange-500" : "bg-slate-900 dark:bg-blue-600"} text-white py-4 rounded-2xl font-black text-xs">
-                      ${visits[p.code] ? "⚠️ تماس جهت هماهنگی : " + visits[p.code].consultant : "🔓 هماهنگی با مالک انجام شد " + p.code}
+                  <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? "bg-slate-900 dark:bg-blue-600" : "bg-orange-500"} text-white py-4 rounded-2xl font-black text-xs">
+                      ${visits[p.code] ? "📞 تماس جهت هماهنگی : " + visits[p.code].consultant : "✅ هماهنگی با مالک انجام شد " + p.code}
                   </button>`;
               } else{
                 statusBtn = `
