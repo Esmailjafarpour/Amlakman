@@ -691,7 +691,7 @@
                     div.className = "relative min-w-[80px] h-20 shadow-md";
                     div.innerHTML = `
                         <img src="${compressedData}" class="w-full h-full object-cover rounded-xl border-2 border-blue-500">
-                        <button onclick="removeImgFromList(this, '${compressedData}')" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg">✕</button>
+                        <button onclick="removeImgFromList(this, '${compressedData}')" class="absolute -top-4 -right-4 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg">✕</button>
                     `;
                     gallery.appendChild(div);
                     };
@@ -911,21 +911,33 @@
             .map((p, idx) => {
               // تعیین وضعیت ملک
               let statusBtn = "";
+              
               if (p.status === "empty_key_office") {
+                // حالت کلید در دفتر
                 statusBtn = `
                   <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? "bg-orange-500" : "bg-slate-900 dark:bg-blue-600"} text-white py-4 rounded-2xl font-black text-xs">
                       ${visits[p.code] ? "⚠️ دست: " + visits[p.code].consultant : "🔓 خروج کلید واحد " + p.code}
                   </button>`;
-              } else if(currentUser.isAdmin) {
-                statusBtn = `
-                  <button onclick="handleKeyAction('${p.code}')" class="w-full ${visits[p.code] ? "bg-slate-700 dark:bg-blue-600" : "bg-orange-500"} text-white py-4 rounded-2xl font-black text-xs">
-                      ${visits[p.code].consultant ? "📞 تماس جهت هماهنگی : " +  visits[p.code]: "✅ هماهنگی با مالک انجام شد " + (p.code, "کد ملک")}
-                  </button>`;
-              } else{
-                statusBtn = `
-                  <div class="w-full bg-slate-100 dark:bg-slate-800 text-slate-400 py-4 rounded-2xl font-black text-xs text-center border-2 border-dashed">
-                      ${getStatusStyle(p.status).text}
-                  </div>`;
+              } else {
+                // حالت مالک یا مستاجر ساکن
+                if (currentUser.isAdmin) {
+                  // اگر ادمین (نادر) بود، دکمه ثبت بازدید نمایش داده شود
+                  statusBtn = `
+                    <div class="w-full space-y-2">
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 text-slate-400 py-3 rounded-2xl font-black text-[10px] text-center border-2 border-dashed">
+                            ${getStatusStyle(p.status).text}
+                        </div>
+                        <button onclick="handleKeyAction('${p.code}')" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-black text-xs">
+                            ✅ هماهنگی انجام شد (ثبت بازدید)
+                        </button>
+                    </div>`;
+                } else {
+                  // برای بقیه مشاورین فقط متن وضعیت
+                  statusBtn = `
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 text-slate-400 py-4 rounded-2xl font-black text-xs text-center border-2 border-dashed">
+                        ${getStatusStyle(p.status).text}
+                    </div>`;
+                }
               }
 
               return `
@@ -933,10 +945,10 @@
                     ${currentUser.isAdmin ? `<button onclick="prepareEdit(${idx})" class="absolute top-4 left-4 z-20 bg-white/90 dark:bg-slate-800/90 p-2 rounded-full shadow-lg border border-blue-500">✏️</button>` : ""}
                     <div class="relative group">
                         <div id="slider-${idx}" onscroll="updateDots(${idx})" class="swiper-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth shadow-inner">
-                            ${p.imgs.map((img) => `<div class="swiper-slide min-w-full snap-start h-72"><img src="${img}" class="w-full h-full object-cover"></div>`).join("")}
+                            ${(p.imgs || []).map((img) => `<div class="swiper-slide min-w-full snap-start h-72"><img src="${img}" class="w-full h-full object-cover"></div>`).join("")}
                         </div>
                         <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">
-                            ${p.imgs.map((_, i) => `<div id="dot-${idx}-${i}" class="w-2 h-2 rounded-full bg-white/40 transition-all ${i === 0 ? "bg-white w-4" : ""}"></div>`).join("")}
+                            ${(p.imgs || []).map((_, i) => `<div id="dot-${idx}-${i}" class="w-2 h-2 rounded-full bg-white/40 transition-all ${i === 0 ? "bg-white w-4" : ""}"></div>`).join("")}
                         </div>
                     </div>
                     <div class="p-6">
@@ -946,14 +958,14 @@
                                 ${formatPrice(p.price)}
                             </div>
                         </div>
-                        <div class="flex flex-wrap gap-2 mb-4">
+                        <div class="flex flex-wrap gap-2 mb-4 w-full">
                             ${statusBtn}
                         </div>
                     </div>
                 </div>`;
             })
             .join("");
-        }
+        }        
 
         // ۲. بخش مدیریت کلیدهای نگهبانی (فیلتر شده)
         const activeVisitsArray = Object.values(visits);
