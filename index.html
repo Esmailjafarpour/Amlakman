@@ -651,61 +651,60 @@
         document.getElementById("propModal").classList.remove("hidden");
       }
 
-
       let uploadedImages = []; // آرایه موقت برای ذخیره عکس‌های جدید
 
-       function handleImageUpload(input) {
-         const gallery = document.getElementById("previewGallery");
-  
-            if (input.files) {
-                Array.from(input.files).forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function() {
-                    // --- شروع عملیات کوچک کردن عکس ---
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800; // حداکثر عرض عکس
-                    let width = img.width;
-                    let height = img.height;
+      function handleImageUpload(input) {
+        const gallery = document.getElementById("previewGallery");
 
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
+        if (input.files) {
+          Array.from(input.files).forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const img = new Image();
+              img.src = e.target.result;
+              img.onload = function () {
+                // --- شروع عملیات کوچک کردن عکس ---
+                const canvas = document.createElement("canvas");
+                const MAX_WIDTH = 800; // حداکثر عرض عکس
+                let width = img.width;
+                let height = img.height;
 
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // تبدیل عکس به فرمت کم‌حجم (JPEG با کیفیت ۰.۷)
-                    const compressedData = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    // حالا عکس کم‌حجم را ذخیره می‌کنیم
-                    currentImgList.push(compressedData);
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width;
+                  width = MAX_WIDTH;
+                }
 
-                    // نمایش پیش‌نمایش
-                    const div = document.createElement("div");
-                    div.className = "relative min-w-[80px] h-20 shadow-md";
-                    div.innerHTML = `
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // تبدیل عکس به فرمت کم‌حجم (JPEG با کیفیت ۰.۷)
+                const compressedData = canvas.toDataURL("image/jpeg", 0.7);
+
+                // حالا عکس کم‌حجم را ذخیره می‌کنیم
+                currentImgList.push(compressedData);
+
+                // نمایش پیش‌نمایش
+                const div = document.createElement("div");
+                div.className = "relative min-w-[80px] h-20 shadow-md";
+                div.innerHTML = `
                         <img src="${compressedData}" class="w-full h-full object-cover rounded-xl border-2 border-blue-500">
                         <button onclick="removeImgFromList(this, '${compressedData}')" class="absolute -top-4 -right-4 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg">✕</button>
                     `;
-                    gallery.appendChild(div);
-                    };
-                };
-                reader.readAsDataURL(file);
-                });
-            }
+                gallery.appendChild(div);
+              };
+            };
+            reader.readAsDataURL(file);
+          });
         }
+      }
 
-        // تابع برای حذف عکس از لیست پیش از ذخیره
-        function removeImgFromList(btn, data) {
-            currentImgList = currentImgList.filter(img => img !== data);
-            btn.parentElement.remove();
-        }
+      // تابع برای حذف عکس از لیست پیش از ذخیره
+      function removeImgFromList(btn, data) {
+        currentImgList = currentImgList.filter((img) => img !== data);
+        btn.parentElement.remove();
+      }
 
       function saveProperty() {
         const c = document.getElementById("pCode");
@@ -760,7 +759,7 @@
         closePropModal();
         updateUI();
 
-        currentImgList = []; 
+        currentImgList = [];
         document.getElementById("previewGallery").innerHTML = "";
       }
 
@@ -911,7 +910,7 @@
             .map((p, idx) => {
               // تعیین وضعیت ملک
               let statusBtn = "";
-              
+
               if (p.status === "empty_key_office") {
                 // حالت کلید در دفتر
                 statusBtn = `
@@ -921,14 +920,13 @@
               } else {
                 // حالت مالک یا مستاجر ساکن
                 if (currentUser.isAdmin) {
-                  // اگر ادمین (نادر) بود، دکمه ثبت بازدید نمایش داده شود
                   statusBtn = `
                     <div class="w-full space-y-2">
                         <div class="w-full bg-slate-100 dark:bg-slate-800 text-slate-400 py-3 rounded-2xl font-black text-[10px] text-center border-2 border-dashed">
                             ${getStatusStyle(p.status).text}
                         </div>
-                        <button onclick="handleKeyAction('${p.code}')" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-black text-xs">
-                            ✅ هماهنگی انجام شد (ثبت بازدید)
+                        <button onclick="openCoordinationModal('${p.code}')" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-black text-xs shadow-lg active:scale-95 transition-transform">
+                            📞 ثبت هماهنگی و بازدید
                         </button>
                     </div>`;
                 } else {
@@ -965,17 +963,22 @@
                 </div>`;
             })
             .join("");
-        }        
+        }
 
         // ۲. بخش مدیریت کلیدهای نگهبانی (فیلتر شده)
         const activeVisitsArray = Object.values(visits);
         const filteredActiveVisits = currentUser.isAdmin
           ? activeVisitsArray
-          : activeVisitsArray.filter((v) => v.consultantPhone === currentUser.phone);
+          : activeVisitsArray.filter(
+              (v) => v.consultantPhone === currentUser.phone,
+            );
 
         const securityList = document.getElementById("securityKeyList");
         if (securityList) {
-            securityList.innerHTML = filteredActiveVisits.map((v) => `
+          securityList.innerHTML =
+            filteredActiveVisits
+              .map(
+                (v) => `
                 <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border-r-4 border-orange-500 flex justify-between items-center shadow-sm">
                     <div>
                         <p class="font-black text-sm text-orange-700 dark:text-orange-400">واحد ${v.code}</p>
@@ -984,7 +987,10 @@
                         <p class="text-[10px] opacity-50">🕒 خروج: ${v.time}</p>
                     </div>
                     <button onclick="handleKeyAction('${v.code}')" class="text-[10px] bg-white dark:bg-slate-800 px-3 py-2 rounded-xl shadow-md font-bold">تایید برگشت</button>
-                </div>`).join("") || `<p class="text-center opacity-40 py-4 text-xs italic">${currentUser.isAdmin ? "تمام کلیدها در دفتر موجود است." : "شما فعلاً کلیدی تحویل نگرفته‌اید."}</p>`;
+                </div>`,
+              )
+              .join("") ||
+            `<p class="text-center opacity-40 py-4 text-xs italic">${currentUser.isAdmin ? "تمام کلیدها در دفتر موجود است." : "شما فعلاً کلیدی تحویل نگرفته‌اید."}</p>`;
         }
 
         // ۳. بخش تاریخچه
@@ -994,7 +1000,10 @@
 
         const historyContainer = document.getElementById("returnedKeyList");
         if (historyContainer) {
-            historyContainer.innerHTML = filteredHistory.map((h) => `
+          historyContainer.innerHTML =
+            filteredHistory
+              .map(
+                (h) => `
                 <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-slate-300 dark:border-slate-700 flex justify-between items-center shadow-sm">
                     <div class="text-right">
                         <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code}</p>
@@ -1006,19 +1015,28 @@
                         <div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
                         <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>
                     </div>
-                </div>`).join("") || '<p class="text-center opacity-30 py-4 text-xs italic font-bold">موردی برای نمایش وجود ندارد.</p>';
+                </div>`,
+              )
+              .join("") ||
+            '<p class="text-center opacity-30 py-4 text-xs italic font-bold">موردی برای نمایش وجود ندارد.</p>';
         }
 
         // ۴. آپدیت تقویم
         const calendarContainer = document.getElementById("calendarList");
         if (calendarContainer) {
-            calendarContainer.innerHTML = calendarEvents.map((e) => `
+          calendarContainer.innerHTML =
+            calendarEvents
+              .map(
+                (e) => `
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border-r-4 border-blue-500 shadow-sm mb-2">
                     <div class="flex justify-between items-start">
                         <div><p class="font-black text-sm">${e.title}</p><p class="text-[10px] opacity-50">${e.date} | توسط: ${e.creator}</p></div>
                         <span class="text-[10px] bg-blue-100 dark:bg-blue-900 text-blue-600 px-2 py-1 rounded-full font-bold">${e.type}</span>
                     </div>
-                </div>`).join("") || '<p class="opacity-30 text-center">رویدادی ثبت نشده.</p>';
+                </div>`,
+              )
+              .join("") ||
+            '<p class="opacity-30 text-center">رویدادی ثبت نشده.</p>';
         }
 
         // ۵. لیست درخواست‌های تایید (فقط ادمین)
@@ -1026,15 +1044,18 @@
           const pendingList = document.getElementById("pendingList");
           if (pendingList) {
             const pend = consultants.filter((c) => c.status === "pending");
-            pendingList.innerHTML = pend.map((c) => `
+            pendingList.innerHTML = pend
+              .map(
+                (c) => `
                 <div class="flex justify-between items-center bg-white dark:bg-slate-800 p-2 rounded-xl mb-1">
                     <span class="text-xs font-bold">${c.name} ${c.family}</span>
                     <button onclick="approveConsultant('${c.phone}')" class="bg-green-600 text-white text-[8px] px-2 py-1 rounded-lg">تایید</button>
-                </div>`).join("");
+                </div>`,
+              )
+              .join("");
           }
         }
       }
-
 
       function approveConsultant(p) {
         const i = consultants.findIndex((c) => c.phone === p);
@@ -1184,6 +1205,62 @@
         return parseInt(numericPrice).toLocaleString("fa-IR") + " تومان";
       } // اینجا تابع تمام می‌شود
 
+
+      // باز کردن مودال برای واحدهای ساکن‌دار
+      function openCoordinationModal(code) {
+    activeCode = code; // کد ملک را ذخیره می‌کنیم
+    
+    // پر کردن لیست مشاورین در مودال بازدید موجود
+    document.getElementById("visitConsultantSelect").innerHTML =
+        consultants
+          .filter((c) => c.status === "active")
+          .map((c) => `<option>${c.name} ${c.family}</option>`)
+          .join("");
+          
+    // تغییر عنوان یا دکمه مودال برای اینکه کاربر بداند این "هماهنگی" است
+    document.getElementById("visitModal").classList.remove("hidden");
+    
+    // یک کلک کوچک: دکمه تایید مودال را موقتاً تغییر می‌دهیم که تابع هماهنگی را اجرا کند
+    const confirmBtn = document.querySelector("#visitModal button[onclick='confirmVisit()']");
+    confirmBtn.setAttribute("onclick", "saveCoordination()");
+    confirmBtn.innerText = "ثبت نهایی هماهنگی";
+}
+
+      // ذخیره مستقیم در تاریخچه (بدون درگیر کردن لیست کلیدهای نگهبانی)
+      function saveCoordination() {
+    const cust = document.getElementById("visitCustomerName");
+    if (!cust.value) return triggerError(cust);
+
+    const selectedConsultantName = document.getElementById("visitConsultantSelect").value;
+    const consultantData = consultants.find((c) => `${c.name} ${c.family}` === selectedConsultantName);
+
+    const historyItem = {
+        code: activeCode,
+        consultant: selectedConsultantName,
+        consultantPhone: consultantData ? consultantData.phone : "",
+        customer: cust.value,
+        outTime: "هماهنگ شده", // چون خروج کلید نداشتیم
+        inTime: new Date().toLocaleTimeString("fa-IR", {
+            hour: "2-digit",
+            minute: "2-digit",
+        }),
+    };
+
+    // اضافه کردن مستقیم به تاریخچه
+    visitHistory.unshift(historyItem);
+    localStorage.setItem("nader_visit_history", JSON.stringify(visitHistory));
+
+    // برگرداندن تنظیمات دکمه مودال به حالت اول برای استفاده‌های بعدی
+    const confirmBtn = document.querySelector("#visitModal button[onclick='saveCoordination()']");
+    confirmBtn.setAttribute("onclick", "confirmVisit()");
+    confirmBtn.innerText = "تأیید خروج کلید";
+
+    closeVisitModal();
+    updateUI();
+    
+    // پاک کردن فیلد نام مشتری برای دفعه بعد
+    cust.value = "";
+}
       // --- مدیریت رویدادهای ورودی (این بخش باید کاملاً مستقل باشد) ---
       document.addEventListener("DOMContentLoaded", function () {
         const priceInput = document.getElementById("pPrice");
@@ -1196,6 +1273,9 @@
           });
         }
       });
+
+
+
     </script>
 
     <div
