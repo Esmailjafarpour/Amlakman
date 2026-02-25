@@ -891,7 +891,7 @@
             }
             </div>
             ${
-              p.currentUser.isAdmin && (
+              currentUser.isAdmin && (
                 <button
                   onclick="handleKeyAction('${p.code}')"
                   class="w-full ${visits[p.code]?'bg-orange-500':'bg-slate-900 dark:bg-blue-600'} text-white py-4 rounded-2xl font-black text-xs"
