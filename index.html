@@ -955,7 +955,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden shadow-lg border dark:border-slate-800 relative">
     
                 ${
-                currentUser.isAdmin
+                  currentUser.isAdmin
                     ? `
                     <div class="absolute top-4 left-4 z-20 flex items-center gap-2">
                         <button onclick="prepareEdit(${idx})" class="bg-white/90 dark:bg-slate-800/90 p-2 rounded-full shadow-lg border border-blue-500">
@@ -1027,6 +1027,7 @@
           : visitHistory.filter((h) => h.consultantPhone === currentUser.phone);
 
         const historyContainer = document.getElementById("returnedKeyList");
+        const isActiveCoord = h.isCoordination && visitHistory.find(item => item.code === h.code && item.isCoordination) === h;
         if (historyContainer) {
           historyContainer.innerHTML =
             filteredHistory
@@ -1043,24 +1044,21 @@
                         <p class="text-[10px] opacity-60">👥 مشتری: ${h.customer}</p>
                     </div>
                     
-                    <div class="flex flex-col items-center gap-2">
+                    // پیدا کردن اینکه آیا این آیتم تاریخچه، آخرین هماهنگی فعال ملک است یا خیر
+                    <div class="flex flex-col items-end gap-2">
                         <div class="text-left ${h.isCoordination ? "bg-orange-50 dark:bg-orange-900/20" : "bg-slate-100 dark:bg-slate-700/50"} p-2 rounded-lg min-w-[80px]">
                             ${
-                              h.isCoordination
-                                ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">
-                                    موعد بازدید:<br>${h.outTime}
-                                </div>`
-                                : `<div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
-                                <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>`
+                            h.isCoordination
+                                ? `<div class="text-[9px] font-black text-orange-700 dark:text-orange-400 text-center leading-tight">موعد:<br>${h.outTime}</div>`
+                                : `<div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>`
                             }
                         </div>
-
+                        
                         ${
-                          currentUser.isAdmin
+                        currentUser.isAdmin && isActiveCoord
                             ? `
-                            <button onclick="deleteHistoryItem(${visitHistory.indexOf(h)})" 
-                                    class="flex items-center gap-1 text-[8px] font-bold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md active:scale-90 transition-transform">
-                                <span class="text-[10px]">🗑️</span> لغو هماهنگی
+                            <button onclick="deleteHistoryItem(${visitHistory.indexOf(h)})" class="text-[9px] text-red-500 font-bold hover:underline">
+                                🗑️ لغو و حذف
                             </button>
                         `
                             : ""
@@ -1327,24 +1325,49 @@
         document.getElementById("coordTime").value = "";
       }
 
-      function deleteHistoryItem(index) {
-        // باز کردن یک تاییدیه ساده
-        if (
-          confirm("نادر جان، از لغو این مورد و پاک کردن از تاریخچه مطمئنی؟")
-        ) {
-          // ۱. حذف از آرایه تاریخچه
-          visitHistory.splice(index, 1);
+      let indexToDelete = null;
 
-          // ۲. به‌روزرسانی حافظه مرورگر
-          localStorage.setItem(
-            "nader_visit_history",
-            JSON.stringify(visitHistory),
-          );
-
-          // ۳. آپدیت کردن رابط کاربری (که باعث میشه دکمه ملک دوباره آبی بشه)
-          updateUI();
+        // تابع اصلی برای باز کردن مودال خوشگل
+        function deleteHistoryItem(index) {
+            indexToDelete = index;
+            const item = visitHistory[index];
+            
+            // نمایش کد واحد در مودال
+            document.getElementById("cancelUnitCode").innerText = item.code;
+            
+            // نمایش مودال
+            document.getElementById("cancelConfirmModal").classList.remove("hidden");
+            
+            // ست کردن وظیفه دکمه قرمز
+            document.getElementById("finalDeleteBtn").onclick = function() {
+                confirmFinalDelete();
+            };
         }
-      }
+
+        function closeCancelModal() {
+            document.getElementById("cancelConfirmModal").classList.add("hidden");
+            indexToDelete = null;
+        }
+
+        function confirmFinalDelete() {
+            if (indexToDelete !== null) {
+                // حذف از آرایه
+                visitHistory.splice(indexToDelete, 1);
+                
+                // ذخیره در دیتابیس محلی
+                localStorage.setItem("nader_visit_history", JSON.stringify(visitHistory));
+                
+                // بستن مودال‌های باز
+                closeCancelModal();
+                if(typeof closeManageModal === "function") closeManageModal(); // اگر مودال مدیریت باز بود هم ببند
+                
+                // آپدیت کل صفحه
+                updateUI();
+                
+                // یک نوتیفیکیشن ساده (اختیاری)
+                console.log("هماهنگی با موفقیت لغو شد.");
+            }
+        }
 
       function openManageCoordModal(index, code) {
         const modal = document.getElementById("manageCoordModal");
@@ -1601,6 +1624,35 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <div id="cancelConfirmModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[3rem] p-8 shadow-2xl border-b-8 border-red-500 transform transition-all">
+            <div class="text-center">
+                <div class="bg-red-100 dark:bg-red-900/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y1="17"></line>
+                        <line x1="14" y1="11" x2="14" y1="17"></line>
+                    </svg>
+                </div>
+                
+                <h3 class="text-xl font-black mb-2 text-slate-800 dark:text-white">لغو هماهنگی واحد <span id="cancelUnitCode" class="text-red-500"></span></h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+                    نادر جان، آیا مطمئنی که می‌خوای این هماهنگی رو لغو کنی؟ با این کار وضعیت ملک به حالت عادی (آبی) برمی‌گرده.
+                </p>
+            </div>
+        
+            <div class="flex flex-col gap-3">
+                <button id="finalDeleteBtn" class="w-full bg-red-500 text-white py-4 rounded-2xl font-black text-sm shadow-lg shadow-red-200 dark:shadow-none active:scale-95 transition-all">
+                    بله، لغو و حذف شود
+                </button>
+                <button onclick="closeCancelModal()" class="w-full bg-slate-100 dark:bg-slate-800 text-slate-500 py-4 rounded-2xl font-bold text-sm active:scale-95 transition-all">
+                    انصراف
+                </button>
+            </div>
+        </div>
     </div>
   </body>
 </html>
