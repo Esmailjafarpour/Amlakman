@@ -1147,37 +1147,30 @@
         }, 200);
       }
 
-      function formatPrice(price) {
+    function formatPrice(price) {
         if (!price || price === "توافقی") return "توافقی";
 
-        // حذف هرگونه حروف یا کامای قبلی برای اطمینان از عدد بودن
+        // حذف هرگونه حروف یا کامای قبلی
         const numericPrice = price.toString().replace(/[^0-9]/g, "");
 
         if (numericPrice === "") return "توافقی";
 
-        // جدا کردن سه رقم سه رقم و اضافه کردن کلمه تومان
+        // جدا کردن سه رقم سه رقم
         return parseInt(numericPrice).toLocaleString("fa-IR") + " تومان";
+      } // اینجا تابع تمام می‌شود
 
-        // --- بخش مدیریت رویدادهای ورودی ---
-        document.addEventListener("DOMContentLoaded", () => {
-          // کد جداکننده سه رقم برای فیلد قیمت
-          const priceInput = document.getElementById("pPrice");
-          if (priceInput) {
-            priceInput.addEventListener("input", function (e) {
-              // ۱. حذف هر چیزی که عدد نیست
-              let value = e.target.value.replace(/[^0-9]/g, "");
-
-              if (value) {
-                // ۲. تبدیل به عدد و فرمت کردن (بدون نیاز به پکیج اضافه)
-                // استفاده از toLocaleString بدون آرگومان، کاما انگلیسی می‌گذارد که برای اینپوت بهتر است
-                e.target.value = parseInt(value).toLocaleString();
-              }
-            });
-          }
-
-          // ... سایر کدهای لود اولیه ...
-        });
-      }
+      // --- مدیریت رویدادهای ورودی (این بخش باید کاملاً مستقل باشد) ---
+      document.addEventListener("DOMContentLoaded", function() {
+        const priceInput = document.getElementById("pPrice");
+        if (priceInput) {
+          priceInput.addEventListener("input", function (e) {
+            let value = e.target.value.replace(/[^0-9]/g, "");
+            if (value) {
+              e.target.value = parseInt(value).toLocaleString();
+            }
+          });
+        }
+      });
     </script>
 
     <div
