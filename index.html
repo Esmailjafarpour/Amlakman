@@ -460,7 +460,7 @@
     </div>
 
     <script>
-      let properties = JSON.parse(localStorage.getItem("nader_visit_history")) || [];
+      let properties = JSON.parse(localStorage.getItem("nader_props")) || [];
       let visits = JSON.parse(localStorage.getItem("active_visits")) || {};
       let visitHistory =
         JSON.parse(localStorage.getItem("nader_visit_history")) || [];
@@ -1325,49 +1325,24 @@
         document.getElementById("coordTime").value = "";
       }
 
-      let indexToDelete = null;
+      function deleteHistoryItem(index) {
+        // باز کردن یک تاییدیه ساده
+        if (
+          confirm("نادر جان، از لغو این مورد و پاک کردن از تاریخچه مطمئنی؟")
+        ) {
+          // ۱. حذف از آرایه تاریخچه
+          visitHistory.splice(index, 1);
 
-        // تابع اصلی برای باز کردن مودال خوشگل
-        function deleteHistoryItem(index) {
-            indexToDelete = index;
-            const item = visitHistory[index];
-            
-            // نمایش کد واحد در مودال
-            document.getElementById("cancelUnitCode").innerText = item.code;
-            
-            // نمایش مودال
-            document.getElementById("cancelConfirmModal").classList.remove("hidden");
-            
-            // ست کردن وظیفه دکمه قرمز
-            document.getElementById("finalDeleteBtn").onclick = function() {
-                confirmFinalDelete();
-            };
-        }
+          // ۲. به‌روزرسانی حافظه مرورگر
+          localStorage.setItem(
+            "nader_visit_history",
+            JSON.stringify(visitHistory),
+          );
 
-        function closeCancelModal() {
-            document.getElementById("cancelConfirmModal").classList.add("hidden");
-            indexToDelete = null;
+          // ۳. آپدیت کردن رابط کاربری (که باعث میشه دکمه ملک دوباره آبی بشه)
+          updateUI();
         }
-
-        function confirmFinalDelete() {
-            if (indexToDelete !== null) {
-                // حذف از آرایه
-                visitHistory.splice(indexToDelete, 1);
-                
-                // ذخیره در دیتابیس محلی
-                localStorage.setItem("nader_visit_history", JSON.stringify(visitHistory));
-                
-                // بستن مودال‌های باز
-                closeCancelModal();
-                if(typeof closeManageModal === "function") closeManageModal(); // اگر مودال مدیریت باز بود هم ببند
-                
-                // آپدیت کل صفحه
-                updateUI();
-                
-                // یک نوتیفیکیشن ساده (اختیاری)
-                console.log("هماهنگی با موفقیت لغو شد.");
-            }
-        }
+      }
 
       function openManageCoordModal(index, code) {
         const modal = document.getElementById("manageCoordModal");
