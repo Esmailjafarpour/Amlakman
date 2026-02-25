@@ -545,32 +545,58 @@ function closeReturnModal() {
         </div>
     </div>`).join('');
 
-            // ۱. نمایش کلیدهایی که الان بیرون هستند (همراه با دکمه تماس سریع)
-document.getElementById('securityKeyList').innerHTML = Object.values(visits).map(v => `
+// --- ۱. فیلتر کردن کلیدهای بیرون رفته بر اساس سطح دسترسی ---
+const activeVisitsArray = Object.values(visits);
+const filteredActiveVisits = currentUser.isAdmin 
+    ? activeVisitsArray // تو همه را می‌بینی
+    : activeVisitsArray.filter(v => v.consultantPhone === currentUser.phone); // مشاور فقط کلیدهای خودش
+
+// نمایش در باکس کلیدهای خارج شده
+document.getElementById('securityKeyList').innerHTML = filteredActiveVisits.map(v => `
     <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border-r-4 border-orange-500 flex justify-between items-center shadow-sm">
         <div>
             <p class="font-black text-sm text-orange-700 dark:text-orange-400">واحد ${v.code}</p>
             <p class="text-[10px] opacity-70">👤 مشاور: ${v.consultant}</p>
-            <a href="tel:${v.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${v.consultantPhone}</a>
+            
+            ${currentUser.isAdmin ? `
+                <a href="tel:${v.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${v.consultantPhone}</a>
+            ` : `<p class="text-[10px] opacity-50">📱 ${v.consultantPhone}</p>`}
+            
             <p class="text-[10px] opacity-50">🕒 خروج: ${v.time}</p>
         </div>
-        <button onclick="handleKeyAction('${v.code}')" class="text-[10px] bg-white dark:bg-slate-800 px-3 py-2 rounded-xl shadow-md font-bold">تایید برگشت</button>
-    </div>`).join('') || '<p class="text-center opacity-40 py-4 text-xs italic">تمام کلیدها در دفتر موجود است.</p>';
+        
+        <button onclick="handleKeyAction('${v.code}')" 
+                class="text-[10px] bg-white dark:bg-slate-800 px-3 py-2 rounded-xl shadow-md font-bold hover:bg-orange-100 transition-colors">
+            تایید برگشت
+        </button>
+    </div>`).join('') || `
+        <p class="text-center opacity-40 py-4 text-xs italic">
+            ${currentUser.isAdmin ? 'تمام کلیدها در دفتر موجود است.' : 'شما فعلاً کلیدی تحویل نگرفته‌اید.'}
+        </p>`;
 
-       // ۲. نمایش تاریخچه (اصلاح شده)
-document.getElementById('returnedKeyList').innerHTML = visitHistory.map(h => `
+// --- فیلتر کردن تاریخچه بر اساس سطح دسترسی ---
+const filteredHistory = currentUser.isAdmin 
+    ? visitHistory // ادمین همه را می‌بیند
+    : visitHistory.filter(h => h.consultantPhone === currentUser.phone); // مشاور فقط موارد خودش را
+
+// نمایش در باکس تاریخچه
+document.getElementById('returnedKeyList').innerHTML = filteredHistory.map(h => `
     <div class="bg-white dark:bg-slate-800/50 p-4 rounded-2xl border-r-4 border-slate-300 dark:border-slate-700 flex justify-between items-center shadow-sm">
         <div class="text-right">
             <p class="font-bold text-xs text-slate-700 dark:text-slate-300">واحد ${h.code} (پایان بازدید)</p>
             <p class="text-[10px] opacity-60 mt-1">👤 مشاور: ${h.consultant}</p>
-            <a href="tel:${h.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${h.consultantPhone}</a>
+            ${currentUser.isAdmin ? `
+                <a href="tel:${h.consultantPhone}" class="text-[10px] text-blue-600 font-bold decoration-dotted underline">📞 ${h.consultantPhone}</a>
+            ` : ''}
             <p class="text-[10px] opacity-60">👥 مشتری: ${h.customer}</p>
         </div>
         <div class="text-left bg-slate-100 dark:bg-slate-700/50 p-2 rounded-lg min-w-[70px]">
             <div class="text-[8px] font-bold text-red-500 italic">خروج: ${h.outTime}</div>
             <div class="text-[8px] font-bold text-green-600 italic">ورود: ${h.inTime}</div>
         </div>
-    </div>`).join('') || '<p class="text-center opacity-30 py-4 text-xs italic font-bold">تاریخچه بازدیدهای امروز خالی است.</p>';
+    </div>`).join('') || '<p class="text-center opacity-30 py-4 text-xs italic font-bold">موردی برای نمایش وجود ندارد.</p>';
+
+
 
             document.getElementById('calendarList').innerHTML = calendarEvents.map(e=>`
                 <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border-r-4 border-blue-500 shadow-sm">
